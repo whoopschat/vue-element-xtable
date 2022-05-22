@@ -128,6 +128,7 @@
                   getValue('render', field, scope.row) ||
                   getValue('label', field, scope.row)
                 "
+                :style="getValue('styleValue', field, scope.row)"
                 :type="getValue('tagType', field, scope.row)"
                 :size="
                   getValue('size', field, scope.row) || size || $xTableSize
@@ -139,7 +140,7 @@
                 }}
               </el-tag>
             </template>
-            <span v-else>
+            <span v-else :style="getValue('styleValue', field, scope.row)">
               {{
                 getValue("render", field, scope.row) ||
                 getValue("label", field, scope.row)
@@ -235,10 +236,13 @@
 <style lang="less">
 .xTable {
   min-height: 100px;
+  .el-form-item {
+    margin-bottom: 5px;
+  }
   .x-table-param-btn {
-    margin-left: 0px !important;
-    margin-right: 8px !important;
-    margin-top: 8px !important;
+    margin-left: 0px;
+    margin-right: 8px;
+    margin-top: 8px;
   }
   .x-table-action-link {
     margin-right: 8px;

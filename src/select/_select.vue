@@ -179,19 +179,21 @@ export default {
       this.handleOpen();
     },
     dispatch(componentName, eventName, params) {
-      try {
-        var parent = this.$parent || this.$root;
-        var name = parent.$options.componentName;
-        while (parent && (!name || name !== componentName)) {
-          parent = parent.$parent;
-          if (parent) {
-            name = parent.$options.componentName;
+      setTimeout(() => {
+        try {
+          var parent = this.$parent || this.$root;
+          var name = parent.$options.componentName;
+          while (parent && (!name || name !== componentName)) {
+            parent = parent.$parent;
+            if (parent) {
+              name = parent.$options.componentName;
+            }
           }
-        }
-        if (parent) {
-          parent.$emit.apply(parent, [eventName].concat(params));
-        }
-      } catch (error) {}
+          if (parent) {
+            parent.$emit.apply(parent, [eventName].concat(params));
+          }
+        } catch (error) {}
+      }, 200);
     },
     handleOpen() {
       this.selectList = [];
@@ -262,9 +264,9 @@ export default {
       this.selectList = list;
     },
     handleSelectClick(row, value) {
-      this.$emit("change", value);
       this.$emit("select", row);
-      this.dispatch("ElFormItem", "el.form.change", value);
+      this.$emit("change", value);
+      this.dispatch("ElFormItem", "el.form.change");
       this.handleClosed();
       this.dialog = false;
     },

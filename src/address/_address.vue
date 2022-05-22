@@ -76,19 +76,21 @@ export default {
       this.selected = this.selected.filter((item) => !!item);
     },
     dispatch(componentName, eventName, params) {
-      try {
-        var parent = this.$parent || this.$root;
-        var name = parent.$options.componentName;
-        while (parent && (!name || name !== componentName)) {
-          parent = parent.$parent;
-          if (parent) {
-            name = parent.$options.componentName;
+      setTimeout(() => {
+        try {
+          var parent = this.$parent || this.$root;
+          var name = parent.$options.componentName;
+          while (parent && (!name || name !== componentName)) {
+            parent = parent.$parent;
+            if (parent) {
+              name = parent.$options.componentName;
+            }
           }
-        }
-        if (parent) {
-          parent.$emit.apply(parent, [eventName].concat(params));
-        }
-      } catch (error) {}
+          if (parent) {
+            parent.$emit.apply(parent, [eventName].concat(params));
+          }
+        } catch (error) {}
+      }, 200);
     },
     initOptions() {
       this.cityInfo = getData(this.level);
@@ -114,11 +116,10 @@ export default {
     handleInputConfirm() {
       if (this.format == "string") {
         this.$emit("change", this.selected.join(","));
-        this.dispatch("ElFormItem", "el.form.change", this.selected.join(","));
       } else {
         this.$emit("change", this.selected);
-        this.dispatch("ElFormItem", "el.form.change", this.selected);
       }
+      this.dispatch("ElFormItem", "el.form.change");
     },
   },
   created() {

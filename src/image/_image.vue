@@ -161,19 +161,21 @@ export default {
       });
     },
     dispatch(componentName, eventName, params) {
-      try {
-        var parent = this.$parent || this.$root;
-        var name = parent.$options.componentName;
-        while (parent && (!name || name !== componentName)) {
-          parent = parent.$parent;
-          if (parent) {
-            name = parent.$options.componentName;
+      setTimeout(() => {
+        try {
+          var parent = this.$parent || this.$root;
+          var name = parent.$options.componentName;
+          while (parent && (!name || name !== componentName)) {
+            parent = parent.$parent;
+            if (parent) {
+              name = parent.$options.componentName;
+            }
           }
-        }
-        if (parent) {
-          parent.$emit.apply(parent, [eventName].concat(params));
-        }
-      } catch (error) {}
+          if (parent) {
+            parent.$emit.apply(parent, [eventName].concat(params));
+          }
+        } catch (error) {}
+      }, 200);
     },
     handleImagePreview(image) {
       this.$xImagePreviewHandler(image);
@@ -214,7 +216,7 @@ export default {
     submitChange() {
       let newValue = this.currentImages.join(",");
       this.$emit("change", newValue);
-      this.dispatch("ElFormItem", "el.form.change", newValue);
+      this.dispatch("ElFormItem", "el.form.change");
     },
   },
 };

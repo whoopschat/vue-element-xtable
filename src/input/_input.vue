@@ -182,19 +182,21 @@ export default {
   },
   methods: {
     dispatch(componentName, eventName, params) {
-      try {
-        var parent = this.$parent || this.$root;
-        var name = parent.$options.componentName;
-        while (parent && (!name || name !== componentName)) {
-          parent = parent.$parent;
-          if (parent) {
-            name = parent.$options.componentName;
+      setTimeout(() => {
+        try {
+          var parent = this.$parent || this.$root;
+          var name = parent.$options.componentName;
+          while (parent && (!name || name !== componentName)) {
+            parent = parent.$parent;
+            if (parent) {
+              name = parent.$options.componentName;
+            }
           }
-        }
-        if (parent) {
-          parent.$emit.apply(parent, [eventName].concat(params));
-        }
-      } catch (error) {}
+          if (parent) {
+            parent.$emit.apply(parent, [eventName].concat(params));
+          }
+        } catch (error) {}
+      }, 200);
     },
     focus() {
       this.$nextTick(() => {
@@ -244,7 +246,7 @@ export default {
       }
       this.changeFlag = true;
       this.$emit("change", this.inputValue);
-      this.dispatch("ElFormItem", "el.form.change", this.inputValue);
+      this.dispatch("ElFormItem", "el.form.change");
     },
     getValue(prop, item, param, def) {
       if (!item || !prop) {

@@ -426,7 +426,7 @@ export default {
       }
       let propValue = item[prop];
       if (propValue && typeof propValue === "function") {
-        return propValue(param, this.tag, this);
+        return propValue(param, this.tag, this.dataParams);
       }
       if (typeof propValue === "undefined") {
         return def;
@@ -439,7 +439,7 @@ export default {
       }
       let event = item[prop];
       if (event && typeof event === "function") {
-        return event(param, this.tag, this.fetchList);
+        return event(param, this.tag, this.fetchList, this.dataParams);
       }
     },
     handleSelectionChange(selected) {

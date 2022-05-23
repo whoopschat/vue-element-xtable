@@ -6,10 +6,10 @@
         :size="size || $xTableSize"
         @submit.native.prevent
       >
-        <el-form-item v-if="paramList.length > 0">
+        <el-form-item v-if="filterList(paramList).length > 0">
           <span
             style="margin-right: 12px"
-            v-for="(param, i) in paramList"
+            v-for="(param, i) in filterList(paramList)"
             v-show="getValue('show', param, null, true)"
             :key="'x-table-param-' + i"
           >
@@ -37,9 +37,9 @@
             {{ resetLabel }}
           </el-button>
         </el-form-item>
-        <el-form-item v-if="btnList.length > 0">
+        <el-form-item v-if="filterList(btnList).length > 0">
           <el-button
-            v-for="(btn, i) in btnList"
+            v-for="(btn, i) in filterList(btnList)"
             v-show="getValue('show', btn, null, true)"
             class="x-table-param-btn"
             :key="'x-table-btn-' + i"
@@ -58,11 +58,11 @@
     <el-table
       ref="xTableEl"
       style="width: 100%"
-      :data="filterList"
+      :data="filterData"
       :border="border"
       :size="size || $xTableSize"
       :highlight-current-row="true"
-      v-if="filterList.length > 0"
+      v-if="filterData.length > 0"
       @sort-change="handleSortChange"
       @current-change="handleCurrentChange"
       @selection-change="handleSelectionChange"
@@ -74,7 +74,7 @@
       ></el-table-column>
       <el-table-column
         v-show="field"
-        v-for="(field, i) in fieldList"
+        v-for="(field, i) in filterList(fieldList)"
         :key="'x-table-column-' + i"
         :label="getValue('label', field)"
         :width="getValue('width', field)"
@@ -151,14 +151,14 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="!selection && actionList.length > 0"
+        v-if="!selection && filterList(actionList).length > 0"
         :width="actionWidth"
         :label="actionLabel"
       >
         <template slot-scope="scope">
           <span
             :key="'x-table-action-' + i"
-            v-for="(action, i) in actionList"
+            v-for="(action, i) in filterList(actionList)"
             v-show="getValue('show', action, scope.row, true)"
           >
             <template v-if="getValue('type', action, scope.row) == 'button'">
@@ -214,7 +214,7 @@
     <br />
     <div class="block">
       <el-pagination
-        v-if="filterList && filterList.length > 0"
+        v-if="filterData && filterData.length > 0"
         @current-change="handlePageChange"
         @size-change="handleSizeChange"
         :total="currentTotal"
@@ -384,7 +384,7 @@ export default {
         "已为你过滤了" + this.filterCount + "条数据"
       );
     },
-    filterList() {
+    filterData() {
       this.filterCount = 0;
       return this.dataList.filter((item) => {
         let flag = this.getValue("filter", this.filterConfig, item, true);
@@ -414,6 +414,11 @@ export default {
       if (this.$refs.xTableEl) {
         this.$refs.xTableEl.setCurrentRow(val);
       }
+    },
+    filterList(list) {
+      return (list || []).filter((item) => {
+        return this.getValue("show", item, null, true);
+      });
     },
     getValue(prop, item, param, def) {
       if (!item || !prop) {

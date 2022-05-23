@@ -1,6 +1,6 @@
 {
   "name": "vue-element-xtable",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "vue x table with element-ui",
   "main": "lib/index.js",
   "types": "types/index.d.ts",

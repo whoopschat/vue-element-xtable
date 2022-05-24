@@ -151,14 +151,14 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="!selection && filterList(actionList).length > 0"
+        v-if="!selection && actionList.length > 0"
         :width="actionWidth"
         :label="actionLabel"
       >
         <template slot-scope="scope">
           <span
             :key="'x-table-action-' + i"
-            v-for="(action, i) in filterList(actionList)"
+            v-for="(action, i) in filterList(actionList, scope.row)"
             v-show="getValue('show', action, scope.row, true)"
           >
             <template v-if="getValue('type', action, scope.row) == 'button'">
@@ -415,9 +415,9 @@ export default {
         this.$refs.xTableEl.setCurrentRow(val);
       }
     },
-    filterList(list) {
+    filterList(list, param) {
       return (list || []).filter((item) => {
-        return this.getValue("show", item, null, true);
+        return this.getValue("show", item, param, true);
       });
     },
     getValue(prop, item, param, def) {

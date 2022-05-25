@@ -1,47 +1,52 @@
 <template>
-  <div>
-    <el-cascader
-      filterable
-      style="width: 100%"
-      v-model="selected"
-      @change="handleInputConfirm"
-      :placeholder="placeholder"
-      :options="cityInfo"
-      :props="{
-        value: 'value',
-        label: 'label',
-      }"
-    />
-  </div>
+  <el-cascader
+    ref="input"
+    style="width: 100%"
+    v-model="selected"
+    @change="handleInputConfirm"
+    @visible-change="handleBlur"
+    filterable
+    :size="size"
+    :disabled="disabled"
+    :clearable="clearable"
+    :placeholder="placeholder"
+    :options="options"
+    :props="{
+      value: 'value',
+      label: 'label',
+    }"
+  />
 </template>
 
 <script>
-import { toAny } from "jsutil-toany";
-import { getData } from "./_data";
+import { getData } from "./_address/index";
 
 export default {
   model: {
-    prop: "current",
+    prop: "value",
     event: "change",
   },
   props: {
-    current: {
-      type: String | Object,
-      required: true,
+    size: {
+      type: String,
       default: "",
     },
-    level: {
-      type: Number,
-      required: false,
-      default: 3,
-    },
-    format: {
-      type: "string" | "object",
-      default: "object",
+    value: {
+      type: String,
+      required: true,
+      default: "",
     },
     placeholder: {
       type: String,
       default: "请选择省市区",
+    },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -51,25 +56,27 @@ export default {
     };
   },
   watch: {
-    current() {
-      this.init();
-    },
-    level() {
-      this.initOptions();
+    value() {
+      this.initValue();
     },
   },
   mounted() {
-    this.init();
-    this.initOptions();
+    this.initValue();
+  },
+  computed: {
+    options() {
+      return getData();
+    },
   },
   methods: {
-    init() {
-      if (this.current) {
-        if (typeof this.current == "string") {
-          this.selected = this.current.split(",");
-        } else {
-          this.selected = toAny(this.current, []);
-        }
+    focus() {
+      this.$nextTick(() => {
+          this.$refs.input.focus();
+      });
+    },
+    initValue() {
+      if (this.value) {
+        this.selected = this.value.split("-");
       } else {
         this.selected = [];
       }
@@ -92,9 +99,6 @@ export default {
         } catch (error) {}
       }, 200);
     },
-    initOptions() {
-      this.cityInfo = getData(this.level);
-    },
     fetchIndex(list, label) {
       if (list instanceof Array) {
         let arrLabel = list.map((item) => {
@@ -114,16 +118,16 @@ export default {
       return -1;
     },
     handleInputConfirm() {
-      if (this.format == "string") {
-        this.$emit("change", this.selected.join(","));
-      } else {
-        this.$emit("change", this.selected);
-      }
+      this.$emit("blur");
+      this.$emit("change", this.selected.join("-"));
       this.dispatch("ElFormItem", "el.form.change");
     },
-  },
-  created() {
-    this.init();
+    handleBlur(flag) {
+      if (!flag) {
+        this.$emit("blur");
+        this.dispatch("ElFormItem", "el.form.blur");
+      }
+    },
   },
 };
 </script>

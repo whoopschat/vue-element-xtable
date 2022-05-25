@@ -4,28 +4,42 @@
       <el-button
         v-if="showType == 'button'"
         :loading="detailLoading"
-        :style="styleValue || getValue('styleValue', configInfo)"
+        :size="size"
+        :style="
+          styleValue || getValue('styleValue', configInfo) || 'width: 100%'
+        "
         :disabled="!!disabled"
-        :size="size || $xSelectSize"
         @click="handleOpen"
       >
         {{ getValueLabel() }}
       </el-button>
       <el-input
         v-else
-        :loading="detailLoading"
+        :size="size"
         :value="getValueLabel()"
         :placeholder="getPlaceholderLabel()"
-        :style="styleValue || getValue('styleValue', configInfo)"
+        :style="
+          styleValue || getValue('styleValue', configInfo) || 'width: 100%'
+        "
         :clearable="!!clearable"
         :disabled="!!disabled"
-        :size="size || $xSelectSize"
         @clear="handleSelectClick(null, null)"
         @focus="handleOpen"
-      />
+      >
+        <i
+          slot="prefix"
+          v-if="detailLoading"
+          class="el-input__icon el-icon-loading"
+        ></i>
+      </el-input>
     </template>
     <template v-else-if="!configLoading && configErrorMsg">
-      <el-tag type="danger">
+      <el-tag
+        type="danger"
+        :style="
+          styleValue || getValue('styleValue', configInfo) || 'width: 100%'
+        "
+      >
         {{ configErrorMsg || "获取选择器配置" }}
       </el-tag>
     </template>
@@ -34,7 +48,7 @@
       v-if="configInfo"
       @closed="handleClosed"
       :close-on-click-modal="closeOnClickModal"
-      :title="getPlaceholderLabel() || '选择'"
+      :title="getTitleLabel() || '选择'"
       :width="getValue('width', configInfo)"
       :visible.sync="dialog"
       custom-class="xSelectDialog"
@@ -63,14 +77,8 @@
         slot="footer"
         v-if="multipleable || getValue('multipleable', configInfo)"
       >
-        <el-button @click="handleCancelClick" :size="size || $xSelectSize">
-          取 消
-        </el-button>
-        <el-button
-          type="primary"
-          @click="handleOkClick"
-          :size="size || $xSelectSize"
-        >
+        <el-button @click="handleCancelClick" :size="size"> 取 消 </el-button>
+        <el-button type="primary" @click="handleOkClick" :size="size">
           确 定
         </el-button>
       </div>
@@ -254,11 +262,14 @@ export default {
       }
       return this.getValue("render", this.configInfo, this.select);
     },
+    getTitleLabel() {
+      return this.title || this.getValue("title", this.configInfo);
+    },
     getPlaceholderLabel() {
       if (this.detailErrorMsg) {
         return this.detailErrorMsg;
       }
-      return this.title || this.getValue("title", this.configInfo);
+      return this.getTitleLabel();
     },
     handleSelectList(list) {
       this.selectList = list;
@@ -300,7 +311,7 @@ export default {
         let detailApi = this.getValue("detailApi", this.configInfo);
         let params =
           this.getValue("params", this.configInfo, this.value) || this.value;
-        return this.$xSelectDetailHandler(detailApi, params)
+        return this.$xInputDataDetailHandler(detailApi, params)
           .then((resp) => {
             this.select = resp;
             this.$emit("select", this.select);
@@ -322,7 +333,7 @@ export default {
         this.configInfo = null;
         this.configLoading = true;
         this.configErrorMsg = null;
-        return this.$xSelectConfigHandler(this.type)
+        return this.$xInputDataConfigHandler(this.type)
           .then((resp) => {
             if (resp) {
               this.configInfo = Object.assign({}, resp, this.selectConfig);

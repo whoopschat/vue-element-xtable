@@ -1,6 +1,6 @@
 import drawer from "./_drawer.vue";
 
-let _inited = false;
+let _installed = false;
 let _showDrawer = null;
 let _closeDrawer = null;
 let _refreshDrawer = null;
@@ -30,10 +30,10 @@ const Drawer = {
 }
 
 export function _installDrawer(Vue) {
-    if (_inited) {
+    if (_installed) {
         return;
     }
-    _inited = true;
+    _installed = true;
     const comp = Vue.extend(drawer);
     const instance = new comp();
     instance.$mount(document.createElement('div'))

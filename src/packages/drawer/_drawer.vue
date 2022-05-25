@@ -15,11 +15,12 @@
         <div>
           <el-page-header
             @back="backDrawer"
+            :title="backLabel"
             :content="drawerTitle"
           ></el-page-header>
         </div>
       </template>
-      <div v-if="show" ref="drawer-content">
+      <div v-if="show" ref="drawer-content" v-resize="handleResize">
         <div v-for="(opt, i) in historyList" :key="opt.key">
           <component
             v-show="i == historyList.length - 1"
@@ -87,13 +88,6 @@ export default {
       historyList: [],
     };
   },
-  created() {
-    Tape.onResize(this.handleResize);
-    this.handleResize();
-  },
-  destroyed() {
-    Tape.offResize(this.handleResize);
-  },
   computed: {
     currentOptions() {
       try {
@@ -102,8 +96,15 @@ export default {
         }
       } catch (error) {}
     },
+    backLabel() {
+      try {
+        if (this.historyList.length > 1) {
+          return this.getTitle(this.historyList[this.historyList.length - 2]);
+        }
+      } catch (error) {}
+    },
     drawerTitle() {
-      return this.currentOptions && this.currentOptions.title;
+      return this.getTitle(this.currentOptions);
     },
     drawerClosable() {
       return this.currentOptions && this.currentOptions.closable !== false;
@@ -118,7 +119,26 @@ export default {
       );
     },
   },
+  mounted() {
+    this.handleResize();
+  },
   methods: {
+    createUUID() {
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+        /[xy]/g,
+        function (c) {
+          var r = (Math.random() * 16) | 0,
+            v = c == "x" ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        }
+      );
+    },
+    getTitle(option) {
+      return (
+        (option && option.title) ||
+        (option && option.component && option.component.name)
+      );
+    },
     handleResize() {
       try {
         let width =
@@ -130,15 +150,8 @@ export default {
         }
       } catch (error) {}
     },
-    createUUID() {
-      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-        /[xy]/g,
-        function (c) {
-          var r = (Math.random() * 16) | 0,
-            v = c == "x" ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        }
-      );
+    setRefresh() {
+      this.refresh = true;
     },
     showDrawer(options = {}) {
       if (this.historyList.length > 0) {
@@ -159,9 +172,6 @@ export default {
       );
       this.historyList.push(options);
       this.show = true;
-    },
-    setRefresh() {
-      this.refresh = true;
     },
     checkRefresh(option) {
       if (option && this.refresh && typeof option.refresh === "function") {

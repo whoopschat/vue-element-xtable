@@ -50,7 +50,7 @@
             :size="getValue('size', btn) || size || $xTableSize"
             @click="callEvent('click', btn)"
           >
-            {{ getValue("render", btn) || getValue("label", btn) }}
+            {{ getValue("label", btn) }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -99,10 +99,7 @@
                 :disabled="getValue('disabled', field, scope.row)"
                 :type="getValue('linkType', field, scope.row)"
               >
-                {{
-                  getValue("render", field, scope.row) ||
-                  getValue("label", field, scope.row)
-                }}
+                {{ getValue("render", field, scope.row) }}
               </el-link>
             </template>
             <template
@@ -116,10 +113,7 @@
                 :disabled="getValue('disabled', field, scope.row)"
                 :type="getValue('buttonType', field, scope.row)"
               >
-                {{
-                  getValue("render", field, scope.row) ||
-                  getValue("label", field, scope.row)
-                }}
+                {{ getValue("render", field, scope.row) }}
               </el-button>
             </template>
             <template v-else-if="getValue('type', field, scope.row) == 'tag'">
@@ -134,17 +128,11 @@
                   getValue('size', field, scope.row) || size || $xTableSize
                 "
               >
-                {{
-                  getValue("render", field, scope.row) ||
-                  getValue("label", field, scope.row)
-                }}
+                {{ getValue("render", field, scope.row) }}
               </el-tag>
             </template>
             <span v-else :style="getValue('styleValue', field, scope.row)">
-              {{
-                getValue("render", field, scope.row) ||
-                getValue("label", field, scope.row)
-              }}
+              {{ getValue("render", field, scope.row) }}
             </span>
             <slot :row="scope.row" :field="field" :index="scope.$index"></slot>
           </span>
@@ -171,10 +159,7 @@
                 :type="getValue('buttonType', action, scope.row)"
                 @click="callEvent('click', action, scope.row)"
               >
-                {{
-                  getValue("render", action, scope.row) ||
-                  getValue("label", action, scope.row)
-                }}
+                {{ getValue("label", action, scope.row) }}
               </el-button>
             </template>
             <template v-else>
@@ -188,10 +173,7 @@
                 :type="getValue('linkType', action, scope.row) || 'primary'"
                 @click="callEvent('click', action, scope.row)"
               >
-                {{
-                  getValue("render", action, scope.row) ||
-                  getValue("label", action, scope.row)
-                }}
+                {{ getValue("label", action, scope.row) }}
               </el-link>
             </template>
           </span>
@@ -487,16 +469,16 @@ export default {
         return param;
       });
       (this.paramList || []).forEach((param) => {
-        let value =
-          this.getValue("valueMap", param, param.value) || param.value;
-        if (typeof param.field == "string") {
-          param.field.split(",").forEach((i) => {
+        let field = this.getValue("field", param);
+        let value = this.getValue("value", param, param.value) || param.value;
+        if (typeof field == "string") {
+          field.split(",").forEach((i) => {
             if (typeof i == "string") {
               this.dataParams[i] = value;
             }
           });
-        } else if (param.field instanceof Array) {
-          param.field.forEach((i) => {
+        } else if (field instanceof Array) {
+          field.forEach((i) => {
             if (typeof i == "string") {
               this.dataParams[i] = value;
             }
@@ -513,7 +495,7 @@ export default {
       this.$nextTick(() => {
         this.fetchLoading = true;
         this.fetchErrorMsg = null;
-        return this.$xTableListHandler(this.listApi, this.dataParams, {
+        return this.$xTableDataListHandler(this.listApi, this.dataParams, {
           pageNum: this.currentPage,
           pageSize: this.currentSize,
           orderBy: this.currentOrderBy || this.defaultSort,

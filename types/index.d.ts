@@ -5,7 +5,7 @@ declare module "vue-element-xtable" {
         title: string,
         /** 组件 */
         component: any,
-        /** 刷新事件 */
+        /** 刷新回调 */
         refresh?: Function,
         /** 编辑模式 */
         editable?: boolean,
@@ -26,6 +26,9 @@ declare module "vue-element-xtable" {
         orderBy?: string,
     }
 
+    /**
+     * 数量列表返回格式
+     */
     interface ListResponse {
         /** 页码数值 */
         page: number,
@@ -37,10 +40,22 @@ declare module "vue-element-xtable" {
         list: any[],
     }
 
+    /**
+     * 数据详情返回格式
+     */
+    interface DetailResponse {
+        [key]: any,
+    }
+
+
+    /**
+     * 上传文件返回格式
+     */
     interface UploadResponse {
-        /**  上传地址 */
+        /**  文件地址 */
         url: string,
     }
+    
 
     interface Drawer {
 
@@ -68,54 +83,45 @@ declare module "vue-element-xtable" {
 
     }
 
-    interface Image {
-
-        /**
-         * 请求列表数据
-         * @param handler 处理器
-         */
-        setUploadHandler(handler: (file: any, type?: string, maxSize?: Number) => UploadResponse): void
-
-    }
-
-    interface Table {
-
-        /**
-         * 请求列表数据
-         * @param handler 处理器
-         */
-        setListHandler(handler: (apiUrl: string, params?: Object, options?: ListOptions) => ListResponse): void
-
-    }
-
-    interface Select {
-
-        /**
-         * 请求详细数据
-         * @param handler 处理器
-         */
-        setDetailHandler(handler: (apiUrl: string, value?: any) => Object): void;
-
-        /**
-         * 获取选择器配置信息
-         * @param handler 处理器
-         */
-        setConfigHandler(handler: (dataType?: any) => Object): void;
-
-    }
-
     /**
      * 初始化组件
      * @param vue 对象
      */
     function install(vue: any): void;
 
-    var Image: Image;
+    /**
+     * 设置处理文件预览回调
+     * @param handler 回调
+     */
+    function setFilePreviewHandler(handler: (url: any, type?: string) => void): void
 
+    /**
+     * 设置处理文件上传
+     * @param handler 回调
+     */
+    function setFileUploadHandler(handler: (file: any, type?: string) => UploadResponse): void
+
+    /**
+     * 设置请求详细数据回调
+     * @param handler 回调
+     */
+    function setDataDetailHandler(handler: (apiUrl: string, value?: any) => DetailResponse): void;
+
+    /**
+     * 设置请求数据列表回调
+     * @param handler 回调
+     */
+    function setDataListHandler(handler: (apiUrl: string, params?: Object, options?: ListOptions) => Object): void;
+
+    /**
+     * 设置选择器配置信息回调
+     * @param handler 回调
+     */
+    function setDataConfigHandler(handler: (dataType?: any) => Object): void;
+
+    /**
+     * Drawer窗口组件
+     */
     var Drawer: Drawer;
-
-    var Select: Select;
-
-    var Table: Table;
 
 }

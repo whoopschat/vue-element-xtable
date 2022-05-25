@@ -10,18 +10,6 @@
 > npm install vue-element-xtable
 ```
 
-### Usage
-##### main.js
-```javascript
-import vue from 'vue';
-import ElementUI from 'element-ui';
-import XTable from 'vue-element-xtable';
-
-// install
-vue.use(elementUi);
-vue.use(XTable);
-```
-
 ## Development
 * make sure node and npm installed;
 * clone the repo to local;

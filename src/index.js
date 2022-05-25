@@ -1,17 +1,98 @@
-import Drawer, { _installDrawer } from "./drawer"
-import Select, { _installSelect } from "./select"
-import Table, { _installTable } from "./table"
-import Image, { _installImage } from "./image"
-import { _installAddress } from "./address"
-import { _installInput } from "./input"
+import Drawer, { _installDrawer } from "./packages/drawer"
+import { _installTable } from "./packages/table"
+import { _installInput } from "./packages/input"
+import { _installResize } from "./directives/resize"
+import { _installPage } from "./packages/page"
+
+let _installed = false;
+let _fileUploadHandler = null;
+let _filePreviewHandler = null;
+let _dataListHandler = null;
+let _dataDetailHandler = null;
+let _dataConfigHandler = null;
+
+function setFilePreviewHandler(handler) {
+    if (handler && typeof handler === 'function') {
+        _filePreviewHandler = handler;
+    }
+}
+
+function setFileUploadHandler(handler) {
+    if (handler && typeof handler === 'function') {
+        _fileUploadHandler = handler;
+    }
+}
+
+function setDataListHandler(handler) {
+    if (handler && typeof handler === 'function') {
+        _dataListHandler = handler;
+    }
+}
+
+function setDataDetailHandler(handler) {
+    if (handler && typeof handler === 'function') {
+        _dataDetailHandler = handler;
+    }
+}
+
+function setDataConfigHandler(handler) {
+    if (handler && typeof handler === 'function') {
+        _dataConfigHandler = handler;
+    }
+}
 
 const install = (Vue, options) => {
+    if (_installed) {
+        return;
+    }
+    _installed = true;
+    Vue.prototype.$xInputSize = options && options.size ? options.size : "mini";
+    Vue.prototype.$xTableSize = options && options.size ? options.size : "mini";
+    Vue.prototype.$xInputFileUploadHandler = (file, type) => {
+        return Promise.resolve().then(() => {
+            if (_fileUploadHandler && typeof _fileUploadHandler === 'function') {
+                return _fileUploadHandler(file, type);
+            }
+            throw "not call setFileUploadHandler";
+        })
+    }
+    Vue.prototype.$xInputFilePreviewHandler = (url, type) => {
+        return Promise.resolve().then(() => {
+            if (_filePreviewHandler && typeof _filePreviewHandler === 'function') {
+                return _filePreviewHandler(url, type);
+            }
+            throw "not call setFilePreviewHandler";
+        })
+    }
+    Vue.prototype.$xTableDataListHandler = (apiUrl, params, options) => {
+        return Promise.resolve().then(() => {
+            if (_dataListHandler && typeof _dataListHandler === 'function') {
+                return _dataListHandler(apiUrl, params, options);
+            }
+            throw "not call setDataListHandler";
+        })
+    }
+    Vue.prototype.$xInputDataDetailHandler = (apiUrl, params) => {
+        return Promise.resolve().then(() => {
+            if (_dataDetailHandler && typeof _dataDetailHandler === 'function') {
+                return _dataDetailHandler(apiUrl, params);
+            }
+            throw "not call setDataDetailHandler";
+        })
+    }
+    Vue.prototype.$xInputDataConfigHandler = (dataType) => {
+        return Promise.resolve().then(() => {
+            if (_dataConfigHandler && typeof _dataConfigHandler === 'function') {
+                return _dataConfigHandler(dataType);
+            }
+            throw "not call setDataConfigHandler";
+        })
+    }
     _installDrawer(Vue);
-    _installSelect(Vue, options);
-    _installTable(Vue, options);
-    _installAddress(Vue, options);
-    _installInput(Vue, options);
-    _installImage(Vue, options);
+    _installResize(Vue);
+    _installTable(Vue);
+    _installInput(Vue);
+    _installPage(Vue);
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
@@ -20,8 +101,10 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 export default {
     install,
-    Select,
+    setFilePreviewHandler,
+    setFileUploadHandler,
+    setDataListHandler,
+    setDataDetailHandler,
+    setDataConfigHandler,
     Drawer,
-    Table,
-    Image,
 }

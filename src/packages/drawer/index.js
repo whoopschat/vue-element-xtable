@@ -1,4 +1,5 @@
 import drawer from "./_drawer.vue";
+import { onChanged } from "../../utils/changed";
 
 let _installed = false;
 let _showDrawer = null;
@@ -38,6 +39,9 @@ export function _installDrawer(Vue) {
     const instance = new comp();
     instance.$mount(document.createElement('div'))
     document.body.appendChild(instance.$el);
+    onChanged(() => {
+        instance.handleResize();
+    });
     _showDrawer = function (options) {
         instance.showDrawer(options);
     }

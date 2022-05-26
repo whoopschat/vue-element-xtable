@@ -8,8 +8,11 @@
         <div>
           <div class="headerTop">
             <slot name="header"></slot>
+            <div class="header-right">
+              <slot name="header-right"></slot>
+            </div>
           </div>
-          <div class="headerMenu">
+          <div class="headerMenu" v-if="menus && menus.length > 1">
             <el-menu
               mode="horizontal"
               menu-trigger="click"
@@ -66,7 +69,7 @@
 </template>
 
 <style lang="less">
-@childerMenuWidth: 200px;
+@menuItemHeight: 50px;
 
 .xPage {
   white-space: normal;
@@ -96,6 +99,10 @@
   .el-menu.el-menu--horizontal {
     border-bottom: solid 0px #e6e6e6 !important;
   }
+  .el-menu-item {
+    height: @menuItemHeight;
+    line-height: @menuItemHeight;
+  }
 
   .pageHeader {
     position: fixed;
@@ -118,7 +125,6 @@
 
     .contentLeft {
       display: inline-block;
-      width: @childerMenuWidth;
       background-color: #ffffff;
       border-bottom: solid 0px #e6e6e6;
       border-right: solid 1px #e6e6e6;
@@ -131,6 +137,24 @@
       background-color: #ffffff;
       .el-card {
         border: 0px solid #ebeef5 !important;
+      }
+    }
+  }
+  @media screen and (max-width: 800px) {
+    .pageHeader {
+      .header-right {
+        display: block;
+      }
+    }
+  }
+
+  @media screen and (min-width: 800px) {
+    .pageHeader {
+      .header-right {
+        position: fixed;
+        right: 10px;
+        top: 0;
+        z-index: 600;
       }
     }
   }
@@ -151,6 +175,10 @@ export default {
     noFrame: {
       type: Boolean,
       default: false,
+    },
+    childrenWidth: {
+      type: Number,
+      default: 170,
     },
   },
   data() {
@@ -236,12 +264,12 @@ export default {
         let width = document.documentElement.clientWidth;
         if (this.hasChildren && width > 800) {
           this.contentLeftStyle = {
-            width: "200px",
+            width: this.childrenWidth + "px",
             borderRight: "solid 1px #e6e6e6",
             height: this.currentContentHeight + "px",
           };
           this.contentBodyStyle = {
-            width: `${width - 205}px`,
+            width: `${width - this.childrenWidth - 2}px`,
             height: this.currentContentHeight + "px",
           };
         } else {

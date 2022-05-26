@@ -1,5 +1,5 @@
 <template>
-  <div v-resize="handleResize">
+  <div>
     <el-drawer
       append-to-body
       destroy-on-close

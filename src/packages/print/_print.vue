@@ -1,19 +1,15 @@
 <template>
   <div class="xPagePrint" v-resize="handleResize">
+
+    <div class="print-wrap no-print">
+      <div style="height: 10px; background: #ffffff"></div>
+    </div>
+
     <div class="print-header">
       <div class="print-wrap" id="printHeader">
-        <div class="no-print" style="height: 10px"></div>
         <div class="header-content" v-if="$slots.header">
           <slot name="header"></slot>
         </div>
-      </div>
-    </div>
-    <div class="print-footer">
-      <div class="print-wrap" id="printFooter">
-        <div class="footer-content" v-if="$slots.footer">
-          <slot name="footer"></slot>
-        </div>
-        <div class="no-print" style="height: 10px"></div>
       </div>
     </div>
 
@@ -54,11 +50,22 @@
         </tfoot>
       </table>
     </div>
+
+    <div class="print-footer">
+      <div class="print-wrap" id="printFooter">
+        <div class="footer-content" v-if="$slots.footer">
+          <slot name="footer"></slot>
+        </div>
+      </div>
+    </div>
+    <div class="print-wrap no-print">
+      <div style="height: 10px; background: #ffffff"></div>
+    </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-@printWidth: 768px;
+@printWidth: 800px;
 
 .xPagePrint {
   white-space: normal;
@@ -66,7 +73,6 @@
   word-wrap: break-word;
 
   .print-wrap {
-    margin: 0 auto;
     padding: 0px 0px;
     background: #ffffff;
   }
@@ -95,6 +101,8 @@
   }
 
   .print-footer {
+    position: fixed;
+    bottom: 0;
     width: 100%;
     z-index: 500;
   }
@@ -140,6 +148,18 @@
         border-top: 1px solid #333333;
       }
     }
+    .print-header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 500;
+    }
+    .print-footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index: 500;
+    }
   }
 
   @media screen {
@@ -164,6 +184,18 @@
       .footer-content {
         border-top: 1px solid #d1d1d1;
       }
+    }
+    .print-header-space {
+      display: none;
+    }
+    .print-header {
+      position: relative;
+    }
+    .print-footer-space {
+      display: none;
+    }
+    .print-footer {
+      position: relative;
     }
   }
 }
@@ -190,10 +222,10 @@ export default {
   methods: {
     handleResize() {
       try {
-        this.headerHeight = getPosition("#printHeader").height + 8;
+        this.headerHeight = getPosition("#printHeader").height;
       } catch (error) {}
       try {
-        this.footerHeight = getPosition("#printFooter").height + 8;
+        this.footerHeight = getPosition("#printFooter").height;
       } catch (error) {}
     },
   },

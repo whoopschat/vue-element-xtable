@@ -26,12 +26,6 @@
           >
             {{ searchLabel }}
           </el-button>
-          <el-button
-            class="x-table-param-btn"
-            @click="handleChangeParams(true)"
-          >
-            {{ resetLabel }}
-          </el-button>
         </el-form-item>
         <el-form-item v-if="filterList(btnList).length > 0">
           <el-button
@@ -281,10 +275,6 @@ export default {
       type: String,
       default: "搜索",
     },
-    resetLabel: {
-      type: String,
-      default: "重置",
-    },
     defaultSort: {
       type: String,
       default: "",
@@ -453,10 +443,10 @@ export default {
       }
       this.fetchList();
     },
-    handleChangeParams(reset) {
+    handleChangeParams() {
       this.dataParams = {};
       (this.paramList || []).map((param) => {
-        if (!param.value || reset) {
+        if (!param.value) {
           param.value = this.getValue("default", param) || "";
         }
         return param;

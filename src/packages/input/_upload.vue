@@ -57,9 +57,16 @@
   </div>
 </template>
 
-
 <style lang="less" >
 .xImage {
+  .el-upload {
+    display: block;
+
+    .el-upload-dragger {
+      width: 100%;
+    }
+  }
+
   .error {
     font-size: 12px;
     color: #ff0000;

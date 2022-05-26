@@ -122,6 +122,9 @@ export default {
   mounted() {
     this.handleResize();
   },
+  created() {
+    this.handleResize();
+  },
   methods: {
     createUUID() {
       return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(

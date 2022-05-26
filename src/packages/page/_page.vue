@@ -35,6 +35,7 @@
       <div
         class="pageContent"
         :style="'padding-top: ' + currentHeaderHeight + 'px;height: 100%;'"
+        v-if="contentLeftStyle && contentBodyStyle"
       >
         <template v-if="hasChildren">
           <div class="contentLeft" :style="contentLeftStyle">
@@ -190,8 +191,8 @@ export default {
       currentChildrenItem: null,
       currentHeaderHeight: 0,
       currentContentHeight: 0,
-      contentLeftStyle: {},
-      contentBodyStyle: {},
+      contentLeftStyle: null,
+      contentBodyStyle: null,
     };
   },
   watch: {
@@ -204,6 +205,8 @@ export default {
   },
   mounted() {
     this.initMenu();
+  },
+  created() {
     this.handleResize();
   },
   computed: {
@@ -227,6 +230,7 @@ export default {
         this.currentChildrenItem =
           this.currentItem.children[this.currentChildrenIndex];
       }
+      this.handleResize();
     },
     getMenuIndex(list, auto) {
       let actionName;

@@ -311,7 +311,7 @@ export default {
         let detailApi = this.getValue("detailApi", this.configInfo);
         let params =
           this.getValue("params", this.configInfo, this.value) || this.value;
-        return this.$xInputDataDetailHandler(detailApi, params)
+        return this.$xUIDataDetailHandler(detailApi, params)
           .then((resp) => {
             this.select = resp;
             this.$emit("select", this.select);
@@ -333,7 +333,7 @@ export default {
         this.configInfo = null;
         this.configLoading = true;
         this.configErrorMsg = null;
-        return this.$xInputDataConfigHandler(this.type)
+        return this.$xUIDataConfigHandler(this.type)
           .then((resp) => {
             if (resp) {
               this.configInfo = Object.assign({}, resp, this.selectConfig);

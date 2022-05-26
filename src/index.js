@@ -2,6 +2,7 @@ import Drawer, { _installDrawer } from "./packages/drawer"
 import { _installTable } from "./packages/table"
 import { _installInput } from "./packages/input"
 import { _installResize } from "./directives/resize"
+import { _installPrint } from "./packages/print"
 import { _installPage } from "./packages/page"
 
 let _installed = false;
@@ -46,9 +47,8 @@ const install = (Vue, options) => {
         return;
     }
     _installed = true;
-    Vue.prototype.$xInputSize = options && options.size ? options.size : "mini";
-    Vue.prototype.$xTableSize = options && options.size ? options.size : "mini";
-    Vue.prototype.$xInputFileUploadHandler = (file, type) => {
+    Vue.prototype.$xUISize = options && options.size ? options.size : "mini";
+    Vue.prototype.$xUIFileUploadHandler = (file, type) => {
         return Promise.resolve().then(() => {
             if (_fileUploadHandler && typeof _fileUploadHandler === 'function') {
                 return _fileUploadHandler(file, type);
@@ -56,7 +56,7 @@ const install = (Vue, options) => {
             throw "not call setFileUploadHandler";
         })
     }
-    Vue.prototype.$xInputFilePreviewHandler = (url, type) => {
+    Vue.prototype.$xUIFilePreviewHandler = (url, type) => {
         return Promise.resolve().then(() => {
             if (_filePreviewHandler && typeof _filePreviewHandler === 'function') {
                 return _filePreviewHandler(url, type);
@@ -64,7 +64,7 @@ const install = (Vue, options) => {
             throw "not call setFilePreviewHandler";
         })
     }
-    Vue.prototype.$xTableDataListHandler = (apiUrl, params, options) => {
+    Vue.prototype.$xUIDataListHandler = (apiUrl, params, options) => {
         return Promise.resolve().then(() => {
             if (_dataListHandler && typeof _dataListHandler === 'function') {
                 return _dataListHandler(apiUrl, params, options);
@@ -72,7 +72,7 @@ const install = (Vue, options) => {
             throw "not call setDataListHandler";
         })
     }
-    Vue.prototype.$xInputDataDetailHandler = (apiUrl, params) => {
+    Vue.prototype.$xUIDataDetailHandler = (apiUrl, params) => {
         return Promise.resolve().then(() => {
             if (_dataDetailHandler && typeof _dataDetailHandler === 'function') {
                 return _dataDetailHandler(apiUrl, params);
@@ -80,7 +80,7 @@ const install = (Vue, options) => {
             throw "not call setDataDetailHandler";
         })
     }
-    Vue.prototype.$xInputDataConfigHandler = (dataType) => {
+    Vue.prototype.$xUIDataConfigHandler = (dataType) => {
         return Promise.resolve().then(() => {
             if (_dataConfigHandler && typeof _dataConfigHandler === 'function') {
                 return _dataConfigHandler(dataType);
@@ -92,6 +92,7 @@ const install = (Vue, options) => {
     _installResize(Vue);
     _installTable(Vue);
     _installInput(Vue);
+    _installPrint(Vue);
     _installPage(Vue);
 }
 

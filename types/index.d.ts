@@ -1,4 +1,4 @@
-declare module "vue-element-xtable" {
+declare module "vue-element-xui" {
 
     interface DrawerOptions {
         /** 标题 */
@@ -55,7 +55,7 @@ declare module "vue-element-xtable" {
         /**  文件地址 */
         url: string,
     }
-    
+
 
     interface Drawer {
 

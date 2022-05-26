@@ -1,25 +1,22 @@
 <template>
-  <div class="xPagePrint">
-    <div
-      class="print-header"
-      ref="headerHeight"
-      v-if="$slots.header"
-      v-resize="handleResize"
-    >
-      <div class="print-wrap">
-        <div class="header-content">
-          {{ headerHeight }} - {{ footerHeight }}
+  <div class="xPagePrint" v-resize="handleResize">
+    <div class="print-header">
+      <div class="print-wrap" id="printHeader">
+        <div class="no-print" style="height: 10px"></div>
+        <div class="header-content" v-if="$slots.header">
           <slot name="header"></slot>
         </div>
       </div>
     </div>
-    <div class="print-footer" ref="footerHeight" v-if="$slots.footer">
-      <div class="print-wrap">
-        <div class="footer-content">
+    <div class="print-footer">
+      <div class="print-wrap" id="printFooter">
+        <div class="footer-content" v-if="$slots.footer">
           <slot name="footer"></slot>
         </div>
+        <div class="no-print" style="height: 10px"></div>
       </div>
     </div>
+
     <div class="print-wrap">
       <table>
         <thead>
@@ -27,7 +24,7 @@
             <td>
               <div
                 class="print-header-space"
-                :style="'margin-bottom:' + headerHeight + 'px;'"
+                :style="'height:' + headerHeight + 'px;'"
               ></div>
             </td>
           </tr>
@@ -37,7 +34,9 @@
             <td>
               <!--*** CONTENT GOES HERE ***-->
               <div class="print-content">
-                <slot></slot>
+                <div>
+                  <slot></slot>
+                </div>
               </div>
               <!-- ./ end 内容区 -->
             </td>
@@ -48,7 +47,7 @@
             <td>
               <div
                 class="print-footer-space"
-                :style="'margin-top:' + footerHeight + 'px;'"
+                :style="'height:' + footerHeight + 'px;'"
               ></div>
             </td>
           </tr>
@@ -62,18 +61,20 @@
 @printWidth: 768px;
 
 .xPagePrint {
-  background: #dddddd;
+  white-space: normal;
+  word-break: break-all;
+  word-wrap: break-word;
 
   .print-wrap {
     margin: 0 auto;
+    padding: 0px 0px;
     background: #ffffff;
   }
 
   .print-header,
   .print-header-space {
     .header-content {
-      width: calc(100% - 20px);
-      padding: 5px 10px;
+      width: 100%;
       border-bottom: 1px solid #d1d1d1;
     }
   }
@@ -81,31 +82,31 @@
   .print-footer,
   .print-footer-space {
     .footer-content {
-      width: calc(100% - 20px);
-      padding: 5px 10px;
+      width: 100%;
       border-top: 1px solid #d1d1d1;
     }
   }
 
   .print-header {
     position: fixed;
-    top: 0mm;
+    top: 0;
     width: 100%;
+    z-index: 500;
   }
 
   .print-footer {
-    position: fixed;
-    bottom: 0;
     width: 100%;
+    z-index: 500;
   }
 
   .print-content {
-    width: calc(100% - 20px);
-    padding: 0px 10px;
     page-break-after: always;
   }
 
   @media print {
+    input {
+      display: none;
+    }
     thead {
       display: table-header-group;
     }
@@ -121,8 +122,23 @@
     .no-screen {
       display: block;
     }
-    .print-box {
-      border: 0px solid #d1d1d1;
+    .print-wrap {
+      padding: 0px 0px;
+      width: 100%;
+    }
+
+    .print-header,
+    .print-header-space {
+      .header-content {
+        border-bottom: 1px solid #333333;
+      }
+    }
+
+    .print-footer,
+    .print-footer-space {
+      .footer-content {
+        border-top: 1px solid #333333;
+      }
     }
   }
 
@@ -133,17 +149,29 @@
     .no-screen {
       display: none;
     }
-    .print-box {
-      border: 1px solid #d1d1d1;
-    }
     .print-wrap {
+      padding: 0px 30px;
       width: @printWidth;
+    }
+    .print-header,
+    .print-header-space {
+      .header-content {
+        border-bottom: 1px solid #d1d1d1;
+      }
+    }
+    .print-footer,
+    .print-footer-space {
+      .footer-content {
+        border-top: 1px solid #d1d1d1;
+      }
     }
   }
 }
 </style>
 
 <script>
+import { getPosition } from "../../utils/position.js";
+
 export default {
   data() {
     return {
@@ -156,20 +184,16 @@ export default {
   },
   computed: {
     contentStyle() {
-      return `margin-top:${this.headerHeight}px; margin-bottom:${this.footerHeight}px;`;
+      return `padding-top:${this.headerHeight}px; padding-bottom:${this.footerHeight}px;`;
     },
   },
   methods: {
     handleResize() {
       try {
-        if (this.$refs.headerHeight) {
-          this.headerHeight = this.$refs.headerHeight.offsetHeight + 8;
-        }
+        this.headerHeight = getPosition("#printHeader").height + 8;
       } catch (error) {}
       try {
-        if (this.$refs.footerHeight) {
-          this.footerHeight = this.$refs.footerHeight.offsetHeight + 8;
-        }
+        this.footerHeight = getPosition("#printFooter").height + 8;
       } catch (error) {}
     },
   },

@@ -211,7 +211,7 @@ export default {
       }, 200);
     },
     handlePreviewFile(url) {
-      this.$xInputFilePreviewHandler(url, this.type);
+      this.$xUIFilePreviewHandler(url, this.type);
     },
     handleUploadFile(file) {
       if (this.disabled) {
@@ -237,7 +237,7 @@ export default {
       }
       this.uploadLoading = true;
       this.uploadErrorMsg = null;
-      this.$xInputFileUploadHandler(file, this.type)
+      this.$xUIFileUploadHandler(file, this.type)
         .then((data) => {
           this.uploadLoading = false;
           this.currentUrls.push(data);

@@ -1,4 +1,4 @@
-# vue-element-xtable
+# vue-element-xui
 > vue x table with element-ui
 
 
@@ -7,7 +7,7 @@
 
 ### Install
 ```
-> npm install vue-element-xtable
+> npm install vue-element-xui
 ```
 
 ## Development

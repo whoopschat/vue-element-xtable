@@ -3,7 +3,7 @@
     <div @keyup.enter="fetchList">
       <el-form
         :inline="true"
-        :size="size || $xTableSize"
+        :size="size || $xUISize"
         @submit.native.prevent
       >
         <el-form-item v-if="filterList(paramList).length > 0">
@@ -18,7 +18,7 @@
               @change="handleChangeParams()"
               :disabled="getValue('disabled', param)"
               :clearable="!getValue('default', param)"
-              :size="getValue('size', param) || size || $xTableSize"
+              :size="getValue('size', param) || size || $xUISize"
               :styleValue="getValue('styleValue', param) || 'width: 150px;'"
               :options="param"
             />
@@ -47,7 +47,7 @@
             :icon="getValue('icon', btn)"
             :type="getValue('type', btn)"
             :style="getValue('styleValue', btn)"
-            :size="getValue('size', btn) || size || $xTableSize"
+            :size="getValue('size', btn) || size || $xUISize"
             @click="callEvent('click', btn)"
           >
             {{ getValue("label", btn) }}
@@ -60,7 +60,7 @@
       style="width: 100%"
       :data="filterData"
       :border="border"
-      :size="size || $xTableSize"
+      :size="size || $xUISize"
       :highlight-current-row="true"
       v-if="filterData.length > 0"
       @sort-change="handleSortChange"
@@ -94,7 +94,7 @@
             <template v-else-if="getValue('type', field, scope.row) == 'link'">
               <el-link
                 :size="
-                  getValue('size', field, scope.row) || size || $xTableSize
+                  getValue('size', field, scope.row) || size || $xUISize
                 "
                 :disabled="getValue('disabled', field, scope.row)"
                 :type="getValue('linkType', field, scope.row)"
@@ -108,7 +108,7 @@
               <el-button
                 :style="getValue('styleValue', field, scope.row)"
                 :size="
-                  getValue('size', field, scope.row) || size || $xTableSize
+                  getValue('size', field, scope.row) || size || $xUISize
                 "
                 :disabled="getValue('disabled', field, scope.row)"
                 :type="getValue('buttonType', field, scope.row)"
@@ -125,7 +125,7 @@
                 :style="getValue('styleValue', field, scope.row)"
                 :type="getValue('tagType', field, scope.row)"
                 :size="
-                  getValue('size', field, scope.row) || size || $xTableSize
+                  getValue('size', field, scope.row) || size || $xUISize
                 "
               >
                 {{ getValue("render", field, scope.row) }}
@@ -153,7 +153,7 @@
               <el-button
                 :style="getValue('styleValue', action, scope.row)"
                 :size="
-                  getValue('size', action, scope.row) || size || $xTableSize
+                  getValue('size', action, scope.row) || size || $xUISize
                 "
                 :disabled="getValue('disabled', action, scope.row, false)"
                 :type="getValue('buttonType', action, scope.row)"
@@ -167,7 +167,7 @@
                 class="x-table-action-link"
                 :style="getValue('styleValue', action, scope.row)"
                 :size="
-                  getValue('size', action, scope.row) || size || $xTableSize
+                  getValue('size', action, scope.row) || size || $xUISize
                 "
                 :disabled="getValue('disabled', action, scope.row)"
                 :type="getValue('linkType', action, scope.row) || 'primary'"
@@ -188,7 +188,7 @@
       <el-button
         v-if="fetchErrorMsg"
         @click="fetchList"
-        :size="size || $xTableSize"
+        :size="size || $xUISize"
       >
         {{ retryLabel }}
       </el-button>
@@ -208,7 +208,7 @@
     <el-alert
       type="info"
       v-if="filterCount > 0"
-      :title="filterTitle"
+      :title="filterLabelMethod(filterCount)"
       :closable="false"
     >
     </el-alert>
@@ -243,12 +243,6 @@ export default {
     },
     listApi: {
       type: String,
-    },
-    filterConfig: {
-      type: Object,
-      default: () => {
-        return {};
-      },
     },
     btnList: {
       type: Array,
@@ -315,6 +309,18 @@ export default {
         return {};
       },
     },
+    filterMethod: {
+      type: Function,
+      default: null,
+    },
+    filterLabelMethod: {
+      type: Function,
+      default: () => {
+        return (count) => {
+          "已为你过滤了" + count + "条数据";
+        };
+      },
+    },
     paginationLayout: {
       type: String,
       default: "total, sizes, prev, pager, next, jumper",
@@ -358,23 +364,18 @@ export default {
     },
   },
   computed: {
-    filterTitle() {
-      return this.getValue(
-        "title",
-        this.filterConfig,
-        this.filterCount,
-        "已为你过滤了" + this.filterCount + "条数据"
-      );
-    },
     filterData() {
       this.filterCount = 0;
-      return this.dataList.filter((item) => {
-        let flag = this.getValue("filter", this.filterConfig, item, true);
-        if (!flag) {
-          this.filterCount += 1;
-        }
-        return flag;
-      });
+      if (this.filterMethod && typeof this.filterMethod === "function") {
+        return (this.dataList || []).filter((item) => {
+          let flag = this.filterMethod(item);
+          if (!flag) {
+            this.filterCount += 1;
+          }
+          return flag;
+        });
+      }
+      return this.dataList;
     },
   },
   methods: {
@@ -384,17 +385,17 @@ export default {
         this.refreshElement = false;
       });
     },
+    setCurrentRow(val) {
+      if (this.$refs.xTableEl) {
+        this.$refs.xTableEl.setCurrentRow(val);
+      }
+    },
     toggleSelection(rows) {
       this.$refs.xTableEl.clearSelection();
       if (rows) {
         rows.forEach((row) => {
           this.$refs.xTableEl.toggleRowSelection(row);
         });
-      }
-    },
-    setCurrentRow(val) {
-      if (this.$refs.xTableEl) {
-        this.$refs.xTableEl.setCurrentRow(val);
       }
     },
     filterList(list, param) {
@@ -495,7 +496,7 @@ export default {
       this.$nextTick(() => {
         this.fetchLoading = true;
         this.fetchErrorMsg = null;
-        return this.$xTableDataListHandler(this.listApi, this.dataParams, {
+        return this.$xUIDataListHandler(this.listApi, this.dataParams, {
           pageNum: this.currentPage,
           pageSize: this.currentSize,
           orderBy: this.currentOrderBy || this.defaultSort,

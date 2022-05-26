@@ -68,8 +68,8 @@
         :actionLabel="getValue('actionLabel', configInfo)"
         :defaultSort="getValue('defaultSort', configInfo)"
         :defaultParams="getValue('defaultParams', configInfo)"
-        :filterMethod="filterMethod || getValue('filterMethod', configInfo)"
-        :filterLabelMethod="filterLabelMethod || getValue('filterLabelMethod', configInfo)"
+        :filterMethod="filterMethod"
+        :filterLabelMethod="filterLabelMethod"
         :actionList="getActionList()"
         :actionWidth="90"
         :tag="value"
@@ -125,17 +125,6 @@ export default {
       type: String,
       default: "",
     },
-    filterMethod: {
-      type: Function,
-      default: null,
-    },
-    filterLabelMethod: {
-      type: Function,
-      default: null,
-    },
-    selectConfig: {
-      type: Object,
-    },
     renderLabel: {
       type: String,
     },
@@ -146,6 +135,12 @@ export default {
     selectLabel: {
       type: String,
       default: "选择",
+    },
+    filterMethod: {
+      type: Function,
+    },
+    filterLabelMethod: {
+      type: Function,
     },
     closeOnClickModal: {
       type: Boolean,
@@ -342,7 +337,7 @@ export default {
         return this.$xUIDataConfigHandler(this.type)
           .then((resp) => {
             if (resp) {
-              this.configInfo = Object.assign({}, resp, this.selectConfig);
+              this.configInfo = Object.assign({}, resp);
               this.fetchDetail();
             } else {
               throw "找不到选择器配置信息";

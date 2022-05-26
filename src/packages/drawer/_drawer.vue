@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-resize="handleResize">
     <el-drawer
       append-to-body
       destroy-on-close
@@ -20,7 +20,7 @@
           ></el-page-header>
         </div>
       </template>
-      <div v-if="show" ref="drawer-content" v-resize="handleResize">
+      <div v-if="show" ref="drawer-content">
         <div v-for="(opt, i) in historyList" :key="opt.key">
           <component
             v-show="i == historyList.length - 1"

@@ -1,11 +1,7 @@
 <template>
   <div v-loading="fetchLoading" class="xTable">
     <div @keyup.enter="fetchList">
-      <el-form
-        :inline="true"
-        :size="size || $xUISize"
-        @submit.native.prevent
-      >
+      <el-form :inline="true" :size="size || $xUISize" @submit.native.prevent>
         <el-form-item v-if="filterList(paramList).length > 0">
           <span
             style="margin-right: 12px"
@@ -93,9 +89,7 @@
             </template>
             <template v-else-if="getValue('type', field, scope.row) == 'link'">
               <el-link
-                :size="
-                  getValue('size', field, scope.row) || size || $xUISize
-                "
+                :size="getValue('size', field, scope.row) || size || $xUISize"
                 :disabled="getValue('disabled', field, scope.row)"
                 :type="getValue('linkType', field, scope.row)"
               >
@@ -107,9 +101,7 @@
             >
               <el-button
                 :style="getValue('styleValue', field, scope.row)"
-                :size="
-                  getValue('size', field, scope.row) || size || $xUISize
-                "
+                :size="getValue('size', field, scope.row) || size || $xUISize"
                 :disabled="getValue('disabled', field, scope.row)"
                 :type="getValue('buttonType', field, scope.row)"
               >
@@ -124,9 +116,7 @@
                 "
                 :style="getValue('styleValue', field, scope.row)"
                 :type="getValue('tagType', field, scope.row)"
-                :size="
-                  getValue('size', field, scope.row) || size || $xUISize
-                "
+                :size="getValue('size', field, scope.row) || size || $xUISize"
               >
                 {{ getValue("render", field, scope.row) }}
               </el-tag>
@@ -152,9 +142,7 @@
             <template v-if="getValue('type', action, scope.row) == 'button'">
               <el-button
                 :style="getValue('styleValue', action, scope.row)"
-                :size="
-                  getValue('size', action, scope.row) || size || $xUISize
-                "
+                :size="getValue('size', action, scope.row) || size || $xUISize"
                 :disabled="getValue('disabled', action, scope.row, false)"
                 :type="getValue('buttonType', action, scope.row)"
                 @click="callEvent('click', action, scope.row)"
@@ -166,9 +154,7 @@
               <el-link
                 class="x-table-action-link"
                 :style="getValue('styleValue', action, scope.row)"
-                :size="
-                  getValue('size', action, scope.row) || size || $xUISize
-                "
+                :size="getValue('size', action, scope.row) || size || $xUISize"
                 :disabled="getValue('disabled', action, scope.row)"
                 :type="getValue('linkType', action, scope.row) || 'primary'"
                 @click="callEvent('click', action, scope.row)"
@@ -208,7 +194,7 @@
     <el-alert
       type="info"
       v-if="filterCount > 0"
-      :title="filterLabelMethod(filterCount)"
+      :title="filterTips"
       :closable="false"
     >
     </el-alert>
@@ -311,15 +297,9 @@ export default {
     },
     filterMethod: {
       type: Function,
-      default: null,
     },
     filterLabelMethod: {
       type: Function,
-      default: () => {
-        return (count) => {
-          "已为你过滤了" + count + "条数据";
-        };
-      },
     },
     paginationLayout: {
       type: String,
@@ -364,6 +344,18 @@ export default {
     },
   },
   computed: {
+    filterTips() {
+      if (this.filterCount > 0) {
+        if (
+          this.filterLabelMethod &&
+          typeof this.filterLabelMethod === "function"
+        ) {
+          return this.filterLabelMethod(this.filterCount);
+        }
+        return "已过滤了" + this.filterCount + "条数据";
+      }
+      return "";
+    },
     filterData() {
       this.filterCount = 0;
       if (this.filterMethod && typeof this.filterMethod === "function") {

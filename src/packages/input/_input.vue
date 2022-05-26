@@ -5,6 +5,7 @@
         ref="input"
         @close="handleBlur"
         @change="handleChange"
+        @select="handleSelect"
         v-model="inputValue"
         :size="getValue('size', options) || $xUISize"
         :type="getValue('dataType', options)"
@@ -12,10 +13,10 @@
         :renderLabel="getValue('renderLabel', options)"
         :selectLabel="getValue('selectLabel', options)"
         :currentLabel="getValue('currentLabel', options)"
-        :filterMethod="getValue('filterMethod', options)"
-        :filterLabelMethod="getValue('filterLabelMethod', options)"
         :closeOnClickModal="getValue('closeOnClickModal', options)"
         :styleValue="styleValue || getValue('styleValue', options)"
+        :filterLabelMethod="filterLabelMethod"
+        :filterMethod="filterMethod"
         :multipleable="multipleable"
         :clearable="clearable"
         :disabled="disabled"
@@ -197,6 +198,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    filterMethod: {
+      type: Function,
+    },
+    filterLabelMethod: {
+      type: Function,
+    },
     multipleable: {
       type: Boolean,
       default: false,
@@ -272,6 +279,9 @@ export default {
     },
     handleBlur() {
       this.delayChange();
+    },
+    handleSelect(select) {
+      this.$emit("select", select);
     },
     handleChange() {
       if (this.options.type == "number" && !this.inputValue) {

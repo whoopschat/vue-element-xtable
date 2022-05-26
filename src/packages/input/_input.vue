@@ -9,8 +9,14 @@
         :size="getValue('size', options) || $xUISize"
         :type="getValue('dataType', options)"
         :showType="getValue('showType', options)"
+        :renderLabel="getValue('renderLabel', options)"
+        :selectLabel="getValue('selectLabel', options)"
+        :currentLabel="getValue('currentLabel', options)"
+        :filterMethod="getValue('filterMethod', options)"
+        :filterLabelMethod="getValue('filterLabelMethod', options)"
+        :closeOnClickModal="getValue('closeOnClickModal', options)"
         :styleValue="styleValue || getValue('styleValue', options)"
-        :width="getValue('width', options)"
+        :multipleable="multipleable"
         :clearable="clearable"
         :disabled="disabled"
       />
@@ -186,6 +192,10 @@ export default {
       default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    multipleable: {
       type: Boolean,
       default: false,
     },

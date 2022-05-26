@@ -59,7 +59,6 @@
         @selectList="handleSelectList"
         :listApi="getValue('listApi', configInfo)"
         :selection="multipleable"
-        :filterConfig="filterConfig || getValue('filterConfig', configInfo)"
         :btnList="getValue('btnList', configInfo)"
         :fieldList="getValue('fieldList', configInfo)"
         :paramList="getValue('paramList', configInfo)"
@@ -69,6 +68,8 @@
         :actionLabel="getValue('actionLabel', configInfo)"
         :defaultSort="getValue('defaultSort', configInfo)"
         :defaultParams="getValue('defaultParams', configInfo)"
+        :filterMethod="filterMethod || getValue('filterMethod', configInfo)"
+        :filterLabelMethod="filterLabelMethod || getValue('filterLabelMethod', configInfo)"
         :actionList="getActionList()"
         :actionWidth="90"
         :tag="value"
@@ -101,6 +102,9 @@ export default {
     event: "change",
   },
   props: {
+    value: {
+      type: String | Number,
+    },
     size: {
       type: String,
       default: "",
@@ -108,9 +112,6 @@ export default {
     type: {
       type: String,
       default: "",
-    },
-    value: {
-      type: String | Number,
     },
     title: {
       type: String,
@@ -124,8 +125,13 @@ export default {
       type: String,
       default: "",
     },
-    filterConfig: {
-      type: Object,
+    filterMethod: {
+      type: Function,
+      default: null,
+    },
+    filterLabelMethod: {
+      type: Function,
+      default: null,
     },
     selectConfig: {
       type: Object,
@@ -149,11 +155,11 @@ export default {
       type: Boolean | String | Number,
       default: false,
     },
-    disabled: {
+    clearable: {
       type: Boolean | String | Number,
       default: false,
     },
-    clearable: {
+    disabled: {
       type: Boolean | String | Number,
       default: false,
     },

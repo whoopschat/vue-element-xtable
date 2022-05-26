@@ -15,6 +15,7 @@
       <template v-else>
         <el-input type="link" :size="size" :value="url">
           <el-button
+            v-if="preview"
             slot="append"
             type="primary"
             icon="el-icon-view"
@@ -59,9 +60,6 @@
 
 <style lang="less" >
 .xImage {
-  .el-upload-dragger {
-    border: 1px dashed #d9d9d9;
-  }
   .error {
     font-size: 12px;
     color: #ff0000;
@@ -143,6 +141,10 @@ export default {
       type: String,
       default: "移除",
     },
+    fileType: {
+      type: Array,
+      default: () => [],
+    },
     fileCount: {
       type: Number,
       default: 1,
@@ -151,9 +153,9 @@ export default {
       type: Number,
       default: 1024,
     },
-    fileType: {
-      type: Array,
-      default: () => [],
+    preview: {
+      type: Boolean,
+      default: false,
     },
     disabled: {
       type: Boolean,
@@ -211,7 +213,9 @@ export default {
       }, 200);
     },
     handlePreviewFile(url) {
-      this.$xUIFilePreviewHandler(url, this.type);
+      if (this.preview) {
+        this.$xUIFilePreviewHandler(url, this.type);
+      }
     },
     handleUploadFile(file) {
       if (this.disabled) {

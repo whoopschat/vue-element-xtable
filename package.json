@@ -1,6 +1,6 @@
 {
   "name": "vue-element-xui",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "vue x ui with element-ui",
   "main": "lib/index.js",
   "types": "types/index.d.ts",

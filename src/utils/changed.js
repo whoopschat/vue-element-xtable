@@ -18,12 +18,12 @@ function _init() {
     onAttachEvent(window, 'scroll', _handleChanged);
     onAttachEvent(window, 'resize', _handleChanged);
     onAttachEvent(document, 'DOMContentLoaded', _handleChanged);
-    setInterval(_handleChanged, 500);
 }
 
 export function onChanged(onchanged) {
     _init();
     if (onchanged && typeof onchanged == 'function' && _onchangeds.indexOf(onchanged) < 0) {
         _onchangeds.push(onchanged);
+        onchanged && onchanged();
     }
 }

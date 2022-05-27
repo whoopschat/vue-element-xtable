@@ -65,7 +65,7 @@
 </template>
 
 <style lang="less" scoped>
-@printWidth: 800px;
+@printWidth: 768px;
 
 .xPagePrint {
   white-space: normal;
@@ -73,6 +73,7 @@
   word-wrap: break-word;
 
   .print-wrap {
+    margin: 0 auto;
     padding: 0px 0px;
     background: #ffffff;
   }

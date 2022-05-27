@@ -51,7 +51,7 @@
       :title="getTitleLabel() || '选择'"
       :width="getValue('width', configInfo)"
       :visible.sync="dialog"
-      custom-class="xSelectDialog"
+      custom-class="xInputSelectDialog"
     >
       <x-table
         v-if="!refreshElement"
@@ -88,9 +88,10 @@
 </template>
 
 <style lang="less">
-.xSelectDialog {
+.xInputSelectDialog {
   .el-dialog__body {
-    padding: 8px 20px !important;
+    padding: 10px 20px;
+    border-top: 0px solid #eeeeee;
   }
 }
 </style>

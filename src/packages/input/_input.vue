@@ -122,6 +122,7 @@
         :placeholder="getValue('label', options)"
         :max="getValue('max', options)"
         :min="getValue('min', options)"
+        :precision="getValue('precision', options, null, 2)"
         :clearable="clearable"
         :disabled="disabled"
       >

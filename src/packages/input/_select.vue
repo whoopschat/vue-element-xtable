@@ -4,16 +4,18 @@
       <el-popover
         v-model="visible"
         :visible-arrow="false"
-        :placement="getValue('placement', configInfo) || 'top-start'"
+        :placement="getValue('placement', configInfo) || $xUIPlacement"
         :width="getValue('width', configInfo)"
         trigger="click"
       >
         <div class="xInputSelect">
-          <div class="title">
+          <div class="xClose" @click="hideDialog">
+            <i class="el-icon-close"></i>
+          </div>
+          <div class="xTitle">
             {{ getTitleLabel() || "选择" }}
           </div>
           <x-table
-            ref="popover"
             v-if="!refreshElement"
             paginationLayout="total, prev, pager, next"
             @selectList="handleSelectList"
@@ -35,11 +37,11 @@
             :tag="value"
           />
           <div
-            class="footer"
+            class="xFooter"
             v-if="multipleable || getValue('multipleable', configInfo)"
           >
             <el-button @click="handleCancelClick" :size="size">
-              取 消
+              {{ cancelLabel }}
             </el-button>
             <el-button
               type="primary"
@@ -47,27 +49,25 @@
               :disabled="!(selectList && selectList.length > 0)"
               :size="size"
             >
-              确 定
+              {{ confirmLabel }}
             </el-button>
           </div>
         </div>
         <template slot="reference">
           <el-button
             v-if="showType == 'button'"
-            v-popover:popover
             :size="size"
             :style="
               styleValue || getValue('styleValue', configInfo) || 'width: 100%'
             "
             :loading="detailLoading"
             :disabled="!!disabled"
-            @click="handleOpen"
+            @click="handleOpenClick"
           >
             {{ getValueLabel() || getPlaceholderLabel() }}
           </el-button>
           <el-input
             v-else
-            v-popover:popover
             :size="size"
             :value="getValueLabel()"
             :placeholder="getPlaceholderLabel()"
@@ -76,7 +76,7 @@
             "
             :clearable="!!clearable"
             :disabled="!!disabled"
-            @click.native="handleOpen"
+            @click.native="handleOpenClick"
             @clear="handleClearClick"
           >
             <i
@@ -103,14 +103,26 @@
 
 <style lang="less">
 .xInputSelect {
-  .title {
+  .xClose {
+    float: right;
+    padding: 2px 0;
+    font-size: 14px;
+    cursor: pointer;
+    color: #919191;
+  }
+
+  .xClose:hover {
+    color: #676767;
+  }
+
+  .xTitle {
     padding: 2px 0;
     font-size: 14px;
     font-weight: 600;
     color: #333;
   }
 
-  .footer {
+  .xFooter {
     margin-top: 10px;
     text-align: right;
   }
@@ -146,6 +158,14 @@ export default {
     titleLabel: {
       type: String,
       default: "",
+    },
+    confirmLabel: {
+      type: String,
+      default: "确定",
+    },
+    cancelLabel: {
+      type: String,
+      default: "取消",
     },
     renderLabel: {
       type: String,
@@ -200,6 +220,11 @@ export default {
     value() {
       this.fetchDetail();
     },
+    visible() {
+      if (!this.visible) {
+        this.$emit("close");
+      }
+    },
     select() {
       if (this.select) {
         let selectValue = this.getValue("value", this.configInfo, this.select);
@@ -216,15 +241,17 @@ export default {
     },
   },
   methods: {
+    focus() {
+      this.handleOpenClick();
+    },
     hideDialog() {
       this.visible = false;
     },
     showDialog() {
       this.visible = true;
     },
-    handleOpen() {
+    handleOpenClick() {
       this.selectList = [];
-      this.refreshDocment();
       this.showDialog();
     },
     refreshDocment() {

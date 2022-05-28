@@ -48,6 +48,7 @@ const install = (Vue, options) => {
     }
     _installed = true;
     Vue.prototype.$xUISize = options && options.size ? options.size : "mini";
+    Vue.prototype.$xUIPlacement = options && options.placement ? options.placement : "top-start";
     Vue.prototype.$xUIFileUploadHandler = (file, type) => {
         return Promise.resolve().then(() => {
             if (_fileUploadHandler && typeof _fileUploadHandler === 'function') {

@@ -13,7 +13,7 @@
         :renderLabel="getValue('renderLabel', options)"
         :selectLabel="getValue('selectLabel', options)"
         :currentLabel="getValue('currentLabel', options)"
-        :closeOnClickModal="getValue('closeOnClickModal', options)"
+        :titleLabel="getValue('titleLabel', options)"
         :styleValue="styleValue || getValue('styleValue', options)"
         :filterLabelMethod="filterLabelMethod"
         :filterMethod="filterMethod"

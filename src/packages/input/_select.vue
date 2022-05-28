@@ -1,37 +1,92 @@
 <template>
   <span v-loading="configLoading">
     <template v-if="!configLoading && configInfo">
-      <el-button
-        v-if="showType == 'button'"
-        :loading="detailLoading"
-        :size="size"
-        :style="
-          styleValue || getValue('styleValue', configInfo) || 'width: 100%'
-        "
-        :disabled="!!disabled"
-        @click="handleOpen"
+      <el-popover
+        v-model="visible"
+        :visible-arrow="false"
+        :placement="getValue('placement', configInfo) || 'top-start'"
+        :width="getValue('width', configInfo)"
+        trigger="click"
       >
-        {{ getValueLabel() }}
-      </el-button>
-      <el-input
-        v-else
-        :size="size"
-        :value="getValueLabel()"
-        :placeholder="getPlaceholderLabel()"
-        :style="
-          styleValue || getValue('styleValue', configInfo) || 'width: 100%'
-        "
-        :clearable="!!clearable"
-        :disabled="!!disabled"
-        @clear="handleSelectClick(null, null)"
-        @focus="handleOpen"
-      >
-        <i
-          slot="prefix"
-          v-if="detailLoading"
-          class="el-input__icon el-icon-loading"
-        ></i>
-      </el-input>
+        <div class="xInputSelect">
+          <div class="title">
+            {{ getTitleLabel() || "选择" }}
+          </div>
+          <x-table
+            ref="popover"
+            v-if="!refreshElement"
+            paginationLayout="total, prev, pager, next"
+            @selectList="handleSelectList"
+            :listApi="getValue('listApi', configInfo)"
+            :selection="multipleable"
+            :btnList="getValue('btnList', configInfo)"
+            :fieldList="getValue('fieldList', configInfo)"
+            :paramList="getValue('paramList', configInfo)"
+            :retryLabel="getValue('retryLabel', configInfo)"
+            :emptyLabel="getValue('emptyLabel', configInfo)"
+            :searchLabel="getValue('searchLabel', configInfo)"
+            :actionLabel="getValue('actionLabel', configInfo)"
+            :defaultSort="getValue('defaultSort', configInfo)"
+            :defaultParams="getValue('defaultParams', configInfo)"
+            :filterMethod="filterMethod"
+            :filterLabelMethod="filterLabelMethod"
+            :actionList="getActionList()"
+            :actionWidth="90"
+            :tag="value"
+          />
+          <div
+            class="footer"
+            v-if="multipleable || getValue('multipleable', configInfo)"
+          >
+            <el-button @click="handleCancelClick" :size="size">
+              取 消
+            </el-button>
+            <el-button
+              type="primary"
+              @click="handleOkClick"
+              :disabled="!(selectList && selectList.length > 0)"
+              :size="size"
+            >
+              确 定
+            </el-button>
+          </div>
+        </div>
+        <template slot="reference">
+          <el-button
+            v-if="showType == 'button'"
+            v-popover:popover
+            :size="size"
+            :style="
+              styleValue || getValue('styleValue', configInfo) || 'width: 100%'
+            "
+            :loading="detailLoading"
+            :disabled="!!disabled"
+            @click="handleOpen"
+          >
+            {{ getValueLabel() || getPlaceholderLabel() }}
+          </el-button>
+          <el-input
+            v-else
+            v-popover:popover
+            :size="size"
+            :value="getValueLabel()"
+            :placeholder="getPlaceholderLabel()"
+            :style="
+              styleValue || getValue('styleValue', configInfo) || 'width: 100%'
+            "
+            :clearable="!!clearable"
+            :disabled="!!disabled"
+            @click.native="handleOpen"
+            @clear="handleClearClick"
+          >
+            <i
+              slot="prefix"
+              v-if="detailLoading"
+              class="el-input__icon el-icon-loading"
+            ></i>
+          </el-input>
+        </template>
+      </el-popover>
     </template>
     <template v-else-if="!configLoading && configErrorMsg">
       <el-tag
@@ -43,55 +98,21 @@
         {{ configErrorMsg || "获取选择器配置" }}
       </el-tag>
     </template>
-    <el-dialog
-      append-to-body
-      v-if="configInfo"
-      @closed="handleClosed"
-      :close-on-click-modal="closeOnClickModal"
-      :title="getTitleLabel() || '选择'"
-      :width="getValue('width', configInfo)"
-      :visible.sync="dialog"
-      custom-class="xInputSelectDialog"
-    >
-      <x-table
-        v-if="!refreshElement"
-        paginationLayout="total, prev, pager, next"
-        @selectList="handleSelectList"
-        :listApi="getValue('listApi', configInfo)"
-        :selection="multipleable"
-        :btnList="getValue('btnList', configInfo)"
-        :fieldList="getValue('fieldList', configInfo)"
-        :paramList="getValue('paramList', configInfo)"
-        :retryLabel="getValue('retryLabel', configInfo)"
-        :emptyLabel="getValue('emptyLabel', configInfo)"
-        :searchLabel="getValue('searchLabel', configInfo)"
-        :actionLabel="getValue('actionLabel', configInfo)"
-        :defaultSort="getValue('defaultSort', configInfo)"
-        :defaultParams="getValue('defaultParams', configInfo)"
-        :filterMethod="filterMethod"
-        :filterLabelMethod="filterLabelMethod"
-        :actionList="getActionList()"
-        :actionWidth="90"
-        :tag="value"
-      />
-      <div
-        slot="footer"
-        v-if="multipleable || getValue('multipleable', configInfo)"
-      >
-        <el-button @click="handleCancelClick" :size="size"> 取 消 </el-button>
-        <el-button type="primary" @click="handleOkClick" :size="size">
-          确 定
-        </el-button>
-      </div>
-    </el-dialog>
   </span>
 </template>
 
 <style lang="less">
-.xInputSelectDialog {
-  .el-dialog__body {
-    padding: 10px 20px;
-    border-top: 0px solid #eeeeee;
+.xInputSelect {
+  .title {
+    padding: 2px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .footer {
+    margin-top: 10px;
+    text-align: right;
   }
 }
 </style>
@@ -114,15 +135,15 @@ export default {
       type: String,
       default: "",
     },
-    title: {
-      type: String,
-      default: "",
-    },
     showType: {
       type: String,
       default: "",
     },
     styleValue: {
+      type: String,
+      default: "",
+    },
+    titleLabel: {
       type: String,
       default: "",
     },
@@ -143,10 +164,6 @@ export default {
     filterLabelMethod: {
       type: Function,
     },
-    closeOnClickModal: {
-      type: Boolean,
-      default: false,
-    },
     multipleable: {
       type: Boolean | String | Number,
       default: false,
@@ -162,8 +179,8 @@ export default {
   },
   data() {
     return {
-      dialog: false,
       select: null,
+      visible: false,
       selectList: null,
       configInfo: null,
       configLoading: false,
@@ -174,19 +191,47 @@ export default {
     };
   },
   watch: {
-    value() {
-      this.fetchDetail();
-    },
     type() {
-      this.dialog = false;
+      this.visible = false;
       this.selectList = [];
       this.refreshDocment();
       this.refreshConfig();
     },
+    value() {
+      this.fetchDetail();
+    },
+    select() {
+      if (this.select) {
+        let selectValue = this.getValue("value", this.configInfo, this.select);
+        if (selectValue != this.value) {
+          this.$emit("change", selectValue);
+        }
+        this.$emit("select", this.select);
+        this.dispatch("ElFormItem", "el.form.change");
+      } else if (this.value) {
+        this.$emit("change", "");
+        this.$emit("select", null);
+        this.dispatch("ElFormItem", "el.form.change");
+      }
+    },
   },
   methods: {
-    focus() {
-      this.handleOpen();
+    hideDialog() {
+      this.visible = false;
+    },
+    showDialog() {
+      this.visible = true;
+    },
+    handleOpen() {
+      this.selectList = [];
+      this.refreshDocment();
+      this.showDialog();
+    },
+    refreshDocment() {
+      this.refreshElement = true;
+      this.$nextTick(() => {
+        this.refreshElement = false;
+      });
     },
     dispatch(componentName, eventName, params) {
       setTimeout(() => {
@@ -204,14 +249,6 @@ export default {
           }
         } catch (error) {}
       }, 200);
-    },
-    handleOpen() {
-      this.selectList = [];
-      this.refreshDocment();
-      this.dialog = true;
-    },
-    handleClosed() {
-      this.$emit("close");
     },
     getValue(prop, item, param, def) {
       if (!item || !prop) {
@@ -239,21 +276,11 @@ export default {
               ? "info"
               : "primary";
           },
-          disabled: (row, tag, table) => {
-            return this.getValue("value", this.configInfo, row) == tag;
-          },
           click: (row, refresh, table) => {
-            let value = this.getValue("value", this.configInfo, row);
-            this.handleSelectClick(row, value || row);
+            this.handleSelectClick(row);
           },
         },
       ];
-    },
-    refreshDocment() {
-      this.refreshElement = true;
-      this.$nextTick(() => {
-        this.refreshElement = false;
-      });
     },
     getValueLabel() {
       if (!this.select) {
@@ -265,7 +292,7 @@ export default {
       return this.getValue("render", this.configInfo, this.select);
     },
     getTitleLabel() {
-      return this.title || this.getValue("title", this.configInfo);
+      return this.titleLabel || this.getValue("title", this.configInfo);
     },
     getPlaceholderLabel() {
       if (this.detailErrorMsg) {
@@ -276,29 +303,30 @@ export default {
     handleSelectList(list) {
       this.selectList = list;
     },
-    handleSelectClick(row, value) {
-      this.$emit("select", row);
-      this.$emit("change", value);
-      this.dispatch("ElFormItem", "el.form.change");
-      this.handleClosed();
-      this.dialog = false;
+    handleClearClick() {
+      this.handleSelectClick(null);
+    },
+    handleSelectClick(row) {
+      this.select = row;
+      this.hideDialog();
     },
     handleCancelClick() {
-      this.handleClosed();
-      this.dialog = false;
+      this.hideDialog();
     },
     handleOkClick() {
       (this.selectList || []).forEach((item) => {
         this.$emit("select", item);
       });
-      this.handleClosed();
-      this.dialog = false;
+      this.hideDialog();
     },
     fetchDetail() {
-      if (!this.configInfo) {
+      if (this.select) {
         return;
       }
       if (this.detailLoading) {
+        return;
+      }
+      if (!this.configInfo) {
         return;
       }
       if (!this.value) {
@@ -316,7 +344,6 @@ export default {
         return this.$xUIDataDetailHandler(detailApi, params)
           .then((resp) => {
             this.select = resp;
-            this.$emit("select", this.select);
           })
           .catch((err) => {
             console.error(err);

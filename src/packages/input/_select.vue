@@ -3,6 +3,7 @@
     <template v-if="!configLoading && configInfo">
       <el-popover
         v-model="visible"
+        :disabled="!!disabled"
         :visible-arrow="false"
         :placement="getValue('placement', configInfo) || $xUIPlacement"
         :width="getValue('width', configInfo)"

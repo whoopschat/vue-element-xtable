@@ -10,12 +10,12 @@
         :size="getValue('size', options) || $xUISize"
         :type="getValue('dataType', options)"
         :styleValue="styleValue"
-        :selectOptions="options"
         :filterLabelMethod="filterLabelMethod"
         :filterMethod="filterMethod"
         :multipleable="multipleable"
         :clearable="clearable"
         :disabled="disabled"
+        :options="options"
       />
     </template>
     <template v-else-if="getValue('type', options, null, type) == 'upload'">

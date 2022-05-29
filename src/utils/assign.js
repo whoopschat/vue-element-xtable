@@ -60,10 +60,10 @@ function assign(to, from) {
     return to;
 }
 
-export function deepAssign(target) {
+export function deepAssign(target, ...sources) {
     target = toObject(target);
-    for (var s = 1; s < arguments.length; s++) {
-        assign(target, arguments[s]);
+    for (var s = 0; s < sources.length; s++) {
+        assign(target, sources[s]);
     }
     return target;
 }

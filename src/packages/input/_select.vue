@@ -14,7 +14,7 @@
             <i class="el-icon-close"></i>
           </div>
           <div class="xTitle">
-            {{ getTitleLabel() || "选择" }}
+            {{ getTitleLabel() || "请选择" }}
           </div>
           <x-table
             v-if="!refreshElement"
@@ -22,6 +22,7 @@
             paginationLayout="total, prev, pager, next"
             @selectList="handleSelectList"
             :selection="multipleable"
+            :tag="getValue('tag', configInfo)"
             :listApi="getValue('listApi', configInfo)"
             :btnList="getValue('btnList', configInfo)"
             :fieldList="getValue('fieldList', configInfo)"
@@ -36,7 +37,6 @@
             :filterLabelMethod="filterLabelMethod"
             :actionList="getActionList()"
             :actionWidth="90"
-            :tag="value"
           />
           <div class="xFooter" v-if="multipleable">
             <el-button @click="handleCancelClick" :size="size">
@@ -158,7 +158,7 @@ export default {
     filterLabelMethod: {
       type: Function,
     },
-    selectOptions: {
+    options: {
       type: Object,
       default: () => {},
     },
@@ -195,6 +195,12 @@ export default {
       this.refreshDocment();
       this.refreshConfig();
     },
+    options() {
+      this.visible = false;
+      this.selectList = [];
+      this.refreshDocment();
+      this.refreshConfig();
+    },
     value() {
       this.fetchDetail();
     },
@@ -205,7 +211,7 @@ export default {
     },
     select() {
       if (this.select) {
-        let selectValue = this.getValue("value", this.configInfo, this.select);
+        let selectValue = this.selectValue;
         if (selectValue != this.value) {
           this.$emit("change", selectValue);
         }
@@ -216,6 +222,14 @@ export default {
         this.$emit("select", null);
         this.dispatch("ElFormItem", "el.form.change");
       }
+    },
+  },
+  computed: {
+    selectValue() {
+      if (!this.select) {
+        return;
+      }
+      return this.getValue("value", this.configInfo, this.select);
     },
   },
   methods: {
@@ -277,12 +291,14 @@ export default {
       return [
         {
           label: (row, tag, table) => {
-            return this.getValue("value", this.configInfo, row) == tag
+            return this.getValue("value", this.configInfo, row) ==
+              this.selectValue
               ? this.getValue("currentLabel", this.configInfo) || "当前"
               : this.getValue("selectLabel", this.configInfo) || "选择";
           },
           linkType: (row, tag, table) => {
-            return this.getValue("value", this.configInfo, row) == tag
+            return this.getValue("value", this.configInfo, row) ==
+              this.selectValue
               ? "info"
               : "primary";
           },
@@ -381,7 +397,7 @@ export default {
         return this.$xUIDataConfigHandler(this.type)
           .then((resp) => {
             if (resp) {
-              this.configInfo = deepAssign({}, resp, this.selectOptions);
+              this.configInfo = deepAssign({}, resp, this.options);
               this.fetchDetail();
             } else {
               throw "找不到选择器配置信息";

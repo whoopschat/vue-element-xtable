@@ -16,7 +16,7 @@
               :clearable="!getValue('default', param)"
               :size="getValue('size', param) || size || $xUISize"
               :styleValue="getValue('styleValue', param) || 'width: 150px;'"
-              :options="param"
+              :options="getParamOptions(param)"
             />
           </span>
           <el-button
@@ -366,6 +366,11 @@ export default {
       this.$nextTick(() => {
         this.refreshElement = false;
       });
+    },
+    getParamOptions(param) {
+      let options = Object.assign({}, param);
+      delete options.value;
+      return options;
     },
     setCurrentRow(val) {
       if (this.$refs.xTableEl) {

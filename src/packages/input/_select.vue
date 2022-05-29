@@ -17,8 +17,8 @@
             {{ getTitleLabel() || "请选择" }}
           </div>
           <x-table
-            v-if="!refreshElement"
             ref="table"
+            v-if="visible"
             paginationLayout="total, prev, pager, next"
             @selectList="handleSelectList"
             :selection="multipleable"
@@ -185,20 +185,17 @@ export default {
       configErrorMsg: null,
       detailErrorMsg: null,
       detailLoading: false,
-      refreshElement: false,
     };
   },
   watch: {
     type() {
       this.visible = false;
       this.selectList = [];
-      this.refreshDocment();
       this.refreshConfig();
     },
     options() {
       this.visible = false;
       this.selectList = [];
-      this.refreshDocment();
       this.refreshConfig();
     },
     value() {
@@ -249,12 +246,6 @@ export default {
         if (this.$refs.table) {
           this.$refs.table.clearSelectList();
         }
-      });
-    },
-    refreshDocment() {
-      this.refreshElement = true;
-      this.$nextTick(() => {
-        this.refreshElement = false;
       });
     },
     dispatch(componentName, eventName, params) {

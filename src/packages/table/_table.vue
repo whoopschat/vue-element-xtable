@@ -378,12 +378,16 @@ export default {
       }
     },
     toggleSelection(rows) {
-      this.$refs.xTableEl.clearSelection();
-      if (rows) {
-        rows.forEach((row) => {
-          this.$refs.xTableEl.toggleRowSelection(row);
-        });
-      }
+      try {
+        if (this.$refs.xTableEl) {
+          this.$refs.xTableEl.clearSelection();
+          if (rows) {
+            rows.forEach((row) => {
+              this.$refs.xTableEl.toggleRowSelection(row);
+            });
+          }
+        }
+      } catch (error) {}
     },
     clearSelectList() {
       this.selectList = [];

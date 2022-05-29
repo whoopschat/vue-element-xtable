@@ -18,10 +18,11 @@
           </div>
           <x-table
             v-if="!refreshElement"
+            ref="table"
             paginationLayout="total, prev, pager, next"
             @selectList="handleSelectList"
-            :listApi="getValue('listApi', configInfo)"
             :selection="multipleable"
+            :listApi="getValue('listApi', configInfo)"
             :btnList="getValue('btnList', configInfo)"
             :fieldList="getValue('fieldList', configInfo)"
             :paramList="getValue('paramList', configInfo)"
@@ -37,12 +38,9 @@
             :actionWidth="90"
             :tag="value"
           />
-          <div
-            class="xFooter"
-            v-if="multipleable || getValue('multipleable', configInfo)"
-          >
+          <div class="xFooter" v-if="multipleable">
             <el-button @click="handleCancelClick" :size="size">
-              {{ cancelLabel }}
+              {{ getValue("cancelLabel", configInfo) || "取消" }}
             </el-button>
             <el-button
               type="primary"
@@ -50,13 +48,13 @@
               :disabled="!(selectList && selectList.length > 0)"
               :size="size"
             >
-              {{ confirmLabel }}
+              {{ getValue("confirmLabel", configInfo) || "确定" }}
             </el-button>
           </div>
         </div>
         <template slot="reference">
           <el-button
-            v-if="showType == 'button'"
+            v-if="getValue('showType', configInfo) == 'button'"
             :size="size"
             :style="
               styleValue || getValue('styleValue', configInfo) || 'width: 100%'
@@ -131,6 +129,8 @@
 </style>
 
 <script>
+import { deepAssign } from "../../utils/assign";
+
 export default {
   model: {
     prop: "value",
@@ -148,42 +148,19 @@ export default {
       type: String,
       default: "",
     },
-    showType: {
-      type: String,
-      default: "",
-    },
     styleValue: {
       type: String,
       default: "",
-    },
-    titleLabel: {
-      type: String,
-      default: "",
-    },
-    confirmLabel: {
-      type: String,
-      default: "确定",
-    },
-    cancelLabel: {
-      type: String,
-      default: "取消",
-    },
-    renderLabel: {
-      type: String,
-    },
-    currentLabel: {
-      type: String,
-      default: "当前",
-    },
-    selectLabel: {
-      type: String,
-      default: "选择",
     },
     filterMethod: {
       type: Function,
     },
     filterLabelMethod: {
       type: Function,
+    },
+    selectOptions: {
+      type: Object,
+      default: () => {},
     },
     multipleable: {
       type: Boolean | String | Number,
@@ -254,6 +231,11 @@ export default {
     handleOpenClick() {
       this.selectList = [];
       this.showDialog();
+      this.$nextTick(() => {
+        if (this.$refs.table) {
+          this.$refs.table.clearSelectList();
+        }
+      });
     },
     refreshDocment() {
       this.refreshElement = true;
@@ -296,8 +278,8 @@ export default {
         {
           label: (row, tag, table) => {
             return this.getValue("value", this.configInfo, row) == tag
-              ? this.currentLabel
-              : this.selectLabel;
+              ? this.getValue("currentLabel", this.configInfo) || "当前"
+              : this.getValue("selectLabel", this.configInfo) || "选择";
           },
           linkType: (row, tag, table) => {
             return this.getValue("value", this.configInfo, row) == tag
@@ -314,13 +296,16 @@ export default {
       if (!this.select) {
         return;
       }
-      if (this.renderLabel) {
-        return this.renderLabel;
-      }
-      return this.getValue("render", this.configInfo, this.select);
+      return (
+        this.getValue("renderLabel", this.configInfo) ||
+        this.getValue("render", this.configInfo, this.select)
+      );
     },
     getTitleLabel() {
-      return this.titleLabel || this.getValue("title", this.configInfo);
+      return (
+        this.getValue("titleLabel", this.configInfo) ||
+        this.getValue("title", this.configInfo)
+      );
     },
     getPlaceholderLabel() {
       if (this.detailErrorMsg) {
@@ -345,6 +330,9 @@ export default {
       (this.selectList || []).forEach((item) => {
         this.$emit("select", item);
       });
+      if (this.$refs.table) {
+        this.$refs.table.clearSelectList();
+      }
       this.hideDialog();
     },
     fetchDetail() {
@@ -393,7 +381,7 @@ export default {
         return this.$xUIDataConfigHandler(this.type)
           .then((resp) => {
             if (resp) {
-              this.configInfo = Object.assign({}, resp);
+              this.configInfo = deepAssign({}, resp, this.selectOptions);
               this.fetchDetail();
             } else {
               throw "找不到选择器配置信息";

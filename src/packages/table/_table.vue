@@ -380,6 +380,10 @@ export default {
         });
       }
     },
+    clearSelectList() {
+      this.selectList = [];
+      this.toggleSelection(this.selectList);
+    },
     filterList(list, param) {
       return (list || []).filter((item) => {
         return this.getValue("show", item, param, true);

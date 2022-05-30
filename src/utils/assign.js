@@ -3,6 +3,10 @@ function isObj(x) {
     return x !== null && (type === 'object' || type === 'function');
 }
 
+function isArray(x) {
+    return x instanceof Array;
+}
+
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
@@ -27,7 +31,7 @@ function assignKey(to, from, key) {
         }
     }
 
-    if (!hasOwnProperty.call(to, key) || !isObj(val)) {
+    if (!hasOwnProperty.call(to, key) || !isObj(val) || isArray(val)) {
         to[key] = val;
     } else {
         to[key] = assign(Object(to[key]), from[key]);

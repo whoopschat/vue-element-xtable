@@ -9,6 +9,8 @@
       <span>
         <el-form
           ref="form"
+          v-if="dialogVisible"
+          @submit.native.prevent
           :model="identifyForm"
           :rules="identifyRules"
           :label-width="getValue('formLabelWidth', identifyOptions)"
@@ -24,13 +26,15 @@
               :contentHeight="38"
               @click="refreshClick"
             />
-            <el-input
-              :style="'width:' + getValue('formInputWidth', identifyOptions)"
-              :placeholder="getValue('formPlaceholder', identifyOptions)"
-              :size="getValue('size', identifyOptions) || $xUISize"
-              v-model="identifyForm.inputCode"
-            >
-            </el-input>
+            <div @keyup.enter="okClick">
+              <el-input
+                :style="'width:' + getValue('formInputWidth', identifyOptions)"
+                :placeholder="getValue('formPlaceholder', identifyOptions)"
+                :size="getValue('size', identifyOptions) || $xUISize"
+                v-model="identifyForm.inputCode"
+              >
+              </el-input>
+            </div>
           </el-form-item>
           <el-form-item>
             <el-button
@@ -41,6 +45,7 @@
             </el-button>
             <el-button
               type="primary"
+              :disabled="!identifyForm.inputCode"
               :size="getValue('size', identifyOptions) || $xUISize"
               @click="okClick"
             >
@@ -139,6 +144,9 @@ export default {
       return propValue;
     },
     okClick() {
+      if (!this.identifyForm.inputCode) {
+        return;
+      }
       if (this.$refs.form) {
         this.$refs.form.validate((valid, data) => {
           if (valid) {
@@ -153,18 +161,14 @@ export default {
       this.callback && this.callback(false);
     },
     refreshClick() {
-      let len = this.getValue("codeLen", this.identifyOptions, null, 4);
-      let str = this.getValue(
-        "codeStr",
-        this.identifyOptions,
-        null,
-        "0123456789"
-      );
+      let len = this.getValue("codeLen", this.identifyOptions);
+      let str = this.getValue("codeStr", this.identifyOptions);
       this.identifyCode = this.genCode(len, str);
     },
     check(callback, options) {
       this.callback = callback;
       this.dialogVisible = true;
+      this.identifyForm.inputCode = "";
       this.identifyOptions = Object.assign({}, defaultOptions, options || {});
       this.refreshClick();
     },

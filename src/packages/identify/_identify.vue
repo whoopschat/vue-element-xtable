@@ -71,9 +71,9 @@ const defaultOptions = {
   formErrorText: "验证码错误",
   formInputWidth: "180px",
   cancelLabel: "取消",
-  okLabel: "确定",
+  okLabel: "验证",
   codeLen: 4,
-  codeStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+  codeStr: "ABCDEFGHJKLMNPQRSTUVWXYabcdefhijkmnpqrstuvwxy0123456789",
 };
 
 export default {
@@ -95,11 +95,7 @@ export default {
             required: true,
             validator: (rule, value, callback) => {
               if (value === "") {
-                callback(
-                  new Error(
-                    this.getValue("formPlaceholder", this.identifyOptions)
-                  )
-                );
+                callback();
               } else if (
                 `${value}`.toLowerCase() !==
                 `${this.identifyCode}`.toLowerCase()

@@ -84,6 +84,41 @@
         </template>
       </el-select>
     </template>
+    <template v-else-if="getValue('type', options, null, type) == 'number'">
+      <el-input-number
+        ref="input"
+        @blur="handleBlur"
+        @change="handleChange"
+        v-model="inputValue"
+        :controls="false"
+        :size="getValue('size', options) || $xUISize"
+        :style="styleValue || getValue('styleValue', options)"
+        :maxlength="getValue('maxlength', options)"
+        :placeholder="getValue('label', options)"
+        :max="getValue('max', options)"
+        :min="getValue('min', options)"
+        :precision="getValue('precision', options, null, 2)"
+        :clearable="clearable"
+        :disabled="disabled"
+      >
+      </el-input-number>
+    </template>
+    <template v-else-if="getValue('type', options, null, type) == 'datetime'">
+      <el-date-picker
+        ref="input"
+        @blur="handleBlur"
+        @change="handleChange"
+        v-model="inputValue"
+        value-format="timestamp"
+        type="datetime"
+        :size="getValue('size', options) || $xUISize"
+        :style="styleValue || getValue('styleValue', options)"
+        :placeholder="getValue('label', options)"
+        :clearable="clearable"
+        :disabled="disabled"
+      >
+      </el-date-picker>
+    </template>
     <template v-else-if="getValue('type', options, null, type) == 'textarea'">
       <el-input
         ref="input"
@@ -104,28 +139,6 @@
           <slot name="prepend" />
         </template>
       </el-input>
-    </template>
-    <template v-else-if="getValue('type', options, null, type) == 'number'">
-      <el-input-number
-        ref="input"
-        @blur="handleBlur"
-        @change="handleChange"
-        v-model="inputValue"
-        :controls="false"
-        :size="getValue('size', options) || $xUISize"
-        :style="styleValue || getValue('styleValue', options)"
-        :maxlength="getValue('maxlength', options)"
-        :placeholder="getValue('label', options)"
-        :max="getValue('max', options)"
-        :min="getValue('min', options)"
-        :precision="getValue('precision', options, null, 2)"
-        :clearable="clearable"
-        :disabled="disabled"
-      >
-        <template slot="prepend">
-          <slot name="prepend" />
-        </template>
-      </el-input-number>
     </template>
     <el-input
       v-else

@@ -43,6 +43,51 @@ function setDataConfigHandler(handler) {
     }
 }
 
+export function FileUploadHandler(file, type) {
+    return Promise.resolve().then(() => {
+        if (_fileUploadHandler && typeof _fileUploadHandler === 'function') {
+            return _fileUploadHandler(file, type);
+        }
+        throw "not call setFileUploadHandler";
+    })
+}
+
+export function FilePreviewHandler(url, type) {
+    return Promise.resolve().then(() => {
+        if (_filePreviewHandler && typeof _filePreviewHandler === 'function') {
+            return _filePreviewHandler(url, type);
+        }
+        throw "not call setFilePreviewHandler";
+    })
+}
+
+export function DataListHandler(apiUrl, params, options) {
+    return Promise.resolve().then(() => {
+        if (_dataListHandler && typeof _dataListHandler === 'function') {
+            return _dataListHandler(apiUrl, params, options);
+        }
+        throw "not call setDataListHandler";
+    })
+}
+
+export function DataDetailHandler(apiUrl, params) {
+    return Promise.resolve().then(() => {
+        if (_dataDetailHandler && typeof _dataDetailHandler === 'function') {
+            return _dataDetailHandler(apiUrl, params);
+        }
+        throw "not call setDataDetailHandler";
+    })
+}
+
+export function DataConfigHandler(dataType) {
+    return Promise.resolve().then(() => {
+        if (_dataConfigHandler && typeof _dataConfigHandler === 'function') {
+            return _dataConfigHandler(dataType);
+        }
+        throw "not call setDataConfigHandler";
+    })
+}
+
 const install = (Vue, options) => {
     if (_installed) {
         return;
@@ -50,46 +95,11 @@ const install = (Vue, options) => {
     _installed = true;
     Vue.prototype.$xUISize = options && options.size ? options.size : "mini";
     Vue.prototype.$xUIPlacement = options && options.placement ? options.placement : "top-start";
-    Vue.prototype.$xUIFileUploadHandler = (file, type) => {
-        return Promise.resolve().then(() => {
-            if (_fileUploadHandler && typeof _fileUploadHandler === 'function') {
-                return _fileUploadHandler(file, type);
-            }
-            throw "not call setFileUploadHandler";
-        })
-    }
-    Vue.prototype.$xUIFilePreviewHandler = (url, type) => {
-        return Promise.resolve().then(() => {
-            if (_filePreviewHandler && typeof _filePreviewHandler === 'function') {
-                return _filePreviewHandler(url, type);
-            }
-            throw "not call setFilePreviewHandler";
-        })
-    }
-    Vue.prototype.$xUIDataListHandler = (apiUrl, params, options) => {
-        return Promise.resolve().then(() => {
-            if (_dataListHandler && typeof _dataListHandler === 'function') {
-                return _dataListHandler(apiUrl, params, options);
-            }
-            throw "not call setDataListHandler";
-        })
-    }
-    Vue.prototype.$xUIDataDetailHandler = (apiUrl, params) => {
-        return Promise.resolve().then(() => {
-            if (_dataDetailHandler && typeof _dataDetailHandler === 'function') {
-                return _dataDetailHandler(apiUrl, params);
-            }
-            throw "not call setDataDetailHandler";
-        })
-    }
-    Vue.prototype.$xUIDataConfigHandler = (dataType) => {
-        return Promise.resolve().then(() => {
-            if (_dataConfigHandler && typeof _dataConfigHandler === 'function') {
-                return _dataConfigHandler(dataType);
-            }
-            throw "not call setDataConfigHandler";
-        })
-    }
+    Vue.prototype.$xUIFileUploadHandler = FileUploadHandler;
+    Vue.prototype.$xUIFilePreviewHandler = FilePreviewHandler;
+    Vue.prototype.$xUIDataListHandler = DataListHandler;
+    Vue.prototype.$xUIDataDetailHandler = DataDetailHandler;
+    Vue.prototype.$xUIDataConfigHandler = DataConfigHandler;
     _installDrawer(Vue);
     _installIdentify(Vue);
     _installResize(Vue);

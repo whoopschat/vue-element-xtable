@@ -54,6 +54,20 @@
       >
       </x-address>
     </template>
+    <template v-else-if="getValue('type', options, null, type) == 'html'">
+      <x-html
+        ref="input"
+        v-model="inputValue"
+        @blur="handleBlur"
+        @change="handleChange"
+        :size="getValue('size', options) || $xUISize"
+        :style="styleValue || getValue('styleValue', options)"
+        :placeholder="getValue('label', options)"
+        :clearable="clearable"
+        :disabled="disabled"
+      >
+      </x-html>
+    </template>
     <template v-else-if="getValue('type', options, null, type) == 'select'">
       <el-select
         ref="input"
@@ -174,6 +188,7 @@
 </style>
 
 <script>
+import XHtml from "./_html.vue";
 import XSelect from "./_select.vue";
 import XAddress from "./_address.vue";
 import XUpload from "./_upload.vue";
@@ -183,6 +198,7 @@ export default {
     XSelect,
     XAddress,
     XUpload,
+    XHtml,
   },
   props: {
     value: {

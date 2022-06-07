@@ -112,7 +112,11 @@
     top: 0;
     z-index: 500;
     background-color: #ffffff;
-    border-bottom: solid 1px #e6e6e6 !important;
+
+    .headerMenu {
+      border-bottom: solid 1px #e6e6e6;
+    }
+    
   }
 
   .pageContent {

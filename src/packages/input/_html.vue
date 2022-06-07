@@ -1,10 +1,16 @@
 <template>
-  <quill-editor v-model="inputValue" :options="editorOption" />
+  <quill-editor v-if="!disabled" v-model="inputValue" :options="editorOption" />
+  <div class="ql-snow ql-editor" v-else v-html="inputValue"></div>
 </template>
 
 <style lang="less">
 .ql-snow .ql-tooltip {
   z-index: 99999;
+}
+.ql-editor {
+  img {
+    max-width: 100%;
+  }
 }
 </style>
 
@@ -42,6 +48,10 @@ export default {
     placeholder: {
       type: String,
       default: "请输入内容",
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     buttons: {
       type: Array,

@@ -126,6 +126,7 @@
         v-if="!selection && actionList.length > 0"
         :width="actionWidth"
         :label="actionLabel"
+        fixed="right"
       >
         <template slot-scope="scope">
           <span

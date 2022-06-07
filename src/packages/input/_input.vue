@@ -10,6 +10,7 @@
         :size="getValue('size', options) || $xUISize"
         :type="getValue('dataType', options)"
         :styleValue="styleValue"
+        :placeholder="placeholder || getValue('label', options)"
         :filterLabelMethod="filterLabelMethod"
         :filterMethod="filterMethod"
         :multipleable="multipleable"
@@ -34,7 +35,7 @@
         :uploadLabel="getValue('uploadLabel', options)"
         :loadingLabel="getValue('loadingLabel', options)"
         :tipsLabel="getValue('tipsLabel', options)"
-        :placeholder="getValue('label', options)"
+        :placeholder="placeholder || getValue('label', options)"
         :preview="getValue('preview', options)"
         :clearable="clearable"
         :disabled="disabled"
@@ -48,7 +49,7 @@
         @change="handleChange"
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
-        :placeholder="getValue('label', options)"
+        :placeholder="placeholder || getValue('label', options)"
         :clearable="clearable"
         :disabled="disabled"
       >
@@ -61,8 +62,9 @@
         @blur="handleBlur"
         @change="handleChange"
         :size="getValue('size', options) || $xUISize"
+        :buttons="getValue('buttons', options)"
         :style="styleValue || getValue('styleValue', options)"
-        :placeholder="getValue('label', options)"
+        :placeholder="placeholder || getValue('label', options)"
         :clearable="clearable"
         :disabled="disabled"
       >
@@ -76,7 +78,7 @@
         v-model="inputValue"
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
-        :placeholder="getValue('label', options)"
+        :placeholder="placeholder || getValue('label', options)"
         :clearable="clearable"
         :disabled="disabled"
       >
@@ -108,7 +110,7 @@
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
         :maxlength="getValue('maxlength', options)"
-        :placeholder="getValue('label', options)"
+        :placeholder="placeholder || getValue('label', options)"
         :max="getValue('max', options)"
         :min="getValue('min', options)"
         :precision="getValue('precision', options, null, 2)"
@@ -127,7 +129,7 @@
         type="datetime"
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
-        :placeholder="getValue('label', options)"
+        :placeholder="placeholder || getValue('label', options)"
         :clearable="clearable"
         :disabled="disabled"
       >
@@ -144,7 +146,7 @@
         :style="styleValue || getValue('styleValue', options)"
         :maxlength="getValue('maxlength', options)"
         :show-word-limit="getValue('limit', options)"
-        :placeholder="getValue('label', options)"
+        :placeholder="placeholder || getValue('label', options)"
         :rows="getValue('rows', options)"
         :clearable="clearable"
         :disabled="disabled"
@@ -163,7 +165,7 @@
       :size="getValue('size', options) || $xUISize"
       :style="styleValue || getValue('styleValue', options)"
       :maxlength="getValue('maxlength', options)"
-      :placeholder="getValue('label', options)"
+      :placeholder="placeholder || getValue('label', options)"
       :clearable="clearable"
       :disabled="disabled"
     >
@@ -229,6 +231,10 @@ export default {
     },
     filterLabelMethod: {
       type: Function,
+    },
+    placeholder: {
+      type: String,
+      default: "",
     },
     multipleable: {
       type: Boolean,

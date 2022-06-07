@@ -13,12 +13,19 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 
-import Quill from "quill";
-import { quillEditor } from "vue-quill-editor";
+import { quillEditor, Quill } from "vue-quill-editor";
+
+// toolbar
+import { ButtonExtend } from "./_quill/buttonExtend";
+Quill.register("modules/buttonExtend", ButtonExtend);
+
+// image upload
 import { ImageExtend } from "./_quill/imageExtend";
 import { QuillWatch } from "./_quill/QuillWatch";
-
 Quill.register("modules/ImageExtend", ImageExtend);
+// image resize
+import QuillResize from "./_quill/resize/index";
+Quill.register("modules/resize", QuillResize);
 
 export default {
   components: {
@@ -35,6 +42,12 @@ export default {
     placeholder: {
       type: String,
       default: "请输入内容",
+    },
+    buttons: {
+      type: Array,
+      default: () => {
+        return [];
+      },
     },
   },
   watch: {
@@ -56,6 +69,9 @@ export default {
         theme: "snow",
         placeholder: this.placeholder,
         modules: {
+          buttonExtend: {
+            buttons: this.buttons,
+          },
           ImageExtend: {
             fileType: ["image/png", "image/jpeg", "image/gif", "image/bmp"],
             uploadHandler: (file, callback, failure) => {
@@ -67,6 +83,10 @@ export default {
                   failure && failure(err);
                 });
             },
+          },
+          resize: {
+            // See optional "config" below
+            modules: ["Resize", "Toolbar"],
           },
           toolbar: {
             container: [

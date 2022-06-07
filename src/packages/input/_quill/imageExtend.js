@@ -7,7 +7,7 @@ export class ImageExtend {
     /**
      * @param quill {Quill}富文本实例
      * @param config {Object} options
-     * config  keys: action, headers, editForm start end error  size response
+     * config  keys: uploadHandler
      */
     constructor(quill, config = {}) {
         this.id = Math.random()

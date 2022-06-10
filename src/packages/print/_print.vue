@@ -82,7 +82,7 @@
   .print-header-space {
     .header-content {
       width: 100%;
-      border-bottom: 1px solid #d1d1d1;
+      border-bottom: 1px solid #333333;
     }
   }
 
@@ -90,7 +90,6 @@
   .print-footer-space {
     .footer-content {
       width: 100%;
-      border-top: 1px solid #d1d1d1;
     }
   }
 
@@ -136,19 +135,6 @@
       width: 100%;
     }
 
-    .print-header,
-    .print-header-space {
-      .header-content {
-        border-bottom: 1px solid #333333;
-      }
-    }
-
-    .print-footer,
-    .print-footer-space {
-      .footer-content {
-        border-top: 1px solid #333333;
-      }
-    }
     .print-header {
       position: fixed;
       top: 0;
@@ -173,18 +159,6 @@
     .print-wrap {
       padding: 0px 30px;
       width: @printWidth;
-    }
-    .print-header,
-    .print-header-space {
-      .header-content {
-        border-bottom: 1px solid #d1d1d1;
-      }
-    }
-    .print-footer,
-    .print-footer-space {
-      .footer-content {
-        border-top: 1px solid #d1d1d1;
-      }
     }
     .print-header-space {
       display: none;

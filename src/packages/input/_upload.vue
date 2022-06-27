@@ -38,7 +38,7 @@
       v-if="!disabled && (fileCount == 0 || fileCount > currentUrls.length)"
       :show-file-list="false"
       :disabled="uploadLoading"
-      :accept="uploadAccept || fileType"
+      :accept="uploadAcceptValue"
       :before-upload="handleUploadFile"
       action=""
       drag
@@ -133,7 +133,7 @@ export default {
       type: String,
       default: "",
     },
-    uploadAccept:{
+    uploadAccept: {
       type: String,
     },
     uploadLabel: {
@@ -176,6 +176,24 @@ export default {
   watch: {
     value() {
       this.initValue();
+    },
+  },
+  computed: {
+    uploadFileTypes() {
+      if (this.fileType && this.fileType.length > 0) {
+        return this.fileType;
+      }
+      if (this.type == "image") {
+        return ["image/png", "image/jpeg", "image/gif"];
+      }
+    },
+    uploadAcceptValue() {
+      if (this.uploadAccept) {
+        return this.uploadAccept;
+      }
+      if (this.uploadFileTypes) {
+        return this.uploadFileTypes.join(",");
+      }
     },
   },
   mounted() {
@@ -238,8 +256,8 @@ export default {
       if (file == null) {
         return;
       }
-      if (this.fileType && this.fileType.length > 0) {
-        if (!this.fileType.includes(file.type)) {
+      if (this.uploadFileTypes && this.uploadFileTypes.length > 0) {
+        if (!this.uploadFileTypes.includes(file.type)) {
           this.uploadErrorMsg = "文件格式错误";
           return false;
         }

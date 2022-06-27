@@ -33,6 +33,7 @@
         :fileCount="getValue('fileCount', options)"
         :deleteLabel="getValue('deleteLabel', options)"
         :uploadLabel="getValue('uploadLabel', options)"
+        :uploadAccept="getValue('uploadAccept', options)"
         :loadingLabel="getValue('loadingLabel', options)"
         :tipsLabel="getValue('tipsLabel', options)"
         :placeholder="placeholder || getValue('label', options)"

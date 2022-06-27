@@ -126,7 +126,7 @@
         v-if="!selection && actionList.length > 0"
         :width="actionWidth"
         :label="actionLabel"
-        fixed="right"
+        :fixed="actionFixed"
       >
         <template slot-scope="scope">
           <span
@@ -255,6 +255,10 @@ export default {
       default: () => {
         return [];
       },
+    },
+    actionFixed:{
+      type: String,
+      default: "right",
     },
     actionWidth: {
       type: Number,

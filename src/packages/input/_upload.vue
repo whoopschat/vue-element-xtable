@@ -38,6 +38,7 @@
       v-if="!disabled && (fileCount == 0 || fileCount > currentUrls.length)"
       :show-file-list="false"
       :disabled="uploadLoading"
+      :accept="uploadAccept"
       :before-upload="handleUploadFile"
       action=""
       drag
@@ -131,6 +132,9 @@ export default {
     value: {
       type: String,
       default: "",
+    },
+    uploadAccept:{
+      type: String,
     },
     uploadLabel: {
       type: String,

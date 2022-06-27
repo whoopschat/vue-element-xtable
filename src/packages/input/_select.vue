@@ -31,6 +31,7 @@
             :emptyLabel="getValue('emptyLabel', configInfo)"
             :searchLabel="getValue('searchLabel', configInfo)"
             :actionLabel="getValue('actionLabel', configInfo)"
+            :actionFixed="getValue('actionFixed', configInfo)"
             :defaultSort="getValue('defaultSort', configInfo)"
             :defaultParams="getValue('defaultParams', configInfo)"
             :filterMethod="filterMethod"

@@ -38,7 +38,7 @@
       v-if="!disabled && (fileCount == 0 || fileCount > currentUrls.length)"
       :show-file-list="false"
       :disabled="uploadLoading"
-      :accept="uploadAccept"
+      :accept="uploadAccept || fileType"
       :before-upload="handleUploadFile"
       action=""
       drag

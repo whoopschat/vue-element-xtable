@@ -257,7 +257,7 @@ export default {
       },
     },
     actionFixed:{
-      type: String,
+      type: String | Boolean,
       default: "right",
     },
     actionWidth: {

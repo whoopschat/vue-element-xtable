@@ -2,21 +2,26 @@ import drawer from "./_drawer.vue";
 import { onChanged } from "../../utils/changed";
 
 let _installed = false;
-let _showDrawer = null;
-let _closeDrawer = null;
+let _openDrawer = null;
 let _refreshDrawer = null;
+let _replaceDrawer = null;
+let _closeDrawer = null;
 let _backDrawer = null;
 
 function openDrawer(drawerParams) {
-    _showDrawer && _showDrawer(drawerParams);
+    _openDrawer && _openDrawer(drawerParams);
 }
 
-function closeDrawer() {
-    _closeDrawer && _closeDrawer();
+function replaceDrawer(drawerParams) {
+    _replaceDrawer && _replaceDrawer(drawerParams);
 }
 
 function backDrawer() {
     _backDrawer && _backDrawer();
+}
+
+function closeDrawer() {
+    _closeDrawer && _closeDrawer();
 }
 
 function refreshDrawer() {
@@ -26,6 +31,7 @@ function refreshDrawer() {
 const Drawer = {
     backDrawer,
     closeDrawer,
+    replaceDrawer,
     refreshDrawer,
     openDrawer
 }
@@ -42,8 +48,11 @@ export function _installDrawer(Vue) {
     onChanged(() => {
         instance.handleResize();
     });
-    _showDrawer = function (options) {
-        instance.showDrawer(options);
+    _openDrawer = function (options) {
+        instance.openDrawer(options, false);
+    }
+    _replaceDrawer = function (options) {
+        instance.openDrawer(options, true);
     }
     _backDrawer = function () {
         instance.backDrawer(true);

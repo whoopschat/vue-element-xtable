@@ -118,6 +118,11 @@ export default {
         "确定退出编辑模式？"
       );
     },
+    drawerTipLabel() {
+      return (
+        (this.currentOptions && this.currentOptions.editableTipLabel) || "提示"
+      );
+    },
   },
   mounted() {
     this.handleResize();
@@ -156,7 +161,12 @@ export default {
     setRefresh() {
       this.refresh = true;
     },
-    showDrawer(options = {}) {
+    checkRefresh(option) {
+      if (option && this.refresh && typeof option.refresh === "function") {
+        option.refresh();
+      }
+    },
+    openDrawer(options = {}, replace = false) {
       if (this.historyList.length > 0) {
         try {
           let opt = this.historyList[this.historyList.length - 1];
@@ -173,13 +183,11 @@ export default {
         options.query || {},
         options.params || {}
       );
+      if (replace) {
+        this.checkRefresh(this.historyList.pop());
+      }
       this.historyList.push(options);
       this.show = true;
-    },
-    checkRefresh(option) {
-      if (option && this.refresh && typeof option.refresh === "function") {
-        option.refresh();
-      }
     },
     closeDrawer() {
       this.historyList.splice(0, this.historyList.length).forEach((option) => {
@@ -207,7 +215,7 @@ export default {
       };
       if (this.drawerEditable && !force) {
         this.$confirm(this.drawerEditableText, {
-          title: "提示",
+          title: this.drawerTipLabel,
           type: "info",
         })
           .then((_) => {
@@ -221,7 +229,7 @@ export default {
     handleClose(done) {
       if (this.drawerEditable) {
         this.$confirm(this.drawerEditableText, {
-          title: "提示",
+          title: this.drawerTipLabel,
           type: "info",
         })
           .then((_) => {

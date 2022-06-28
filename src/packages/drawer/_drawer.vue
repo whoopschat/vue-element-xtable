@@ -184,7 +184,11 @@ export default {
         options.params || {}
       );
       if (replace) {
-        this.checkRefresh(this.historyList.pop());
+        let opt = this.historyList.pop();
+        this.checkRefresh(opt);
+        if (!options.refresh){
+          options.refresh = opt.refresh;
+        }
       }
       this.historyList.push(options);
       this.show = true;

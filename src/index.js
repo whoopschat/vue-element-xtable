@@ -1,5 +1,6 @@
 import Drawer, { _installDrawer } from "./packages/drawer"
 import Identify, { _installIdentify } from "./packages/identify"
+import { _installTab } from "./packages/tab"
 import { _installTable } from "./packages/table"
 import { _installInput } from "./packages/input"
 import { _installResize } from "./directives/resize"
@@ -93,6 +94,7 @@ const install = (Vue, options) => {
         return;
     }
     _installed = true;
+    Vue.prototype.$xUIDrawerFullScreen = options && options.drawerFullScreen;
     Vue.prototype.$xUISize = options && options.size ? options.size : "mini";
     Vue.prototype.$xUIPlacement = options && options.placement ? options.placement : "top-start";
     Vue.prototype.$xUIFileUploadHandler = FileUploadHandler;
@@ -103,6 +105,7 @@ const install = (Vue, options) => {
     _installDrawer(Vue);
     _installIdentify(Vue);
     _installResize(Vue);
+    _installTab(Vue);
     _installTable(Vue);
     _installInput(Vue);
     _installPrint(Vue);

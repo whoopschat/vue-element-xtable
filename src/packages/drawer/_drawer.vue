@@ -148,6 +148,10 @@ export default {
       );
     },
     handleResize() {
+      if (this.$xUIDrawerFullScreen){
+          this.autoSize = "100%";
+          return;
+      }
       try {
         let width =
           document.documentElement.clientWidth || document.body.clientWidth;

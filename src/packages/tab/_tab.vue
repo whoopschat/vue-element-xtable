@@ -13,10 +13,11 @@
             :is="tab.component"
             :params="tab.params || params"
             :query="tab.query || query"
+            @xEvent="callOnEvent"
           />
         </template>
         <div v-else>
-          <el-empty description="空"></el-empty>
+          <el-empty :description="tab.emptyLabel | ''"></el-empty>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -27,7 +28,7 @@
 export default {
   data() {
     return {
-      activeName: "",
+      activeName: null,
     };
   },
   props: {
@@ -65,6 +66,9 @@ export default {
     },
   },
   methods: {
+    callOnEvent(...params) {
+      this.$emit("xEvent", ...params);
+    },
     refreshActiveName() {
       let names = (this.tabs || []).map((tab) => {
         return tab.name;
@@ -74,7 +78,7 @@ export default {
       }
     },
   },
-  created() {
+  mounted() {
     this.refreshActiveName();
   },
 };

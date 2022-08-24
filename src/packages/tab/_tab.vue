@@ -1,6 +1,6 @@
 <template>
   <div class="xTab">
-    <el-tabs v-model="activeName" type="border-card">
+    <el-tabs :value="activeName" type="border-card" @tab-click="onClickTab">
       <el-tab-pane
         :key="i"
         :label="tab.label"
@@ -32,6 +32,9 @@ export default {
     };
   },
   props: {
+    value: {
+      type: String | Number,
+    },
     tabs: {
       type: Array,
       default: () => {
@@ -60,7 +63,14 @@ export default {
       },
     },
   },
+  model: {
+    event: "change",
+    prop: "value",
+  },
   watch: {
+    value() {
+      this.refreshActiveName();
+    },
     tabs() {
       this.refreshActiveName();
     },
@@ -69,7 +79,13 @@ export default {
     callOnEvent(...params) {
       this.$emit("xEvent", ...params);
     },
+    onClickTab(tab) {
+      this.activeName = tab.name;
+      this.$emit("change", this.activeName);
+      this.dispatch("ElFormItem", "el.form.change");
+    },
     refreshActiveName() {
+      this.activeName = this.value;
       let names = (this.tabs || []).map((tab) => {
         return tab.name;
       });

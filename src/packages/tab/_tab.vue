@@ -76,6 +76,23 @@ export default {
     },
   },
   methods: {
+    dispatch(componentName, eventName, params) {
+      setTimeout(() => {
+        try {
+          var parent = this.$parent || this.$root;
+          var name = parent.$options.componentName;
+          while (parent && (!name || name !== componentName)) {
+            parent = parent.$parent;
+            if (parent) {
+              name = parent.$options.componentName;
+            }
+          }
+          if (parent) {
+            parent.$emit.apply(parent, [eventName].concat(params));
+          }
+        } catch (error) {}
+      }, 200);
+    },
     callOnEvent(...params) {
       this.$emit("xEvent", ...params);
     },

@@ -8,7 +8,7 @@
         v-show="tab.show"
         v-for="(tab, i) in tabs"
       >
-        <template v-if="tab.component">
+        <template v-if="tab.component && checkTabVisiable(tab)">
           <component
             :is="tab.component"
             :params="tab.params || params"
@@ -42,10 +42,12 @@ export default {
           {
             name: "tab1",
             label: "Tab 1",
+            interval: false,
           },
           {
             name: "tab2",
             label: "Tab 2",
+            interval: false,
           },
         ];
       },
@@ -95,6 +97,12 @@ export default {
     },
     callOnEvent(...params) {
       this.$emit("xEvent", ...params);
+    },
+    checkTabVisiable(tab) {
+      if (tab.interval && tab.name != this.activeName) {
+        return false;
+      }
+      return true;
     },
     onClickTab(tab) {
       this.activeName = tab.name;

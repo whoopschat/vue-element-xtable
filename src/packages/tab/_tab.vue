@@ -1,23 +1,14 @@
 <template>
   <div class="xTab">
-    <el-tabs :value="activeName" type="border-card" @tab-click="onClickTab">
-      <el-tab-pane
-        :key="i"
-        :label="tab.label"
-        :name="tab.name"
-        v-show="tab.show"
-        v-for="(tab, i) in tabs"
-      >
-        <template v-if="tab.component && checkTabVisiable(tab)">
-          <component
-            :is="tab.component"
-            :params="tab.params || params"
-            :query="tab.query || query"
-            @xEvent="callOnEvent"
-          />
-        </template>
+    <el-tabs v-model="activeName" type="border-card" @tab-click="onClickTab">
+      <el-tab-pane :name="tab.name" :label="tab.label" v-show="tab.show" v-for="(tab, i) in tabs"
+        :key="'x-tab-' + tab.name + '-' + i">
+        <div v-if="checkTabVisiable(tab)">
+          <component :is="tab.component" :params="tab.params || params" :query="tab.query || query"
+            @xEvent="callOnEvent" />
+        </div>
         <div v-else>
-          <el-empty :description="tab.emptyLabel | ''"></el-empty>
+          <el-empty :description="tab.emptyLabel"></el-empty>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -92,22 +83,25 @@ export default {
           if (parent) {
             parent.$emit.apply(parent, [eventName].concat(params));
           }
-        } catch (error) {}
+        } catch (error) { }
       }, 200);
     },
     callOnEvent(...params) {
       this.$emit("xEvent", ...params);
     },
-    checkTabVisiable(tab) {
-      if (tab.interval && tab.name != this.activeName) {
-        return false;
-      }
-      return true;
-    },
     onClickTab(tab) {
       this.activeName = tab.name;
       this.$emit("change", this.activeName);
       this.dispatch("ElFormItem", "el.form.change");
+    },
+    checkTabVisiable(tab) {
+      if (!tab.component) {
+        return false;
+      }
+      if (tab.interval && tab.name != this.activeName) {
+        return false;
+      }
+      return true;
     },
     refreshActiveName() {
       this.activeName = this.value;

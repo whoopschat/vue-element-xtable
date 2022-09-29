@@ -71,7 +71,7 @@ const defaultOptions = {
   formErrorText: "验证码错误",
   formInputWidth: "180px",
   cancelLabel: "取消",
-  okLabel: "验证",
+  okLabel: "确定",
   codeLen: 4,
   codeStr: "ABCDEFGHJKLMNPQRSTUVWXYabcdefhijkmnpqrstuvwxy0123456789",
 };

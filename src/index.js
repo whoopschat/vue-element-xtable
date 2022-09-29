@@ -102,10 +102,10 @@ const install = (Vue, options) => {
     Vue.prototype.$xUIDataListHandler = DataListHandler;
     Vue.prototype.$xUIDataDetailHandler = DataDetailHandler;
     Vue.prototype.$xUIDataConfigHandler = DataConfigHandler;
+    _installTab(Vue);
     _installDrawer(Vue);
     _installIdentify(Vue);
     _installResize(Vue);
-    _installTab(Vue);
     _installTable(Vue);
     _installInput(Vue);
     _installPrint(Vue);

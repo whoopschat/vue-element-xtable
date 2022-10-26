@@ -8,7 +8,7 @@
         <div>
           <div class="headerTop">
             <slot name="header"></slot>
-            <div class="header-right">
+            <div class="headerRight">
               <slot name="header-right"></slot>
             </div>
           </div>
@@ -116,6 +116,13 @@
     .headerMenu {
       border-bottom: solid 1px #e6e6e6;
     }
+
+    .headerRight {
+      position: fixed;
+      right: 10px;
+      top: 0;
+      z-index: 600;
+    }
     
   }
 
@@ -142,24 +149,6 @@
       background-color: #ffffff;
       .el-card {
         border: 0px solid #ebeef5 !important;
-      }
-    }
-  }
-  @media screen and (max-width: 800px) {
-    .pageHeader {
-      .header-right {
-        display: block;
-      }
-    }
-  }
-
-  @media screen and (min-width: 800px) {
-    .pageHeader {
-      .header-right {
-        position: fixed;
-        right: 10px;
-        top: 0;
-        z-index: 600;
       }
     }
   }

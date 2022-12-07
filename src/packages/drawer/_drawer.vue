@@ -21,7 +21,11 @@
         </div>
       </template>
       <div v-if="show" ref="drawer-content">
-        <div v-for="(opt, i) in historyList" :key="opt.key">
+        <div
+          v-for="(opt, i) in historyList"
+          :style="opt.bodyStyle"
+          :key="opt.key"
+        >
           <component
             v-show="i == historyList.length - 1"
             :is="opt.component"
@@ -148,9 +152,9 @@ export default {
       );
     },
     handleResize() {
-      if (this.$xUIDrawerFullScreen){
-          this.autoSize = "100%";
-          return;
+      if (this.$xUIDrawerFullScreen) {
+        this.autoSize = "100%";
+        return;
       }
       try {
         let width =
@@ -190,7 +194,7 @@ export default {
       if (replace) {
         let opt = this.historyList.pop();
         this.checkRefresh(opt);
-        if (!options.refresh){
+        if (!options.refresh) {
           options.refresh = opt.refresh;
         }
       }

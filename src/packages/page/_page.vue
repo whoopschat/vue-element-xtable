@@ -13,45 +13,24 @@
             </div>
           </div>
           <div class="headerMenu" v-if="menus && menus.length > 1">
-            <el-menu
-              mode="horizontal"
-              menu-trigger="click"
-              :collapse-transition="false"
-              :default-active="currentIndex"
-              @select="handleMenuClick"
-            >
-              <el-menu-item
-                v-show="getValue('show', item, null, true)"
-                v-for="(item, index) in menus"
-                :key="'x-page-menu-' + index"
-                :index="'' + index"
-              >
+            <el-menu mode="horizontal" menu-trigger="click" :collapse-transition="false" :default-active="currentIndex"
+              @select="handleMenuClick">
+              <el-menu-item v-show="getValue('show', item, null, true)" v-for="(item, index) in menus"
+                :key="'x-page-menu-' + index" :index="'' + index">
                 {{ getValue("label", item) }}
               </el-menu-item>
             </el-menu>
           </div>
         </div>
       </div>
-      <div
-        class="pageContent"
-        :style="'padding-top: ' + currentHeaderHeight + 'px;height: 100%;'"
-        v-if="contentLeftStyle && contentBodyStyle"
-      >
+      <div class="pageContent" :style="'padding-top: ' + currentHeaderHeight + 'px;height: 100%;'"
+        v-if="contentLeftStyle && contentBodyStyle">
         <template v-if="hasChildren">
           <div class="contentLeft" :style="contentLeftStyle">
-            <el-menu
-              mode="vertical"
-              menu-trigger="click"
-              :collapse-transition="false"
-              :default-active="currentChildrenIndex"
-              @select="handleChildrenClick"
-            >
-              <el-menu-item
-                v-show="getValue('show', children, null, true)"
-                v-for="(children, cIndex) in currentItem.children"
-                :key="'x-page-menu-' + cIndex"
-                :index="'' + cIndex"
-              >
+            <el-menu mode="vertical" menu-trigger="click" :collapse-transition="false"
+              :default-active="currentChildrenIndex" @select="handleChildrenClick">
+              <el-menu-item v-show="getValue('show', children, null, true)"
+                v-for="(children, cIndex) in currentItem.children" :key="'x-page-menu-' + cIndex" :index="'' + cIndex">
                 <i v-if="children.icon" :class="getValue('icon', children)"></i>
                 {{ getValue("label", children) }}
               </el-menu-item>
@@ -97,9 +76,11 @@
   .el-menu {
     border-right: solid 0px #e6e6e6 !important;
   }
+
   .el-menu.el-menu--horizontal {
     border-bottom: solid 0px #e6e6e6 !important;
   }
+
   .el-menu-item {
     height: @menuItemHeight;
     line-height: @menuItemHeight;
@@ -123,7 +104,7 @@
       top: 0;
       z-index: 600;
     }
-    
+
   }
 
   .pageContent {
@@ -147,6 +128,7 @@
       float: right;
       overflow: auto;
       background-color: #ffffff;
+
       .el-card {
         border: 0px solid #ebeef5 !important;
       }
@@ -177,7 +159,6 @@ export default {
   },
   data() {
     return {
-      unChange: false,
       currentIndex: "-",
       currentChildrenIndex: "-",
       currentItem: null,
@@ -252,11 +233,11 @@ export default {
         if (this.$refs.pageHeader) {
           this.currentHeaderHeight = this.$refs.pageHeader.offsetHeight;
         }
-      } catch (error) {}
+      } catch (error) { }
       try {
         this.currentContentHeight =
           document.documentElement.clientHeight - this.currentHeaderHeight;
-      } catch (error) {}
+      } catch (error) { }
       try {
         let width = document.documentElement.clientWidth;
         if (this.hasChildren && width > 800) {
@@ -280,7 +261,7 @@ export default {
             height: this.currentContentHeight + "px",
           };
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     getValue(prop, item, param, def) {
       if (!item || !prop) {
@@ -315,21 +296,21 @@ export default {
           );
           this.handleChildrenClick(this.currentChildrenIndex);
         } else {
-          if (!this.unChange) {
-            this.callEvent("click", this.currentItem);
-            this.$emit("click", this.currentItem);
-          }
+          this.callEvent("click", this.currentItem);
+          this.$emit("click", this.currentItem);
         }
         this.handleResize();
       }
     },
     handleChildrenClick(index) {
       if (this.currentItem) {
-        this.currentChildrenIndex = index;
         this.currentChildrenItem = this.currentItem.children[index];
-        if (this.currentChildrenItem && !this.unChange) {
+        if (this.currentChildrenItem) {
           this.callEvent("click", this.currentChildrenItem);
           this.$emit("click", this.currentChildrenItem);
+          if (this.currentChildrenItem.flag != "event") {
+            this.currentChildrenIndex = index;
+          }
         }
       }
     },

@@ -304,12 +304,15 @@ export default {
     },
     handleChildrenClick(index) {
       if (this.currentItem) {
-        this.currentChildrenItem = this.currentItem.children[index];
-        if (this.currentChildrenItem) {
-          this.callEvent("click", this.currentChildrenItem);
-          this.$emit("click", this.currentChildrenItem);
-          if (this.currentChildrenItem.flag != "event") {
+        let selectItem = this.currentItem.children[index];
+        if (selectItem) {
+          this.callEvent("click", selectItem);
+          this.$emit("click", selectItem);
+          if (selectItem.flag != "event") {
             this.currentChildrenIndex = index;
+            this.currentChildrenItem = selectItem;
+          } else {
+            this.currentChildrenIndex = this.getMenuIndex(this.currentItem.children, true);
           }
         }
       }

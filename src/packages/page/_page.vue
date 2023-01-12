@@ -27,7 +27,7 @@
         v-if="contentLeftStyle && contentBodyStyle">
         <template v-if="hasChildren">
           <div class="contentLeft" :style="contentLeftStyle">
-            <el-menu mode="vertical" menu-trigger="click" :collapse-transition="false"
+            <el-menu mode="vertical" menu-trigger="click" :collapse-transition="false" :index="currentChildrenIndex"
               :default-active="currentChildrenIndex" @select="handleChildrenClick">
               <el-menu-item v-show="getValue('show', children, null, true)"
                 v-for="(children, cIndex) in currentItem.children" :key="'x-page-menu-' + cIndex" :index="'' + cIndex">
@@ -162,7 +162,6 @@ export default {
       currentIndex: "-",
       currentChildrenIndex: "-",
       currentItem: null,
-      currentChildrenItem: null,
       currentHeaderHeight: 0,
       currentContentHeight: 0,
       contentLeftStyle: null,
@@ -197,12 +196,7 @@ export default {
       this.currentIndex = this.getMenuIndex(this.menus, false);
       this.currentItem = this.menus[this.currentIndex];
       if (this.hasChildren) {
-        this.currentChildrenIndex = this.getMenuIndex(
-          this.currentItem.children,
-          false
-        );
-        this.currentChildrenItem =
-          this.currentItem.children[this.currentChildrenIndex];
+        this.currentChildrenIndex = this.getMenuIndex(this.currentItem.children, false);
       }
       this.handleResize();
     },
@@ -304,16 +298,12 @@ export default {
     },
     handleChildrenClick(index) {
       if (this.currentItem) {
-        let selectItem = this.currentItem.children[index];
-        if (selectItem) {
-          this.callEvent("click", selectItem);
-          this.$emit("click", selectItem);
-          if (selectItem.flag != "event") {
-            this.currentChildrenIndex = index;
-            this.currentChildrenItem = selectItem;
-          } else {
-            this.currentChildrenIndex = this.getMenuIndex(this.currentItem.children, true);
-          }
+        let childrenSelectItem = this.currentItem.children[index];
+        if (childrenSelectItem) {
+          this.currentChildrenIndex = index;
+          this.callEvent("click", childrenSelectItem);
+          this.$emit("click", childrenSelectItem);
+          this.$nextTick(() => { this.currentChildrenIndex = this.getMenuIndex(this.currentItem.children, true) });
         }
       }
     },

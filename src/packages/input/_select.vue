@@ -317,9 +317,9 @@ export default {
         this.detailLoading = true;
         this.detailErrorMsg = null;
         let detailApi = this.getValue("detailApi", this.configInfo);
-        let valueParams = this.getValue("params", this.configInfo, this.value) || this.value;
         let defaultParams = this.getValue("defaultParams", this.configInfo) || {};
-        return this.$xUIDataDetailHandler(detailApi, Object.assign({}, defaultParams, valueParams))
+        let dataParams = this.getValue("params", this.configInfo, this.value) || {};
+        return this.$xUIDataDetailHandler(detailApi, Object.assign({}, defaultParams, dataParams))
           .then((resp) => {
             this.select = resp;
           })

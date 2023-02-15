@@ -256,7 +256,7 @@ export default {
         return [];
       },
     },
-    actionFixed:{
+    actionFixed: {
       type: String | Boolean,
       default: "right",
     },
@@ -283,6 +283,10 @@ export default {
     defaultSort: {
       type: String,
       default: "",
+    },
+    defaultPageSize: {
+      type: Number,
+      default: 10,
     },
     defaultParams: {
       type: Object,
@@ -320,7 +324,7 @@ export default {
       refreshElement: false,
       filterCount: 0,
       currentTotal: 0,
-      currentSize: 10,
+      currentSize: 0,
       currentPage: 1,
     };
   },
@@ -392,7 +396,7 @@ export default {
             });
           }
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     clearSelectList() {
       this.selectList = [];
@@ -453,9 +457,8 @@ export default {
     },
     handleSortChange({ prop, order }) {
       if (prop && order) {
-        this.currentOrderBy = `${prop} ${
-          order == "ascending" ? "desc" : "asc"
-        }`;
+        this.currentOrderBy = `${prop} ${order == "ascending" ? "desc" : "asc"
+          }`;
       } else {
         this.currentOrderBy = "";
       }
@@ -498,26 +501,23 @@ export default {
         this.fetchErrorMsg = null;
         return this.$xUIDataListHandler(this.listApi, this.dataParams, {
           pageNum: this.currentPage,
-          pageSize: this.currentSize,
+          pageSize: this.currentSize || this.defaultPageSize,
           orderBy: this.currentOrderBy || this.defaultSort,
-        })
-          .then((resp) => {
-            this.dataList = resp.list || [];
-            this.currentTotal = parseInt(resp.total) || 0;
-            this.currentPage = parseInt(resp.page) || this.currentPage;
-            this.currentSize = parseInt(resp.size) || this.currentSize;
-            if (!this.noCallFetch) {
-              this.$emit("fetch-list", this.dataList, this);
-              this.noCallFetch = false;
-            }
-          })
-          .catch((err) => {
-            this.fetchErrorMsg = err || "请求数据失败";
-            this.$emit("fetch-error", err);
-          })
-          .finally(() => {
-            this.fetchLoading = false;
-          });
+        }).then((resp) => {
+          this.dataList = resp.list || [];
+          this.currentTotal = parseInt(resp.total) || 0;
+          this.currentPage = parseInt(resp.page) || this.currentPage;
+          this.currentSize = parseInt(resp.size) || this.currentSize;
+          if (!this.noCallFetch) {
+            this.$emit("fetch-list", this.dataList, this);
+            this.noCallFetch = false;
+          }
+        }).catch((err) => {
+          this.fetchErrorMsg = err || "请求数据失败";
+          this.$emit("fetch-error", err);
+        }).finally(() => {
+          this.fetchLoading = false;
+        });
       });
     },
     refresh() {

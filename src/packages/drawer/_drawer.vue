@@ -98,14 +98,14 @@ export default {
         if (this.historyList.length > 0) {
           return this.historyList[this.historyList.length - 1];
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     backLabel() {
       try {
         if (this.historyList.length > 1) {
           return this.getTitle(this.historyList[this.historyList.length - 2]);
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     drawerTitle() {
       return this.getTitle(this.currentOptions);
@@ -164,7 +164,7 @@ export default {
         } else {
           this.autoSize = 1000;
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     setRefresh() {
       this.refresh = true;
@@ -183,7 +183,7 @@ export default {
             let parentElement = this.$refs[currentKey].parentElement;
             opt.scrollTop = (parentElement && parentElement.scrollTop) || 0;
           }
-        } catch (err) {}
+        } catch (err) { }
       }
       options.key = this.createUUID();
       options.params = options.query = Object.assign(
@@ -208,6 +208,9 @@ export default {
       this.refresh = false;
       this.show = false;
     },
+    isOpened() {
+      return this.show;
+    },
     backDrawer(force = false) {
       let done = () => {
         if (this.historyList.length == 1) {
@@ -221,7 +224,7 @@ export default {
                 let parentElement = this.$refs[currentKey].parentElement;
                 parentElement.scrollTop = this.currentOptions.scrollTop;
               }
-            } catch (error) {}
+            } catch (error) { }
           });
         }
       };
@@ -233,7 +236,7 @@ export default {
           .then((_) => {
             done();
           })
-          .catch((_) => {});
+          .catch((_) => { });
       } else {
         done();
       }
@@ -247,7 +250,7 @@ export default {
           .then((_) => {
             this.closeDrawer();
           })
-          .catch((_) => {});
+          .catch((_) => { });
       } else {
         this.closeDrawer();
       }

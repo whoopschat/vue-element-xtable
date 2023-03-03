@@ -5,11 +5,11 @@
       destroy-on-close
       custom-class="xDrawer"
       :before-close="handleClose"
-      :wrapperClosable="!drawerEditable && drawerClosable"
+      :wrapperClosable="drawerClosable"
       :visible.sync="show"
+      :modal="drawerModal"
       :title="drawerTitle"
       :size="autoSize"
-      :modal="false"
     >
       <template slot="title">
         <div>
@@ -28,6 +28,7 @@
         >
           <component
             v-show="i == historyList.length - 1"
+            :ref="opt.key"
             :is="opt.component"
             :params="opt.params"
             :query="opt.query"
@@ -82,6 +83,17 @@
 </style>
 
 <script>
+function createUUID() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+    /[xy]/g,
+    function (c) {
+      var r = (Math.random() * 16) | 0,
+        v = c == "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    }
+  );
+}
+
 export default {
   data() {
     return {
@@ -110,40 +122,22 @@ export default {
     drawerTitle() {
       return this.getTitle(this.currentOptions);
     },
+    drawerModal() {
+      return this.currentOptions && this.currentOptions.modal != false;
+    },
     drawerClosable() {
-      return this.currentOptions && this.currentOptions.closable !== false;
-    },
-    drawerEditable() {
-      return this.currentOptions && this.currentOptions.editable;
-    },
-    drawerEditableText() {
-      return (
-        (this.currentOptions && this.currentOptions.editableText) ||
-        "确定退出编辑模式？"
-      );
-    },
-    drawerTipLabel() {
-      return (
-        (this.currentOptions && this.currentOptions.editableTipLabel) || "提示"
-      );
-    },
+      return this.currentOptions && this.currentOptions.closable == true;
+    }
   },
   mounted() {
-    this.handleResize();
+    this.checkResize();
   },
   created() {
-    this.handleResize();
+    this.checkResize();
   },
   methods: {
-    createUUID() {
-      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-        /[xy]/g,
-        function (c) {
-          var r = (Math.random() * 16) | 0,
-            v = c == "x" ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        }
-      );
+    isOpened() {
+      return this.show;
     },
     getTitle(option) {
       return (
@@ -151,7 +145,27 @@ export default {
         (option && option.component && option.component.name)
       );
     },
-    handleResize() {
+    getCurComp() {
+      if (this.currentOptions && this.$refs[this.currentOptions.key]) {
+        let refComp = this.$refs[this.currentOptions.key];
+        if (refComp instanceof Array) {
+          return refComp[0];
+        }
+        return refComp;
+      }
+    },
+    setRefresh() {
+      this.refresh = true;
+    },
+    checkResize() {
+      let curComponent = this.getCurComp();
+      console.log(curComponent);
+      if (curComponent && typeof curComponent['getDrawerWidth'] == 'function') {
+        this.autoSize = curComponent['getDrawerWidth']();
+        if (this.autoSize) {
+          return
+        }
+      }
       if (this.$xUIDrawerFullScreen) {
         this.autoSize = "100%";
         return;
@@ -166,8 +180,19 @@ export default {
         }
       } catch (error) { }
     },
-    setRefresh() {
-      this.refresh = true;
+    checkClose(callback, force = false) {
+      if (force) {
+        callback && callback();
+        return;
+      }
+      let curComponent = this.getCurComp();
+      if (curComponent && typeof curComponent['onDrawerClose'] == 'function') {
+        curComponent['onDrawerClose']((_) => {
+          callback && callback();
+        })
+      } else {
+        callback && callback();
+      }
     },
     checkRefresh(option) {
       if (option && this.refresh && typeof option.refresh === "function") {
@@ -185,7 +210,7 @@ export default {
           }
         } catch (err) { }
       }
-      options.key = this.createUUID();
+      options.key = createUUID();
       options.params = options.query = Object.assign(
         { isDrawer: 1 },
         options.query || {},
@@ -200,6 +225,9 @@ export default {
       }
       this.historyList.push(options);
       this.show = true;
+      this.$nextTick(() => {
+        this.checkResize();
+      });
     },
     closeDrawer() {
       this.historyList.splice(0, this.historyList.length).forEach((option) => {
@@ -207,9 +235,7 @@ export default {
       });
       this.refresh = false;
       this.show = false;
-    },
-    isOpened() {
-      return this.show;
+      this.checkResize();
     },
     backDrawer(force = false) {
       let done = () => {
@@ -225,35 +251,16 @@ export default {
                 parentElement.scrollTop = this.currentOptions.scrollTop;
               }
             } catch (error) { }
+            this.checkResize();
           });
         }
       };
-      if (this.drawerEditable && !force) {
-        this.$confirm(this.drawerEditableText, {
-          title: this.drawerTipLabel,
-          type: "info",
-        })
-          .then((_) => {
-            done();
-          })
-          .catch((_) => { });
-      } else {
+      this.checkClose((_) => {
         done();
-      }
+      }, force);
     },
-    handleClose(done) {
-      if (this.drawerEditable) {
-        this.$confirm(this.drawerEditableText, {
-          title: this.drawerTipLabel,
-          type: "info",
-        })
-          .then((_) => {
-            this.closeDrawer();
-          })
-          .catch((_) => { });
-      } else {
-        this.closeDrawer();
-      }
+    handleClose() {
+      this.checkClose(this.closeDrawer, true);
     },
   },
 };

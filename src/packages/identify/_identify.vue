@@ -13,6 +13,7 @@
           @submit.native.prevent
           :model="identifyForm"
           :rules="identifyRules"
+          :size="getValue('formSize', identifyOptions) || $xUISize"
           :label-width="getValue('formLabelWidth', identifyOptions)"
         >
           <el-form-item
@@ -20,7 +21,6 @@
             prop="inputCode"
           >
             <i-code
-              :size="getValue('size', identifyOptions) || $xUISize"
               :identifyCode="identifyCode"
               :contentWidth="120"
               :contentHeight="38"

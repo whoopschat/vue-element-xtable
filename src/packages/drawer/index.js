@@ -52,7 +52,7 @@ export function _installDrawer(Vue) {
   _drawerInstance.$mount(document.createElement('div'))
   document.body.appendChild(_drawerInstance.$el);
   onChanged(() => {
-    _drawerInstance && _drawerInstance.handleResize();
+    _drawerInstance && _drawerInstance.checkResize();
   });
   _openDrawer = function (options) {
     _drawerInstance && _drawerInstance.openDrawer(options, false);

@@ -20,6 +20,7 @@
             />
           </span>
           <el-button
+            :size="size || $xUISize"
             class="x-table-param-btn"
             icon="el-icon-search"
             @click="fetchList"

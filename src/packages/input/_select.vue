@@ -5,7 +5,7 @@
         v-model="visible"
         :disabled="!!disabled"
         :visible-arrow="false"
-        :placement="getValue('placement', configInfo) || $xUIPlacement"
+        :placement="getValue('placement', configInfo) || $xUISelectPlacement"
         :width="getValue('width', configInfo)"
         trigger="click"
       >

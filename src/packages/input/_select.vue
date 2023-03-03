@@ -2,7 +2,7 @@
   <span v-loading="configLoading">
     <template v-if="!configLoading && configInfo">
       <el-popover
-        v-model="visible"
+        :value="visible"
         :disabled="!!disabled"
         :visible-arrow="false"
         :placement="getValue('placement', configInfo) || $xUISelectPlacement"
@@ -16,30 +16,32 @@
           <div class="xTitle">
             {{ getTitleLabel() || "请选择" }}
           </div>
-          <x-table
-            ref="table"
-            v-if="visible"
-            paginationLayout="total, prev, pager, next"
-            @selectList="handleSelectList"
-            :selection="multipleable"
-            :tag="getValue('tag', configInfo)"
-            :listApi="getValue('listApi', configInfo)"
-            :btnList="getValue('btnList', configInfo)"
-            :fieldList="getValue('fieldList', configInfo)"
-            :paramList="getValue('paramList', configInfo)"
-            :retryLabel="getValue('retryLabel', configInfo)"
-            :emptyLabel="getValue('emptyLabel', configInfo)"
-            :searchLabel="getValue('searchLabel', configInfo)"
-            :actionLabel="getValue('actionLabel', configInfo)"
-            :actionFixed="getValue('actionFixed', configInfo)"
-            :actionWidth="getValue('actionWidth', configInfo)"
-            :defaultSort="getValue('defaultSort', configInfo)"
-            :defaultPageSize="getValue('defaultPageSize', configInfo)"
-            :defaultParams="getValue('defaultParams', configInfo)"
-            :filterMethod="filterMethod"
-            :filterLabelMethod="filterLabelMethod"
-            :actionList="getActionList()"
-          />
+          <div class="xContent">
+            <x-table
+              ref="table"
+              paginationLayout="total, prev, next"
+              @selectList="handleSelectList"
+              :selection="multipleable"
+              :tag="getValue('tag', configInfo)"
+              :listApi="getValue('listApi', configInfo)"
+              :btnList="getValue('btnList', configInfo)"
+              :fieldList="getValue('fieldList', configInfo)"
+              :paramList="getValue('paramList', configInfo)"
+              :retryLabel="getValue('retryLabel', configInfo)"
+              :emptyLabel="getValue('emptyLabel', configInfo)"
+              :searchLabel="getValue('searchLabel', configInfo)"
+              :actionLabel="getValue('actionLabel', configInfo)"
+              :actionFixed="getValue('actionFixed', configInfo)"
+              :actionWidth="getValue('actionWidth', configInfo)"
+              :unshiftList="getValue('unshiftList', configInfo)"
+              :defaultSort="getValue('defaultSort', configInfo)"
+              :defaultPageSize="getValue('defaultPageSize', configInfo)"
+              :defaultParams="getValue('defaultParams', configInfo)"
+              :filterLabelMethod="filterLabelMethod"
+              :filterMethod="filterMethod"
+              :actionList="getActionList()"
+            />
+          </div>
           <div class="xFooter" v-if="multipleable">
             <el-button @click="handleCancelClick" :size="size">
               {{ getValue("cancelLabel", configInfo) || "取消" }}
@@ -104,6 +106,11 @@
 
 <style lang="less">
 .xInputSelect {
+  .xContent {
+    padding: 20px;
+    min-height: 100px;
+  }
+
   .xClose {
     float: right;
     padding: 2px 0;
@@ -187,6 +194,7 @@ export default {
       configErrorMsg: null,
       detailErrorMsg: null,
       detailLoading: false,
+      clearTime: 0
     };
   },
   watch: {
@@ -195,13 +203,13 @@ export default {
       this.selectList = [];
       this.refreshConfig();
     },
+    value() {
+      this.fetchDetail();
+    },
     options() {
       this.visible = false;
       this.selectList = [];
       this.refreshConfig();
-    },
-    value() {
-      this.fetchDetail();
     },
     visible() {
       if (!this.visible) {
@@ -226,7 +234,7 @@ export default {
   computed: {
     selectValue() {
       if (!this.select) {
-        return;
+        return this.getValue("defaultValue", this.configInfo);
       }
       return this.getValue("value", this.configInfo, this.select);
     },
@@ -239,6 +247,9 @@ export default {
       this.visible = false;
     },
     showDialog() {
+      if (Date.now() - this.clearTime < 1000) {
+        return;
+      }
       this.visible = true;
     },
     handleOpenClick() {
@@ -303,7 +314,7 @@ export default {
     },
     getValueLabel() {
       if (!this.select) {
-        return;
+        return this.getValue("defalueValueLabel", this.configInfo);
       }
       return (
         this.getValue("renderLabel", this.configInfo) ||
@@ -326,6 +337,7 @@ export default {
       this.selectList = list;
     },
     handleClearClick() {
+      this.clearTime = Date.now();
       this.handleSelectClick(null);
     },
     handleSelectClick(row) {

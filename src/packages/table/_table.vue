@@ -232,6 +232,12 @@ export default {
         return [];
       },
     },
+    unshiftList: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
     paramList: {
       type: Array,
       default: () => {
@@ -259,7 +265,7 @@ export default {
     },
     actionFixed: {
       type: String | Boolean,
-      default: "right",
+      default: false,
     },
     actionWidth: {
       type: Number,
@@ -506,6 +512,7 @@ export default {
           orderBy: this.currentOrderBy || this.defaultSort,
         }).then((resp) => {
           this.dataList = resp.list || [];
+          this.dataList.unshift(...(this.unshiftList || []));
           this.currentTotal = parseInt(resp.total) || 0;
           this.currentPage = parseInt(resp.page) || this.currentPage;
           this.currentSize = parseInt(resp.size) || this.currentSize;

@@ -159,7 +159,6 @@ export default {
     },
     checkResize() {
       let curComponent = this.getCurComp();
-      console.log(curComponent);
       if (curComponent && typeof curComponent['getDrawerWidth'] == 'function') {
         this.autoSize = curComponent['getDrawerWidth']();
         if (this.autoSize) {

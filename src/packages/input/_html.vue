@@ -8,6 +8,7 @@
   z-index: 99999;
 }
 .ql-editor {
+  min-height: 240px;
   img {
     max-width: 100%;
   }
@@ -113,7 +114,7 @@ export default {
               [{ font: [] }],
               [{ align: [] }],
               ["clean"],
-              ["link", "image", "video"],
+              ["image"],
             ],
             handlers: {
               image: function () {
@@ -143,7 +144,7 @@ export default {
           if (parent) {
             parent.$emit.apply(parent, [eventName].concat(params));
           }
-        } catch (error) {}
+        } catch (error) { }
       }, 200);
     },
     handleInputConfirm() {

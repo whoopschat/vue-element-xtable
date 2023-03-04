@@ -13,7 +13,9 @@
               v-model="param.value"
               @change="handleChangeParams()"
               :disabled="getValue('disabled', param)"
-              :clearable="!getValue('default', param)"
+              :clearable="
+                !!(param.value && param.value != getValue('default', param))
+              "
               :size="getValue('size', param) || size || $xUISize"
               :styleValue="getValue('styleValue', param) || 'width: 150px;'"
               :options="getParamOptions(param)"
@@ -183,6 +185,7 @@
         @size-change="handleSizeChange"
         :total="currentTotal"
         :page-size="currentSize"
+        :page-sizes="paginationPageSizes"
         :current-page="currentPage"
         :layout="paginationLayout"
       ></el-pagination>
@@ -309,7 +312,13 @@ export default {
     },
     paginationLayout: {
       type: String,
-      default: "total, sizes, prev, pager, next, jumper",
+      default: "total, sizes, prev, next, jumper",
+    },
+    paginationPageSizes: {
+      type: Array,
+      default: () => {
+        return [5, 10, 50, 100, 300, 500, 1000];
+      },
     },
     selection: {
       type: Boolean,

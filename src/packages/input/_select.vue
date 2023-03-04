@@ -19,7 +19,7 @@
           <div class="xContent">
             <x-table
               ref="table"
-              paginationLayout="total, prev, next"
+              paginationLayout="total, sizes, prev, next"
               @selectList="handleSelectList"
               :selection="multipleable"
               :tag="getValue('tag', configInfo)"

@@ -314,7 +314,7 @@ export default {
     },
     getValueLabel() {
       if (!this.select) {
-        return this.getValue("defalueValueLabel", this.configInfo);
+        return this.getValue("defaultValueLabel", this.configInfo);
       }
       return (
         this.getValue("renderLabel", this.configInfo) ||

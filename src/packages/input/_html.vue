@@ -13,6 +13,34 @@
     max-width: 100%;
   }
 }
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10px"]::before {
+  content: "10px";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="12px"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="12px"]::before {
+  content: "12px";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14px"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
+  content: "14px";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16px"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
+  content: "16px";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="20px"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="20px"]::before {
+  content: "20px";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="24px"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="24px"]::before {
+  content: "24px";
+}
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="36px"]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="36px"]::before {
+  content: "36px";
+}
 </style>
 
 <script>
@@ -33,6 +61,10 @@ Quill.register("modules/ImageExtend", ImageExtend);
 // image resize
 import QuillResize from "./_quill/resize/index";
 Quill.register("modules/resize", QuillResize);
+// 自定义文字大小
+let fontSize = ['10px', '12px', '14px', '16px', '20px', '24px', '36px']
+Quill.imports['attributors/style/size'].whitelist = fontSize;
+Quill.register(Quill.imports['attributors/style/size']);
 
 export default {
   components: {
@@ -101,18 +133,14 @@ export default {
           },
           toolbar: {
             container: [
+              [{ size: fontSize }],
+              [{ align: [] }],
+              [{ color: [] }, { background: [] }],
               ["bold", "italic", "underline", "strike"],
-              ["blockquote", "code-block"],
-              [{ header: 1 }, { header: 2 }],
+              ["blockquote"],
               [{ list: "ordered" }, { list: "bullet" }],
               [{ script: "sub" }, { script: "super" }],
               [{ indent: "-1" }, { indent: "+1" }],
-              [{ direction: "rtl" }],
-              [{ size: ["small", false, "large", "huge"] }],
-              [{ header: [1, 2, 3, 4, 5, 6, false] }],
-              [{ color: [] }, { background: [] }],
-              [{ font: [] }],
-              [{ align: [] }],
               ["clean"],
               ["image"],
             ],

@@ -7,10 +7,6 @@ declare module "vue-element-xui" {
     component: any,
     /** 刷新回调 */
     refresh?: Function,
-    /** 编辑模式 */
-    editable?: boolean,
-    /** 编辑模式提示文案 */
-    editableText?: string,
     /** Params参数 */
     params?: any,
     /** Query参数 */
@@ -50,6 +46,10 @@ declare module "vue-element-xui" {
 
 
   interface Drawer {
+    /**
+     * 是否打开
+     */
+    isOpened(): boolean;
 
     /**
      * 关闭页面

@@ -42,20 +42,6 @@
         :disabled="disabled"
       />
     </template>
-    <template v-else-if="getValue('type', options, null, type) == 'address'">
-      <x-address
-        ref="input"
-        v-model="inputValue"
-        @blur="handleBlur"
-        @change="handleChange"
-        :size="getValue('size', options) || $xUISize"
-        :style="styleValue || getValue('styleValue', options)"
-        :placeholder="placeholder || getValue('label', options)"
-        :clearable="clearable"
-        :disabled="disabled"
-      >
-      </x-address>
-    </template>
     <template v-else-if="getValue('type', options, null, type) == 'html'">
       <x-html
         ref="input"
@@ -193,13 +179,11 @@
 <script>
 import XHtml from "./_html.vue";
 import XSelect from "./_select.vue";
-import XAddress from "./_address.vue";
 import XUpload from "./_upload.vue";
 
 export default {
   components: {
     XSelect,
-    XAddress,
     XUpload,
     XHtml,
   },
@@ -282,7 +266,7 @@ export default {
           if (parent) {
             parent.$emit.apply(parent, [eventName].concat(params));
           }
-        } catch (error) {}
+        } catch (error) { }
       }, 200);
     },
     getValueLabel() {
@@ -297,7 +281,7 @@ export default {
               }
             });
           }
-        } catch (error) {}
+        } catch (error) { }
       }
       if (!valueLabel) {
         valueLabel = this.getValue("valueLabel", this.options, this.value);

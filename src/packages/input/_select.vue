@@ -378,17 +378,22 @@ export default {
         let detailApi = this.getValue("detailApi", this.configInfo);
         let defaultParams = this.getValue("defaultParams", this.configInfo) || {};
         let dataParams = this.getValue("params", this.configInfo, this.value) || {};
-        return this.$xUIDataDetailHandler(detailApi, Object.assign({}, defaultParams, dataParams))
-          .then((resp) => {
-            this.select = resp;
-          })
-          .catch((err) => {
-            console.error(err);
-            this.detailErrorMsg = err || "请求数据失败";
-          })
-          .finally(() => {
-            this.detailLoading = false;
-          });
+        let requestParams = Object.assign({}, defaultParams, dataParams);
+        return Promise.resolve().then(() => {
+          return this.getValue("handleFetchDetail", this.configInfo, requestParams)
+        }).catch(() => { }).then(resp => {
+          if (!resp) {
+            return this.$xUIDataDetailHandler(detailApi, requestParams);
+          }
+          return resp;
+        }).then((resp) => {
+          this.select = resp;
+        }).catch((err) => {
+          console.error(err);
+          this.detailErrorMsg = err || "请求数据失败";
+        }).finally(() => {
+          this.detailLoading = false;
+        });
       });
     },
     refreshConfig() {

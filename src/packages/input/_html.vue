@@ -133,7 +133,7 @@ export default {
           },
           toolbar: {
             container: [
-              [{ size: fontSize }],
+              [{ size: [false, ...fontSize] }],
               [{ align: [] }],
               [{ color: [] }, { background: [] }],
               ["bold", "italic", "underline", "strike"],

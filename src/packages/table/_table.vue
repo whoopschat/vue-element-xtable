@@ -310,6 +310,9 @@ export default {
     filterLabelMethod: {
       type: Function,
     },
+    handleFetchList: {
+      type: Function,
+    },
     paginationLayout: {
       type: String,
       default: "total, sizes, prev, next, jumper",
@@ -515,10 +518,21 @@ export default {
       this.$nextTick(() => {
         this.fetchLoading = true;
         this.fetchErrorMsg = null;
-        return this.$xUIDataListHandler(this.listApi, this.dataParams, {
-          pageNum: this.currentPage,
-          pageSize: this.currentSize || this.defaultPageSize,
-          orderBy: this.currentOrderBy || this.defaultSort,
+        return Promise.resolve().then(() => {
+          return this.handleFetchList && this.handleFetchList(this.dataParams, {
+            pageNum: this.currentPage,
+            pageSize: this.currentSize || this.defaultPageSize,
+            orderBy: this.currentOrderBy || this.defaultSort,
+          })
+        }).catch(() => { }).then(resp => {
+          if (!resp) {
+            return this.$xUIDataListHandler(this.listApi, this.dataParams, {
+              pageNum: this.currentPage,
+              pageSize: this.currentSize || this.defaultPageSize,
+              orderBy: this.currentOrderBy || this.defaultSort,
+            })
+          }
+          return resp;
         }).then((resp) => {
           this.dataList = resp.list || [];
           this.dataList.unshift(...(this.unshiftList || []));

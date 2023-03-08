@@ -11,6 +11,14 @@
 </template>
 
 <style lang="less">
+.quill-editor {
+  background: #ffffff;
+
+  &.is-disabled {
+    background: #f1f1f1;
+  }
+}
+
 .ql-editor {
   max-width: 100%;
   min-height: 240px;
@@ -211,7 +219,9 @@ export default {
     },
     initEditor() {
       this.loading = false;
-      this.refreshDisabled();
+      this.$nextTick(() => {
+        this.refreshDisabled();
+      })
     },
     refreshDisabled() {
       if (this.$refs.myQuillEditor) {

@@ -1,7 +1,7 @@
 import BaseModule from './BaseModule'
 
 export default class Keyboard extends BaseModule {
-  static injectInit (quill) {
+  static injectInit(quill) {
     // left/right
     const bindings = quill.keyboard.bindings
     bindings[this.keys.LEFT].unshift(
@@ -27,7 +27,7 @@ export default class Keyboard extends BaseModule {
     // }
   }
 
-  static makeArrowHandler (key, shiftKey) {
+  static makeArrowHandler(key, shiftKey) {
     const where = key === Keyboard.keys.LEFT ? 'prefix' : 'suffix'
     return {
       key,
@@ -67,16 +67,16 @@ export default class Keyboard extends BaseModule {
     }
   }
 
-  onCreate (e) {
+  onCreate(e) {
     this.keyboardProxy = evt => this.keyboardHandle(evt)
     document.addEventListener('keydown', this.keyboardProxy, true)
   }
 
-  onDestroy () {
+  onDestroy() {
     document.removeEventListener('keydown', this.keyboardProxy, true)
   }
 
-  keyboardHandle (evt) {
+  keyboardHandle(evt) {
     if (evt.defaultPrevented) return
     if (evt.shiftKey || evt.ctrlKey || evt.altKey) {
       return
@@ -94,7 +94,7 @@ export default class Keyboard extends BaseModule {
       this.blot.parent.optimize()
       handled = true
 
-    // direction key
+      // direction key
     } else if (code >= Keyboard.keys.LEFT && code <= Keyboard.keys.DOWN) {
       if (code === Keyboard.keys.RIGHT) {
         index++
@@ -119,7 +119,7 @@ export default class Keyboard extends BaseModule {
     this.resizer.hide()
   }
 
-  getOtherLineIndex (dir) {
+  getOtherLineIndex(dir) {
     let index = this.blot.offset(this.quill.scroll)
     const [line] = this.quill.getLine(index)
     const lineIndex = this.blot.offset(line) + 1
@@ -136,7 +136,7 @@ export default class Keyboard extends BaseModule {
   }
 
   // 转发event到quill
-  dispatchEvent (evt) {
+  dispatchEvent(evt) {
     const event = new evt.constructor(evt)
     event.fromResize = true
     this.quill.root.dispatchEvent(event)

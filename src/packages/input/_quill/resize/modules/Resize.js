@@ -1,7 +1,7 @@
 import BaseModule from './BaseModule'
 
 export default class Resize extends BaseModule {
-  onCreate () {
+  onCreate() {
     // track resize handles
     this.boxes = []
 
@@ -14,29 +14,31 @@ export default class Resize extends BaseModule {
     this.positionBoxes()
   }
 
-  onDestroy () {
+  onDestroy() {
     // reset drag handle cursors
     this.setCursor('')
   }
 
-  positionBoxes () {
-    const handleXOffset = `${-parseFloat(this.options.styles.handle.width) /
-      2}px`
-    const handleYOffset = `${-parseFloat(this.options.styles.handle.height) /
-      2}px`
+  positionBoxes() {
+    if (this.boxes && this.boxes.length > 0) {
+      const handleXOffset = `${-parseFloat(this.options.styles.handle.width) /
+        2}px`
+      const handleYOffset = `${-parseFloat(this.options.styles.handle.height) /
+        2}px`
 
-    // set the top and left for each drag handle
-    ;[
-      { left: handleXOffset, top: handleYOffset }, // top left
-      { right: handleXOffset, top: handleYOffset }, // top right
-      { right: handleXOffset, bottom: handleYOffset }, // bottom right
-      { left: handleXOffset, bottom: handleYOffset } // bottom left
-    ].forEach((pos, idx) => {
-      Object.assign(this.boxes[idx].style, pos)
-    })
+        // set the top and left for each drag handle
+        ;[
+          { left: handleXOffset, top: handleYOffset }, // top left
+          { right: handleXOffset, top: handleYOffset }, // top right
+          { right: handleXOffset, bottom: handleYOffset }, // bottom right
+          { left: handleXOffset, bottom: handleYOffset } // bottom left
+        ].forEach((pos, idx) => {
+          Object.assign(this.boxes[idx].style, pos)
+        })
+    }
   }
 
-  addBox (cursor) {
+  addBox(cursor) {
     // create div element for resize handle
     const box = document.createElement('div')
 
@@ -56,7 +58,7 @@ export default class Resize extends BaseModule {
     this.boxes.push(box)
   }
 
-  handleMousedown (evt) {
+  handleMousedown(evt) {
     this.blot.handling && this.blot.handling(true)
     // note which box
     this.dragBox = evt.target
@@ -80,7 +82,7 @@ export default class Resize extends BaseModule {
     document.addEventListener('mouseup', this.handleMouseupProxy, false)
   }
 
-  handleMouseup () {
+  handleMouseup() {
     // reset cursor everywhere
     this.setCursor('')
     this.blot.handling && this.blot.handling(false)
@@ -89,7 +91,7 @@ export default class Resize extends BaseModule {
     document.removeEventListener('mouseup', this.handleMouseupProxy)
   }
 
-  handleDrag (evt) {
+  handleDrag(evt) {
     if (!this.activeEle || !this.blot) {
       // activeEle not set yet
       return
@@ -102,9 +104,9 @@ export default class Resize extends BaseModule {
     const size = {}
     let direction = 1
 
-    ;(options.attribute || ['width']).forEach(key => {
-      size[key] = this.preDragSize[key]
-    })
+      ; (options.attribute || ['width']).forEach(key => {
+        size[key] = this.preDragSize[key]
+      })
 
     // left-side
     if (this.dragBox === this.boxes[0] || this.dragBox === this.boxes[3]) {
@@ -122,7 +124,7 @@ export default class Resize extends BaseModule {
     this.requestUpdate()
   }
 
-  calcSize (size, limit = {}) {
+  calcSize(size, limit = {}) {
     let { width, height } = size
 
     // keep ratio
@@ -162,7 +164,7 @@ export default class Resize extends BaseModule {
     return size
   }
 
-  getNaturalSize () {
+  getNaturalSize() {
     const ele = this.activeEle
     let size = [0, 0]
     if (!ele.getAttribute('data-size')) {
@@ -180,7 +182,7 @@ export default class Resize extends BaseModule {
     }
   }
 
-  setCursor (value) {
+  setCursor(value) {
     [document.body, this.activeEle].forEach(el => {
       el.style.cursor = value // eslint-disable-line no-param-reassign
     })

@@ -1,5 +1,5 @@
 export default class BaseModule {
-  constructor (resizer) {
+  constructor(resizer) {
     this.resizer = resizer
     this.quill = resizer.quill
     this.overlay = resizer.overlay
@@ -27,14 +27,15 @@ export default class BaseModule {
     use your own absolute positioning and the 'top', 'right', etc. styles to be positioned relative to the element
     on-screen.
   */
-  onCreate () {}
+  onCreate() { }
 
   /*
     onDestroy will be called when the element is de-selected, or when this module otherwise needs to tidy up.
 
     If you created any DOM elements in onCreate, please remove them from the DOM and destroy them here.
   */
-  onDestroy () {}
+  onDestroy() {
+  }
 
   /*
     onUpdate will be called any time that the element is changed (e.g. resized, aligned, etc.)
@@ -42,5 +43,6 @@ export default class BaseModule {
     This frequently happens during resize dragging, so keep computations light while here to ensure a smooth
     user experience.
   */
-  onUpdate () {}
+  onUpdate() { }
+
 }

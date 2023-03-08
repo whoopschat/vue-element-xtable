@@ -1,14 +1,33 @@
 import DefaultOptions from './DefaultOptions'
 import DisplaySize from './modules/DisplaySize'
-import Toolbar from './modules/Toolbar'
-import Resize from './modules/Resize'
 import Keyboard from './modules/Keyboard'
+import Resize from './modules/Resize'
 
 import _Quill from 'quill'
 const Quill = window.Quill || _Quill
 const Parchment = Quill.import('parchment')
 
-const knownModules = { DisplaySize, Toolbar, Resize, Keyboard }
+const knownModules = { DisplaySize, Resize, Keyboard }
+
+function onAttachEvent(elem, event, fn) {
+  if (elem.addEventListener != null) {
+    elem.addEventListener(event, fn, false);
+  } else if (elem.attachEvent != null) {
+    elem.attachEvent("on" + event, fn);
+  } else {
+    elem[event] = fn;
+  }
+}
+
+function offAttachEvent(elem, event, fn) {
+  if (elem.removeEventListener != null) {
+    return elem.removeEventListener(event, fn, false);
+  } else if (elem.detachEvent != null) {
+    return elem.detachEvent("on" + event, fn);
+  } else {
+    delete elem[event];
+  }
+}
 
 /**
  * Custom module for quilljs to allow user to resize elements
@@ -16,7 +35,7 @@ const knownModules = { DisplaySize, Toolbar, Resize, Keyboard }
  * @see https://quilljs.com/blog/building-a-custom-module/
  */
 export default class QuillResize {
-  constructor (quill, options = {}) {
+  constructor(quill, options = {}) {
     quill.resizer = this
     // save the quill reference and options
     this.quill = quill
@@ -71,7 +90,7 @@ export default class QuillResize {
     }
   }
 
-  initializeModules () {
+  initializeModules() {
     this.removeModules()
 
     this.modules = this.moduleClasses.map(
@@ -85,7 +104,7 @@ export default class QuillResize {
     this.onUpdate()
   }
 
-  onUpdate (fromModule) {
+  onUpdate(fromModule) {
     this.updateFromModule = fromModule
     this.repositionElements()
     this.modules.forEach(module => {
@@ -93,7 +112,7 @@ export default class QuillResize {
     })
   }
 
-  removeModules () {
+  removeModules() {
     this.modules.forEach(module => {
       module.onDestroy()
     })
@@ -101,7 +120,7 @@ export default class QuillResize {
     this.modules = []
   }
 
-  handleEdit () {
+  handleEdit() {
     if (!this.blot) return
     const index = this.blot.offset(this.quill.scroll)
     this.hide()
@@ -109,7 +128,7 @@ export default class QuillResize {
     this.quill.setSelection(index, 1)
   }
 
-  handleClick (evt) {
+  handleClick(evt) {
     let show = false
     let blot
     const target = evt.target
@@ -131,7 +150,7 @@ export default class QuillResize {
     }
   }
 
-  judgeShow (blot, target) {
+  judgeShow(blot, target) {
     let res = false
     if (!blot) return res
 
@@ -161,7 +180,7 @@ export default class QuillResize {
     return res
   }
 
-  handleChange (delta, oldDelta, source) {
+  handleChange(delta, oldDelta, source) {
     if (this.updateFromModule) {
       this.updateFromModule = false
       return
@@ -171,13 +190,13 @@ export default class QuillResize {
     this.onUpdate()
   }
 
-  show () {
+  show() {
     this.showOverlay()
     this.initializeModules()
     if (this.options.activeClass) this.activeEle.classList.add(this.options.activeClass)
   }
 
-  showOverlay () {
+  showOverlay() {
     if (this.overlay) {
       this.hideOverlay()
     }
@@ -199,16 +218,22 @@ export default class QuillResize {
       if (!this.activeEle) return
       this.hide()
     }
+
+
     // listen for the image being deleted or moved
     this.quill.root.addEventListener('input', this.hideProxy, true)
 
     this.updateOverlayPositionProxy = this.updateOverlayPosition.bind(this)
     this.quill.root.addEventListener('scroll', this.updateOverlayPositionProxy)
 
+    // listen for the window resize
+    this.repositionElementsProxy = this.repositionElements.bind(this)
+    onAttachEvent(window, "resize", this.repositionElementsProxy)
+
     this.repositionElements()
   }
 
-  hideOverlay () {
+  hideOverlay() {
     if (!this.overlay) {
       return
     }
@@ -222,11 +247,14 @@ export default class QuillResize {
     this.quill.root.removeEventListener('input', this.hideProxy, true)
     this.quill.root.removeEventListener('scroll', this.updateOverlayPositionProxy)
 
+    // stop listening for the window resize
+    offAttachEvent(window, "resize", this.repositionElementsProxy)
+
     // reset user-select
     this.setUserSelect('')
   }
 
-  repositionElements () {
+  repositionElements() {
     if (!this.overlay || !this.activeEle) {
       return
     }
@@ -245,11 +273,11 @@ export default class QuillResize {
     })
   }
 
-  updateOverlayPosition () {
+  updateOverlayPosition() {
     this.overlay.style.marginTop = -1 * this.quill.root.scrollTop + 'px'
   }
 
-  addBlotsSelectedClass (range, oldRange) {
+  addBlotsSelectedClass(range, oldRange) {
     if (!range) {
       this.removeBlotsSelectedClass()
       this.selectedBlots = []
@@ -265,7 +293,7 @@ export default class QuillResize {
     this.selectedBlots = blots
   }
 
-  removeBlotsSelectedClass (ignoreBlots = []) {
+  removeBlotsSelectedClass(ignoreBlots = []) {
     if (!Array.isArray(ignoreBlots)) ignoreBlots = [ignoreBlots]
 
     this.selectedBlots.forEach(blot => {
@@ -275,7 +303,7 @@ export default class QuillResize {
     })
   }
 
-  hide () {
+  hide() {
     this.hideOverlay()
     this.removeModules()
     if (this.activeEle && this.options.activeClass) this.activeEle.classList.remove(this.options.activeClass)
@@ -283,7 +311,7 @@ export default class QuillResize {
     this.blot = undefined
   }
 
-  setUserSelect (value) {
+  setUserSelect(value) {
     [
       'userSelect',
       'mozUserSelect',
@@ -295,6 +323,7 @@ export default class QuillResize {
       document.documentElement.style[prop] = value
     })
   }
+
 }
 
 if (window.Quill) {

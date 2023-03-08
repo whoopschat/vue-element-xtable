@@ -1,17 +1,24 @@
 <template>
-  <quill-editor v-if="!disabled" v-model="inputValue" :options="editorOption" />
-  <div class="ql-snow ql-editor" v-else v-html="inputValue"></div>
+  <quill-editor
+    ref="myQuillEditor"
+    v-model="inputValue"
+    :class="[disabled ? 'is-disabled' : '']"
+    :options="editorOption"
+  />
 </template>
 
 <style lang="less">
-.ql-snow .ql-tooltip {
-  z-index: 99999;
-}
 .ql-editor {
   min-height: 240px;
   img {
     max-width: 100%;
   }
+}
+.ql-snow .ql-formats {
+  line-height: 20px;
+}
+.ql-snow .ql-tooltip {
+  z-index: 99999;
 }
 .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
 .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10px"]::before {
@@ -51,8 +58,8 @@ import "quill/dist/quill.bubble.css";
 import { quillEditor, Quill } from "vue-quill-editor";
 
 // toolbar
-import { ButtonExtend } from "./_quill/buttonExtend";
-Quill.register("modules/buttonExtend", ButtonExtend);
+import { CustomExtend } from "./_quill/customExtend";
+Quill.register("modules/customExtend", CustomExtend);
 
 // image upload
 import { ImageExtend } from "./_quill/imageExtend";
@@ -86,34 +93,33 @@ export default {
       type: Boolean,
       default: false,
     },
-    buttons: {
+    disabledLabel: {
+      type: String,
+      default: "只读模式",
+    },
+    customs: {
       type: Array,
       default: () => {
         return [];
       },
     },
   },
-  watch: {
-    value() {
-      this.initValue();
-    },
-    inputValue() {
-      this.handleInputConfirm();
-    },
-  },
-  mounted() {
-    this.initValue();
-  },
-  data() {
-    return {
-      editor: null,
-      inputValue: null,
-      editorOption: {
+  computed: {
+    editorOption() {
+      return {
         theme: "snow",
         placeholder: this.placeholder,
         modules: {
-          buttonExtend: {
-            buttons: this.buttons,
+          resize: {
+            // See optional "config" below
+            modules: ["DisplaySize", "Resize", "Keyboard"],
+          },
+          customExtend: {
+            customs: this.disabled ? [{
+              type: "label",
+              innerHTML: this.disabledLabel,
+              styleValue: "color: #919191",
+            }] : this.customs,
           },
           ImageExtend: {
             fileType: ["image/png", "image/jpeg", "image/gif", "image/bmp"],
@@ -127,12 +133,8 @@ export default {
                 });
             },
           },
-          resize: {
-            // See optional "config" below
-            modules: ["Resize", "Toolbar"],
-          },
           toolbar: {
-            container: [
+            container: this.disabled ? [] : [
               [{ size: [false, ...fontSize] }],
               [{ align: [] }],
               [{ color: [] }, { background: [] }],
@@ -151,12 +153,38 @@ export default {
             },
           },
         },
-      },
+      }
+    }
+  },
+  watch: {
+    value() {
+      this.initValue();
+    },
+    disabled() {
+      this.refreshDisabled();
+    },
+    inputValue() {
+      this.handleInputConfirm();
+    },
+  },
+  mounted() {
+    this.initValue();
+  },
+  data() {
+    return {
+      editor: null,
+      inputValue: null,
     };
   },
   methods: {
     initValue() {
       this.inputValue = this.value;
+      this.refreshDisabled();
+    },
+    refreshDisabled() {
+      if (this.$refs.myQuillEditor) {
+        this.$refs.myQuillEditor.quill.enable(!this.disabled);
+      }
     },
     dispatch(componentName, eventName, params) {
       setTimeout(() => {

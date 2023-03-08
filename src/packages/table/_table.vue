@@ -63,7 +63,7 @@
       <el-table-column
         v-if="selection"
         type="selection"
-        width="55"
+        width="40"
       ></el-table-column>
       <el-table-column
         v-show="field"
@@ -73,6 +73,7 @@
         :width="getValue('width', field)"
         :min-width="getValue('minWidth', field)"
         :sortable="getValue('sortKey', field) ? 'custom' : null"
+        :fixed="getValue('fixed', field)"
         :prop="getValue('sortKey', field)"
       >
         <template slot-scope="scope" v-if="field">

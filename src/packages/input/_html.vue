@@ -1,14 +1,18 @@
 <template>
-  <quill-editor
-    ref="myQuillEditor"
-    v-model="inputValue"
-    :class="[disabled ? 'is-disabled' : '']"
-    :options="editorOption"
-  />
+  <div v-if="!loading">
+    <quill-editor
+      ref="myQuillEditor"
+      v-model="inputValue"
+      :class="[disabled ? 'is-disabled' : '']"
+      :options="editorOption"
+    />
+  </div>
+  <div v-else :style="loadingStyle">{{ loadingLabel }}</div>
 </template>
 
 <style lang="less">
 .ql-editor {
+  max-width: 100%;
   min-height: 240px;
   img {
     max-width: 100%;
@@ -97,6 +101,22 @@ export default {
       type: String,
       default: "只读模式",
     },
+    disabledStyle: {
+      type: String,
+      default: "color: #919191",
+    },
+    loadingLabel: {
+      type: String,
+      default: "正在加载编辑器",
+    },
+    loadingStyle: {
+      type: String,
+      default: "color: #919191",
+    },
+    loadingDelay: {
+      type: Number,
+      default: 200,
+    },
     customs: {
       type: Array,
       default: () => {
@@ -118,7 +138,7 @@ export default {
             customs: this.disabled ? [{
               type: "label",
               innerHTML: this.disabledLabel,
-              styleValue: "color: #919191",
+              styleValue: this.disabledStyle,
             }] : this.customs,
           },
           ImageExtend: {
@@ -167,18 +187,30 @@ export default {
       this.handleInputConfirm();
     },
   },
+  destroyed() {
+    if (this.initObj) {
+      clearTimeout(this.initObj);
+    }
+  },
   mounted() {
     this.initValue();
   },
   data() {
     return {
-      editor: null,
+      loading: true,
       inputValue: null,
+      initObj: null,
     };
   },
   methods: {
     initValue() {
       this.inputValue = this.value;
+      if (!this.initObj) {
+        this.initObj = setTimeout(this.initEditor, this.loadingDelay);
+      }
+    },
+    initEditor() {
+      this.loading = false;
       this.refreshDisabled();
     },
     refreshDisabled() {

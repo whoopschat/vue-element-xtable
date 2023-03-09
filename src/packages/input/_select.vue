@@ -24,7 +24,7 @@
               :selection="multipleable"
               :tag="getValue('tag', configInfo)"
               :listApi="getValue('listApi', configInfo)"
-              :btnList="getValue('btnList', configInfo)"
+              :btnList="computedBtnList"
               :fieldList="getValue('fieldList', configInfo)"
               :paramList="getValue('paramList', configInfo)"
               :retryLabel="getValue('retryLabel', configInfo)"
@@ -232,6 +232,18 @@ export default {
     },
   },
   computed: {
+    computedBtnList() {
+      let list = [];
+      let btnList = this.getValue('btnList', this.configInfo);
+      let customBtnList = this.getValue('customBtnList', this.configInfo);
+      if (btnList && btnList instanceof Array) {
+        list.push(...btnList);
+      }
+      if (customBtnList && customBtnList instanceof Array) {
+        list.push(...customBtnList);
+      }
+      return list;
+    },
     selectValue() {
       if (!this.select) {
         return this.getValue("defaultValue", this.configInfo);

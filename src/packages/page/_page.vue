@@ -1,46 +1,68 @@
 <template>
-  <div class="xPage" v-resize="handleResize">
+  <div class="xPage" v-resize="handleResize" :style="pageStyle">
     <template v-if="noFrame">
       <slot></slot>
     </template>
     <template v-else>
-      <div ref="pageHeader" class="pageHeader">
-        <div>
-          <div class="headerTop">
-            <slot name="header"></slot>
-            <div class="headerRight">
-              <slot name="header-right"></slot>
-            </div>
-          </div>
-          <div class="headerMenu" v-if="menus && menus.length > 1">
-            <el-menu mode="horizontal" menu-trigger="click" :collapse-transition="false" :default-active="currentIndex"
-              @select="handleMenuClick">
-              <el-menu-item v-show="getValue('show', item, null, true)" v-for="(item, index) in menus"
-                :key="'x-page-menu-' + index" :index="'' + index">
-                {{ getValue("label", item) }}
+      <div
+        v-if="menus"
+        :class="'x-page-menu' + (isCollapse ? ' x-menu-collapse' : '')"
+      >
+        <slot v-if="!isCollapse" name="menu-header"></slot>
+        <slot v-else name="menu-collapse-header"></slot>
+        <el-menu
+          mode="vertical"
+          menu-trigger="click"
+          :collapse="isCollapse"
+          :collapse-transition="false"
+          :default-active="actionName"
+          @select="handleMenuClick"
+        >
+          <template v-for="(item, index) in menus">
+            <el-submenu
+              v-if="item.children"
+              v-show="getValue('show', item, null, true)"
+              :disabled="getValue('disabled', item, null, false)"
+              :key="'x-page-menu-' + index"
+              :index="'' + index"
+            >
+              <template slot="title">
+                <i v-if="item.icon" :class="getValue('icon', item)"></i>
+                <span> {{ getValue("label", item) }}</span>
+              </template>
+              <el-menu-item
+                v-for="(children, cIndex) in item.children"
+                v-show="getValue('show', children, null, true)"
+                :disabled="getValue('disabled', children, null, false)"
+                :key="'x-page-menu-child-' + cIndex"
+                :index="index + '_' + cIndex"
+              >
+                <template slot="title">
+                  <i
+                    v-if="children.icon"
+                    :class="getValue('icon', children)"
+                  ></i>
+                  <span> {{ getValue("label", children) }}</span>
+                </template>
               </el-menu-item>
-            </el-menu>
-          </div>
-        </div>
+            </el-submenu>
+            <el-menu-item
+              v-else
+              v-show="getValue('show', item, null, true)"
+              :disabled="getValue('disabled', item, null, false)"
+              :index="'' + index"
+            >
+              <i v-if="item.icon" :class="getValue('icon', item)"></i>
+              <span slot="title"> {{ getValue("label", item) }}</span>
+            </el-menu-item>
+          </template>
+        </el-menu>
       </div>
-      <div class="pageContent" :style="'padding-top: ' + currentHeaderHeight + 'px;height: 100%;'"
-        v-if="contentLeftStyle && contentBodyStyle">
-        <template v-if="hasChildren">
-          <div class="contentLeft" :style="contentLeftStyle">
-            <el-menu mode="vertical" menu-trigger="click" :collapse-transition="false" :index="currentChildrenIndex"
-              :default-active="currentChildrenIndex" @select="handleChildrenClick">
-              <el-menu-item v-show="getValue('show', children, null, true)"
-                v-for="(children, cIndex) in currentItem.children" :key="'x-page-menu-' + cIndex" :index="'' + cIndex">
-                <i v-if="children.icon" :class="getValue('icon', children)"></i>
-                {{ getValue("label", children) }}
-              </el-menu-item>
-            </el-menu>
-          </div>
-          <div class="contentBody" :style="contentBodyStyle">
-            <slot></slot>
-          </div>
-        </template>
-        <div v-else class="contentBody" :style="contentBodyStyle">
+      <div :class="'x-page-content' + (isCollapse ? ' x-menu-collapse' : '')">
+        <div ref="header">
+          <slot name="content-header"></slot>
+        </div>
+        <div class="x-page-slot-content">
           <slot></slot>
         </div>
       </div>
@@ -49,90 +71,132 @@
 </template>
 
 <style lang="less">
-@menuItemHeight: 50px;
-
 .xPage {
-  white-space: normal;
-  word-break: break-all;
-  word-wrap: break-word;
-  min-width: 500px;
+  z-index: 499;
+
+  .x-page-content {
+    overflow: auto;
+    position: fixed;
+    flex-direction: column;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    height: var(--page-height);
+    width: calc(100% - var(--page-menu-border-width) - var(--page-menu-width));
+    background-color: var(--page-content-bg-color);
+    &.x-menu-collapse {
+      width: calc(
+        100% - var(--page-menu-border-width) - var(--page-menu-collapse-width)
+      );
+    }
+
+    .el-card {
+      border: 0px solid #ebeef5 !important;
+    }
+  }
+
+  .x-page-menu {
+    overflow: auto;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    vertical-align: top;
+    display: inline-block;
+    width: var(--page-menu-width);
+    color: var(--page-menu-text-color);
+    background-color: var(--page-menu-bg-color);
+    border-right: solid var(--page-menu-border-width)
+      var(--page-menu-border-color);
+
+    &.x-menu-collapse {
+      width: var(--page-menu-collapse-width);
+    }
+  }
+
+  .el-menu {
+    width: auto;
+    color: var(--page-menu-text-color);
+    background-color: var(--page-menu-bg-color);
+    border: 0px;
+
+    .el-submenu__title {
+      width: auto;
+      height: var(--page-menu-item-height);
+      line-height: var(--page-menu-item-height);
+      min-width: calc(
+        var(--page-menu-collapse-width)- var(--page-menu-border-width)
+      );
+      max-width: calc(var(--page-menu-width)- var(--page-menu-border-width));
+
+      color: var(--page-menu-text-color);
+      i {
+        color: var(--page-menu-text-color);
+      }
+    }
+
+    .el-submenu__title.is-active {
+      background-color: var(--page-menu-bg-active-color);
+      color: var(--page-menu-text-active-color);
+
+      i {
+        color: var(--page-menu-text-active-color);
+      }
+    }
+    .el-submenu__title:hover {
+      background-color: var(--page-menu-bg-hover-color);
+      color: var(--page-menu-text-hover-color);
+
+      i {
+        color: var(--page-menu-text-hover-color);
+      }
+    }
+
+    .el-menu-item {
+      width: auto;
+      height: var(--page-menu-item-height);
+      line-height: var(--page-menu-item-height);
+      min-width: calc(
+        var(--page-menu-collapse-width)- var(--page-menu-border-width)
+      );
+      max-width: calc(var(--page-menu-width)- var(--page-menu-border-width));
+      color: var(--page-menu-text-color);
+
+      i {
+        color: var(--page-menu-text-color);
+      }
+    }
+    .el-menu-item.is-active {
+      background-color: var(--page-menu-bg-active-color);
+      color: var(--page-menu-text-active-color);
+
+      i {
+        color: var(--page-menu-text-active-color);
+      }
+    }
+    .el-menu-item:hover {
+      background-color: var(--page-menu-bg-hover-color);
+      color: var(--page-menu-text-hover-color);
+
+      i {
+        color: var(--page-menu-text-hover-color);
+      }
+    }
+  }
 
   // 滚动条的宽度
   ::-webkit-scrollbar {
     width: 0px; // 横向滚动条
     height: 16px; // 纵向滚动条 必写
   }
-
   // 滚动条的滑块
   ::-webkit-scrollbar-thumb {
     background-color: #ddd;
   }
-
   ::-webkit-scrollbar-track {
     /*滚动条里面轨道*/
     background: #eee;
-  }
-
-  .el-menu {
-    border-right: solid 0px #e6e6e6 !important;
-  }
-
-  .el-menu.el-menu--horizontal {
-    border-bottom: solid 0px #e6e6e6 !important;
-  }
-
-  .el-menu-item {
-    height: @menuItemHeight;
-    line-height: @menuItemHeight;
-  }
-
-  .pageHeader {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    z-index: 500;
-    background-color: #ffffff;
-
-    .headerMenu {
-      border-bottom: solid 1px #e6e6e6;
-    }
-
-    .headerRight {
-      position: fixed;
-      right: 10px;
-      top: 0;
-      z-index: 600;
-    }
-
-  }
-
-  .pageContent {
-    position: fixed;
-    overflow: auto;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 499;
-
-    .contentLeft {
-      display: inline-block;
-      background-color: #ffffff;
-      border-bottom: solid 0px #e6e6e6;
-      border-right: solid 1px #e6e6e6;
-      vertical-align: top;
-    }
-
-    .contentBody {
-      float: right;
-      overflow: auto;
-      background-color: #ffffff;
-
-      .el-card {
-        border: 0px solid #ebeef5 !important;
-      }
-    }
   }
 }
 </style>
@@ -140,7 +204,7 @@
 <script>
 export default {
   props: {
-    path: {
+    value: {
       type: String,
       default: "",
     },
@@ -152,27 +216,67 @@ export default {
       type: Boolean,
       default: false,
     },
-    childrenWidth: {
+    collapseWidth: {
+      type: Number,
+      default: 800,
+    },
+    menuWidth: {
       type: Number,
       default: 170,
+    },
+    menuBgColor: {
+      type: String,
+      default: "#c25b4e",
+    },
+    menuBgHoverColor: {
+      type: String,
+      default: "#a7493d",
+    },
+    menuBgActiveColor: {
+      type: String,
+      default: "#a7493d",
+    },
+    menuTextColor: {
+      type: String,
+      default: "#ffffff",
+    },
+    menuTextHoverColor: {
+      type: String,
+      default: "#c5e1fd",
+    },
+    menuTextActiveColor: {
+      type: String,
+      default: "#c5e1fd",
+    },
+    menuBorderColor: {
+      type: String,
+      default: "#ff0000",
+    },
+    menuBorderWidth: {
+      type: Number,
+      default: 1,
+    },
+    menuCollapseWidth: {
+      type: Number,
+      default: 70,
+    },
+    menuItemHeight: {
+      type: Number,
+      default: 50,
     },
   },
   data() {
     return {
-      currentIndex: "-",
-      currentChildrenIndex: "-",
-      currentItem: null,
-      currentHeaderHeight: 0,
-      currentContentHeight: 0,
-      contentLeftStyle: null,
-      contentBodyStyle: null,
+      isCollapse: false,
+      actionName: "-",
+      pageStyle: null,
     };
   },
   watch: {
     menus() {
       this.initMenu();
     },
-    path() {
+    value() {
       this.initMenu();
     },
   },
@@ -182,78 +286,59 @@ export default {
   created() {
     this.handleResize();
   },
-  computed: {
-    hasChildren() {
-      return (
-        this.currentItem &&
-        this.currentItem.children &&
-        this.currentItem.children.length > 1
-      );
-    },
-  },
   methods: {
     initMenu() {
-      this.currentIndex = this.getMenuIndex(this.menus, false);
-      this.currentItem = this.menus[this.currentIndex];
-      if (this.hasChildren) {
-        this.currentChildrenIndex = this.getMenuIndex(this.currentItem.children, false);
-      }
+      this.actionName = '-';
+      this.$nextTick(() => {
+        this.actionName = this.getActionName(this.menus);
+        console.log(this.value, this.actionName)
+      })
       this.handleResize();
     },
-    getMenuIndex(list, auto) {
+    getActionName(list) {
       let actionName;
+      let matchFull = false;
       list.forEach((item, index) => {
-        if (
-          item.path &&
-          this.getValue("show", item, null, true) &&
-          new RegExp(item.path).test(this.path)
-        ) {
-          actionName = `${index}`;
+        if (!matchFull) {
+          if (item.children && item.children.length > 0) {
+            let subIndex = this.getActionName(item.children);
+            if (subIndex) {
+              actionName = `${index}_${subIndex}`
+            }
+          } else if (item.path
+            && this.getValue("show", item, null, true)
+            && !this.getValue("disabled", item, null, false)
+            && new RegExp(item.path).test(this.value)
+          ) {
+            if (item.path == this.value) {
+              matchFull = true;
+            }
+            actionName = `${index}`;
+          }
         }
       });
-      if (!actionName && auto) {
-        let flag = false;
-        list.forEach((item, index) => {
-          if (!flag && this.getValue("show", item, null, true)) {
-            actionName = `${index}`;
-            flag = true;
-          }
-        });
-      }
       return actionName;
     },
     handleResize() {
       try {
-        if (this.$refs.pageHeader) {
-          this.currentHeaderHeight = this.$refs.pageHeader.offsetHeight;
+        this.pageStyle = {
+          "--page-menu-width": `${this.menuWidth}px`,
+          "--page-menu-item-height": `${this.menuItemHeight}px`,
+          "--page-menu-collapse-width": `${this.menuCollapseWidth}px`,
+          "--page-menu-bg-color": this.menuBgColor,
+          "--page-menu-bg-hover-color": this.menuBgHoverColor,
+          "--page-menu-bg-active-color": this.menuBgActiveColor,
+          "--page-menu-text-color": this.menuTextColor,
+          "--page-menu-text-hover-color": this.menuTextHoverColor,
+          "--page-menu-text-active-color": this.menuTextActiveColor,
+          "--page-menu-border-color": this.menuBorderColor,
+          "--page-menu-border-width": `${this.menuBorderWidth || 0}px`
         }
-      } catch (error) { }
-      try {
-        this.currentContentHeight =
-          document.documentElement.clientHeight - this.currentHeaderHeight;
-      } catch (error) { }
-      try {
         let width = document.documentElement.clientWidth;
-        if (this.hasChildren && width > 800) {
-          this.contentLeftStyle = {
-            width: this.childrenWidth + "px",
-            borderRight: "solid 1px #e6e6e6",
-            height: this.currentContentHeight + "px",
-          };
-          this.contentBodyStyle = {
-            width: `${width - this.childrenWidth - 2}px`,
-            height: this.currentContentHeight + "px",
-          };
+        if (width > this.collapseWidth) {
+          this.isCollapse = false;
         } else {
-          this.contentLeftStyle = {
-            width: "100%",
-            borderRight: "none",
-            borderBottom: "solid 1px #e6e6e6",
-          };
-          this.contentBodyStyle = {
-            width: "100%",
-            height: this.currentContentHeight + "px",
-          };
+          this.isCollapse = true;
         }
       } catch (error) { }
     },
@@ -280,33 +365,25 @@ export default {
       }
     },
     handleMenuClick(index) {
-      this.currentIndex = index;
-      this.currentItem = this.menus[index];
-      if (this.currentItem) {
-        if (this.currentItem.children && this.currentItem.children.length > 0) {
-          this.currentChildrenIndex = this.getMenuIndex(
-            this.currentItem.children,
-            true
-          );
-          this.handleChildrenClick(this.currentChildrenIndex);
+      let splitIndex = `${index}`.split("_");
+      let currentItem = this.menus[Number(splitIndex[0])];
+      if (currentItem) {
+        if (currentItem.children && currentItem.children.length > 0) {
+          let childrenIndex = 0;
+          if (splitIndex.length > 1) {
+            childrenIndex = Number(splitIndex[1])
+          }
+          let currentChildrenItem = currentItem.children[childrenIndex];
+          this.callEvent("click", currentChildrenItem);
+          this.$emit("click", currentChildrenItem);
         } else {
-          this.callEvent("click", this.currentItem);
-          this.$emit("click", this.currentItem);
+          this.callEvent("click", currentItem);
+          this.$emit("click", currentItem);
         }
+        this.$emit("change", index);
         this.handleResize();
       }
-    },
-    handleChildrenClick(index) {
-      if (this.currentItem) {
-        let childrenSelectItem = this.currentItem.children[index];
-        if (childrenSelectItem) {
-          this.currentChildrenIndex = index;
-          this.callEvent("click", childrenSelectItem);
-          this.$emit("click", childrenSelectItem);
-          this.$nextTick(() => { this.currentChildrenIndex = this.getMenuIndex(this.currentItem.children, true) });
-        }
-      }
-    },
+    }
   },
 };
 </script>

@@ -1,35 +1,35 @@
 <template>
   <div class="xUpload" :style="uploadStyle">
-    <div class="x-upload-file-list">
-      <span :key="i" v-for="(url, i) in currentUrls">
-        <div class="x-upload-item-image" v-if="type == 'image'">
-          <div
-            class="x-upload-image-delete"
-            v-if="!disabled"
-            @click="handleDeleteImage(i)"
-          >
-            {{ deleteLabel }}
-          </div>
-          <el-image
-            :src="url"
-            :fit="imageViewFit"
-            class="x-upload-image-view"
-            @click="handlePreviewFile(url)"
-          />
+    <div class="x-upload-file-list" v-if="type == 'image'">
+      <div class="x-upload-item-image" :key="i" v-for="(url, i) in currentUrls">
+        <div
+          class="x-upload-image-delete"
+          v-if="!disabled"
+          @click="handleDeleteImage(i)"
+        >
+          {{ deleteLabel }}
         </div>
-        <template v-else>
-          <el-input :size="size" :value="url">
-            <el-button
-              slot="append"
-              type="primary"
-              icon="el-icon-delete"
-              @click="handleDeleteImage(i)"
-            >
-              {{ deleteLabel }}
-            </el-button>
-          </el-input>
-        </template>
-      </span>
+        <el-image
+          :src="url"
+          :fit="imageViewFit"
+          class="x-upload-image-view"
+          @click="handlePreviewFile(url)"
+        />
+      </div>
+    </div>
+    <div class="x-upload-file-list x-upload-file-urls" v-else>
+      <div class="x-upload-item-file" :key="i" v-for="(url, i) in currentUrls">
+        <span>
+          {{ url }}
+        </span>
+        <el-link
+          type="danger"
+          icon="el-icon-delete"
+          @click="handleDeleteImage(i)"
+        >
+          {{ deleteLabel }}
+        </el-link>
+      </div>
     </div>
     <div
       v-if="
@@ -98,6 +98,16 @@
   .x-upload-file-list {
     display: flex;
     padding: calc(var(--x-upload-padding) / 2);
+
+    &.x-upload-file-urls {
+      flex-direction: column;
+    }
+
+    .x-upload-item-file {
+      color: #676767;
+      font-size: 14px;
+      padding: calc(var(--x-upload-padding) / 2);
+    }
 
     .x-upload-item-image {
       position: relative;
@@ -169,7 +179,7 @@ export default {
       default: 10,
     },
     borderColor: {
-      type: Number,
+      type: String,
       default: "#f1f1f1",
     },
     borderWidth: {

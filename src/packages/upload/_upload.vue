@@ -106,7 +106,11 @@
     .x-upload-item-file {
       color: #676767;
       font-size: 14px;
+      white-space: normal;
+      word-break: break-all;
+      word-wrap: break-word;
       padding: calc(var(--x-upload-padding) / 2);
+      line-height: 20px;
     }
 
     .x-upload-item-image {

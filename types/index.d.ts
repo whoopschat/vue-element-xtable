@@ -13,6 +13,27 @@ declare module "vue-element-xui" {
     query?: any;
   }
 
+  interface IdentifyOptions {
+    /** dialog 宽度 */
+    width?: number,
+    /** dialog 标题 */
+    title?: string,
+    /** 验证码文案：图形验证码 */
+    formLabel?: string,
+    /** 验证码输入提示：请输入图中验证码 */
+    formPlaceholder?: string,
+    /** 错误提示：验证码错误 */
+    formErrorText?: string,
+    /** 取消按钮文案 */
+    cancelLabel: string,
+    /** 确认按钮文案 */
+    okLabel: string,
+    /** 验证码生成规则 */
+    codeStr?: string,
+    /** 验证码长度 */
+    codeLen: number,
+  }
+
   interface ListOptions {
     /** 页码数值 */
     pageNum: string,
@@ -44,6 +65,11 @@ declare module "vue-element-xui" {
     url: string,
   }
 
+  interface Identify {
+
+    check(callback: Function, options?: IdentifyOptions): void;
+
+  }
 
   interface Drawer {
     /**
@@ -115,5 +141,10 @@ declare module "vue-element-xui" {
    * Drawer窗口组件
    */
   var Drawer: Drawer;
+
+  /**
+   * Identify验证码
+   */
+  var Identify: Identify;
 
 }

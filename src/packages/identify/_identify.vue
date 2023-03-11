@@ -62,9 +62,8 @@
 import ICode from "./_code.vue";
 
 const defaultOptions = {
-  title: "请验证",
   width: "400px",
-  size: "small",
+  title: "请验证",
   formLabel: "图形验证码",
   formLabelWidth: "100px",
   formPlaceholder: "请输入图中验证码",
@@ -72,8 +71,8 @@ const defaultOptions = {
   formInputWidth: "180px",
   cancelLabel: "取消",
   okLabel: "确定",
-  codeLen: 4,
   codeStr: "ABCDEFGHJKLMNPQRSTUVWXYabcdefhijkmnpqrstuvwxy0123456789",
+  codeLen: 4,
 };
 
 export default {

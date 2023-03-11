@@ -12,7 +12,7 @@
       :size="autoSize"
     >
       <template slot="title">
-        <div :class="backLabel ? '' : 'hide-back'">
+        <div :class="backLabel ? '' : 'hidden-back'">
           <el-page-header
             @back="backDrawer"
             :title="backLabel"
@@ -76,14 +76,14 @@
     color: #303133 !important;
   }
 
-  .el-card {
-    border: 0px solid #ebeef5 !important;
-  }
-
-  .hide-back {
+  .hidden-back {
     .el-page-header__left {
       display: none !important;
     }
+  }
+
+  .el-card {
+    border: 0px solid #ebeef5 !important;
   }
 }
 </style>

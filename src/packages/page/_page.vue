@@ -57,6 +57,8 @@
             </el-menu-item>
           </template>
         </el-menu>
+        <slot v-if="!isCollapse" name="menu-footer"></slot>
+        <slot v-else name="menu-collapse-footer"></slot>
       </div>
       <div :class="'x-page-content' + (isCollapse ? ' x-menu-collapse' : '')">
         <div ref="header">
@@ -83,11 +85,14 @@
     bottom: 0;
     right: 0;
     height: var(--page-height);
-    width: calc(100% - var(--page-menu-border-width) - var(--page-menu-width));
+    width: calc(
+      100% - var(--x-page-menu-border-width) - var(--x-page-menu-width)
+    );
     background-color: var(--page-content-bg-color);
     &.x-menu-collapse {
       width: calc(
-        100% - var(--page-menu-border-width) - var(--page-menu-collapse-width)
+        100% - var(--x-page-menu-border-width) -
+          var(--x-page-menu-collapse-width)
       );
     }
 
@@ -104,83 +109,87 @@
     bottom: 0;
     vertical-align: top;
     display: inline-block;
-    width: var(--page-menu-width);
-    color: var(--page-menu-text-color);
-    background-color: var(--page-menu-bg-color);
-    border-right: solid var(--page-menu-border-width)
-      var(--page-menu-border-color);
+    width: var(--x-page-menu-width);
+    color: var(--x-page-menu-text-color);
+    background-color: var(--x-page-menu-bg-color);
+    border-right: solid var(--x-page-menu-border-width)
+      var(--x-page-menu-border-color);
 
     &.x-menu-collapse {
-      width: var(--page-menu-collapse-width);
+      width: var(--x-page-menu-collapse-width);
     }
   }
 
   .el-menu {
     width: auto;
-    color: var(--page-menu-text-color);
-    background-color: var(--page-menu-bg-color);
+    color: var(--x-page-menu-text-color);
+    background-color: var(--x-page-menu-bg-color);
     border: 0px;
 
     .el-submenu__title {
       width: auto;
-      height: var(--page-menu-item-height);
-      line-height: var(--page-menu-item-height);
+      height: var(--x-page-menu-item-height);
+      line-height: var(--x-page-menu-item-height);
       min-width: calc(
-        var(--page-menu-collapse-width)- var(--page-menu-border-width)
+        var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
       );
-      max-width: calc(var(--page-menu-width)- var(--page-menu-border-width));
+      max-width: calc(
+        var(--x-page-menu-width)- var(--x-page-menu-border-width)
+      );
 
-      color: var(--page-menu-text-color);
+      color: var(--x-page-menu-text-color);
       i {
-        color: var(--page-menu-text-color);
+        color: var(--x-page-menu-text-color);
       }
     }
 
     .el-submenu__title.is-active {
-      background-color: var(--page-menu-bg-active-color);
-      color: var(--page-menu-text-active-color);
+      background-color: var(--x-page-menu-bg-active-color);
+      color: var(--x-page-menu-text-active-color);
 
       i {
-        color: var(--page-menu-text-active-color);
+        color: var(--x-page-menu-text-active-color);
       }
     }
     .el-submenu__title:hover {
-      background-color: var(--page-menu-bg-hover-color);
-      color: var(--page-menu-text-hover-color);
+      background-color: var(--x-page-menu-bg-hover-color);
+      color: var(--x-page-menu-text-hover-color);
 
       i {
-        color: var(--page-menu-text-hover-color);
+        color: var(--x-page-menu-text-hover-color);
       }
     }
 
     .el-menu-item {
       width: auto;
-      height: var(--page-menu-item-height);
-      line-height: var(--page-menu-item-height);
+      height: var(--x-page-menu-item-height);
+      line-height: var(--x-page-menu-item-height);
       min-width: calc(
-        var(--page-menu-collapse-width)- var(--page-menu-border-width)
+        var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
       );
-      max-width: calc(var(--page-menu-width)- var(--page-menu-border-width));
-      color: var(--page-menu-text-color);
+      max-width: calc(
+        var(--x-page-menu-width)- var(--x-page-menu-border-width)
+      );
+      color: var(--x-page-menu-text-color);
 
       i {
-        color: var(--page-menu-text-color);
+        color: var(--x-page-menu-text-color);
       }
     }
     .el-menu-item.is-active {
-      background-color: var(--page-menu-bg-active-color);
-      color: var(--page-menu-text-active-color);
+      background-color: var(--x-page-menu-bg-active-color);
+      color: var(--x-page-menu-text-active-color);
 
       i {
-        color: var(--page-menu-text-active-color);
+        color: var(--x-page-menu-text-active-color);
       }
     }
     .el-menu-item:hover {
-      background-color: var(--page-menu-bg-hover-color);
-      color: var(--page-menu-text-hover-color);
+      background-color: var(--x-page-menu-bg-hover-color);
+      color: var(--x-page-menu-text-hover-color);
 
       i {
-        color: var(--page-menu-text-hover-color);
+        color: var(--x-page-menu-text-hover-color);
       }
     }
   }
@@ -291,7 +300,6 @@ export default {
       this.actionName = '-';
       this.$nextTick(() => {
         this.actionName = this.getActionName(this.menus);
-        console.log(this.value, this.actionName)
       })
       this.handleResize();
     },
@@ -322,17 +330,17 @@ export default {
     handleResize() {
       try {
         this.pageStyle = {
-          "--page-menu-width": `${this.menuWidth}px`,
-          "--page-menu-item-height": `${this.menuItemHeight}px`,
-          "--page-menu-collapse-width": `${this.menuCollapseWidth}px`,
-          "--page-menu-bg-color": this.menuBgColor,
-          "--page-menu-bg-hover-color": this.menuBgHoverColor,
-          "--page-menu-bg-active-color": this.menuBgActiveColor,
-          "--page-menu-text-color": this.menuTextColor,
-          "--page-menu-text-hover-color": this.menuTextHoverColor,
-          "--page-menu-text-active-color": this.menuTextActiveColor,
-          "--page-menu-border-color": this.menuBorderColor,
-          "--page-menu-border-width": `${this.menuBorderWidth || 0}px`
+          "--x-page-menu-width": `${this.menuWidth}px`,
+          "--x-page-menu-item-height": `${this.menuItemHeight}px`,
+          "--x-page-menu-collapse-width": `${this.menuCollapseWidth}px`,
+          "--x-page-menu-bg-color": this.menuBgColor,
+          "--x-page-menu-bg-hover-color": this.menuBgHoverColor,
+          "--x-page-menu-bg-active-color": this.menuBgActiveColor,
+          "--x-page-menu-text-color": this.menuTextColor,
+          "--x-page-menu-text-hover-color": this.menuTextHoverColor,
+          "--x-page-menu-text-active-color": this.menuTextActiveColor,
+          "--x-page-menu-border-color": this.menuBorderColor,
+          "--x-page-menu-border-width": `${this.menuBorderWidth || 0}px`
         }
         let width = document.documentElement.clientWidth;
         if (width > this.collapseWidth) {

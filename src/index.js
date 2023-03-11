@@ -4,6 +4,7 @@ import { _installResize } from "./directives/resize"
 import { _installTab } from "./packages/tab"
 import { _installTable } from "./packages/table"
 import { _installInput } from "./packages/input"
+import { _installUpload } from "./packages/upload"
 import { _installPage } from "./packages/page"
 
 let _installed = false;
@@ -107,6 +108,7 @@ const install = (Vue, options) => {
   _installResize(Vue);
   _installTable(Vue);
   _installInput(Vue);
+  _installUpload(Vue);
   _installPage(Vue);
 }
 
@@ -116,8 +118,8 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 export default {
   install,
-  setFilePreviewHandler,
   setFileUploadHandler,
+  setFilePreviewHandler,
   setDataListHandler,
   setDataDetailHandler,
   setDataConfigHandler,

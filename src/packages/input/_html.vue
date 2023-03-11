@@ -1,64 +1,66 @@
 <template>
-  <div v-if="!loading">
-    <quill-editor
-      ref="myQuillEditor"
-      v-model="inputValue"
-      :class="[disabled ? 'is-disabled' : '']"
-      :options="editorOption"
-    />
+  <div class="xHtmlEditor">
+    <div v-if="!loading">
+      <quill-editor
+        ref="myQuillEditor"
+        v-model="inputValue"
+        :class="[disabled ? 'is-disabled' : '']"
+        :options="editorOption"
+      />
+    </div>
+    <div v-else :style="loadingStyle">{{ loadingLabel }}</div>
   </div>
-  <div v-else :style="loadingStyle">{{ loadingLabel }}</div>
 </template>
 
 <style lang="less">
-.quill-editor {
-  background: #ffffff;
-
-  &.is-disabled {
-    background: #f1f1f1;
+.xHtmlEditor {
+  .quill-editor {
+    background: #ffffff;
+    &.is-disabled {
+      background: #f1f1f1;
+    }
   }
-}
-
-.ql-editor {
-  max-width: 100%;
-  min-height: 240px;
-  img {
+  .ql-editor {
     max-width: 100%;
+    min-height: 240px;
+    img {
+      max-width: 100%;
+    }
   }
-}
-.ql-snow .ql-formats {
-  line-height: 20px;
-}
-.ql-snow .ql-tooltip {
-  z-index: 99999;
-}
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10px"]::before {
-  content: "10px";
-}
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="12px"]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="12px"]::before {
-  content: "12px";
-}
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14px"]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
-  content: "14px";
-}
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16px"]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
-  content: "16px";
-}
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="20px"]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="20px"]::before {
-  content: "20px";
-}
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="24px"]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="24px"]::before {
-  content: "24px";
-}
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value="36px"]::before,
-.ql-snow .ql-picker.ql-size .ql-picker-item[data-value="36px"]::before {
-  content: "36px";
+  .ql-snow .ql-formats {
+    line-height: 20px;
+  }
+  .ql-snow .ql-tooltip {
+    z-index: 99999;
+  }
+  .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
+  .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10px"]::before {
+    content: "10px";
+  }
+  .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="12px"]::before,
+  .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="12px"]::before {
+    content: "12px";
+  }
+  .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14px"]::before,
+  .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
+    content: "14px";
+  }
+  .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16px"]::before,
+  .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
+    content: "16px";
+  }
+  .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="20px"]::before,
+  .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="20px"]::before {
+    content: "20px";
+  }
+  .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="24px"]::before,
+  .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="24px"]::before {
+    content: "24px";
+  }
+  .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="36px"]::before,
+  .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="36px"]::before {
+    content: "36px";
+  }
 }
 </style>
 

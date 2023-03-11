@@ -46,13 +46,13 @@
             {{ getValue("label", btn) }}
           </el-button>
         </el-form-item>
+        <slot name="extra" :refresh="fetchList"></slot>
       </el-form>
     </div>
     <el-table
       ref="xTableEl"
-      style="width: 100%"
-      :data="filterData"
       :border="border"
+      :data="filterData"
       :size="size || $xUISize"
       :highlight-current-row="true"
       v-if="filterData.length > 0"
@@ -77,6 +77,11 @@
         :prop="getValue('sortKey', field)"
       >
         <template slot-scope="scope" v-if="field">
+          <slot
+            v-if="field.slot"
+            :name="'row-' + field.slot"
+            :row="scope.row"
+          ></slot>
           <span
             :style="getValue('styleValue', field, scope.row)"
             :class="getValue('className', field, scope.row)"
@@ -133,6 +138,7 @@
         :fixed="actionFixed"
       >
         <template slot-scope="scope">
+          <slot name="action" :row="scope.row"></slot>
           <span
             :key="'x-table-action-' + i"
             v-for="(action, i) in filterList(actionList, scope.row)"
@@ -390,6 +396,28 @@ export default {
     },
   },
   methods: {
+    callEvent(prop, item, param) {
+      if (!item || !prop) {
+        return;
+      }
+      let event = item[prop];
+      if (event && typeof event === "function") {
+        return event(param, this.tag, this.fetchList, this);
+      }
+    },
+    getValue(prop, item, param, def) {
+      if (!item || !prop) {
+        return def;
+      }
+      let propValue = item[prop];
+      if (propValue && typeof propValue === "function") {
+        return propValue(param, this.tag, this);
+      }
+      if (typeof propValue === "undefined") {
+        return def;
+      }
+      return propValue;
+    },
     refreshDocment() {
       this.refreshElement = true;
       this.$nextTick(() => {
@@ -426,28 +454,6 @@ export default {
       return (list || []).filter((item) => {
         return this.getValue("show", item, param, true);
       });
-    },
-    getValue(prop, item, param, def) {
-      if (!item || !prop) {
-        return def;
-      }
-      let propValue = item[prop];
-      if (propValue && typeof propValue === "function") {
-        return propValue(param, this.tag, this);
-      }
-      if (typeof propValue === "undefined") {
-        return def;
-      }
-      return propValue;
-    },
-    callEvent(prop, item, param) {
-      if (!item || !prop) {
-        return;
-      }
-      let event = item[prop];
-      if (event && typeof event === "function") {
-        return event(param, this.tag, this.fetchList, this);
-      }
     },
     handleSelectionChange(selected) {
       this.selectList = selected;

@@ -1,11 +1,20 @@
 <template>
   <div class="xTab">
-    <el-tabs v-model="activeName" type="border-card" @tab-click="onClickTab">
-      <el-tab-pane :name="tab.name" :label="tab.label" v-show="tab.show" v-for="(tab, i) in tabs"
-        :key="'x-tab-' + tab.name + '-' + i">
+    <el-tabs v-model="activeName" :type="type" @tab-click="onClickTab">
+      <el-tab-pane
+        v-show="getValue('show', tab)"
+        v-for="(tab, i) in tabs"
+        :name="tab.name"
+        :label="getValue('label', tab)"
+        :key="'x-tab-' + tab.name + '-' + i"
+      >
         <div v-if="checkTabVisiable(tab)">
-          <component :is="tab.component" :params="tab.params || params" :query="tab.query || query"
-            @xEvent="callOnEvent" />
+          <component
+            :is="tab.component"
+            :params="tab.params || params"
+            :query="tab.query || query"
+            @event="callOnEvent"
+          />
         </div>
         <div v-else>
           <el-empty :description="tab.emptyLabel"></el-empty>
@@ -25,6 +34,13 @@ export default {
   props: {
     value: {
       type: String | Number,
+    },
+    tag: {
+      type: Object | String | Boolean | Number,
+    },
+    type: {
+      type: String,
+      default: "border-card",
     },
     tabs: {
       type: Array,
@@ -69,6 +85,28 @@ export default {
     },
   },
   methods: {
+    callEvent(prop, item, param) {
+      if (!item || !prop) {
+        return;
+      }
+      let event = item[prop];
+      if (event && typeof event === "function") {
+        return event(param, this.tag, this);
+      }
+    },
+    getValue(prop, item, param, def) {
+      if (!item || !prop) {
+        return def;
+      }
+      let propValue = item[prop];
+      if (propValue && typeof propValue === "function") {
+        return propValue(param, this.tag, this);
+      }
+      if (typeof propValue === "undefined") {
+        return def;
+      }
+      return propValue;
+    },
     dispatch(componentName, eventName, params) {
       setTimeout(() => {
         try {
@@ -87,12 +125,7 @@ export default {
       }, 200);
     },
     callOnEvent(...params) {
-      this.$emit("xEvent", ...params);
-    },
-    onClickTab(tab) {
-      this.activeName = tab.name;
-      this.$emit("change", this.activeName);
-      this.dispatch("ElFormItem", "el.form.change");
+      this.$emit("event", ...params);
     },
     checkTabVisiable(tab) {
       if (!tab.component) {
@@ -111,6 +144,11 @@ export default {
       if (!this.activeName || names.indexOf(this.activeName) < 0) {
         this.activeName = names[0];
       }
+    },
+    onClickTab(tab) {
+      this.activeName = tab.name;
+      this.$emit("change", this.activeName);
+      this.dispatch("ElFormItem", "el.form.change");
     },
   },
   mounted() {

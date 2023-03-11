@@ -1,5 +1,5 @@
 <template>
-  <span class="xTableDataInput">
+  <span class="xInput">
     <template v-if="getValue('type', options, null, type) == 'data'">
       <x-select
         ref="input"
@@ -17,30 +17,11 @@
         :clearable="clearable"
         :disabled="disabled"
         :options="options"
-      />
-    </template>
-    <template v-else-if="getValue('type', options, null, type) == 'upload'">
-      <x-upload
-        ref="input"
-        v-model="inputValue"
-        @blur="handleBlur"
-        @change="handleChange"
-        :style="styleValue || getValue('styleValue', options)"
-        :size="getValue('size', options) || $xUISize"
-        :type="getValue('uploadType', options)"
-        :fileType="getValue('fileType', options)"
-        :fileSize="getValue('fileSize', options)"
-        :fileCount="getValue('fileCount', options)"
-        :deleteLabel="getValue('deleteLabel', options)"
-        :uploadLabel="getValue('uploadLabel', options)"
-        :uploadAccept="getValue('uploadAccept', options)"
-        :loadingLabel="getValue('loadingLabel', options)"
-        :tipsLabel="getValue('tipsLabel', options)"
-        :placeholder="placeholder || getValue('label', options)"
-        :preview="getValue('preview', options)"
-        :clearable="clearable"
-        :disabled="disabled"
-      />
+      >
+        <template slot="extra">
+          <slot name="extra" />
+        </template>
+      </x-select>
     </template>
     <template v-else-if="getValue('type', options, null, type) == 'html'">
       <x-html
@@ -99,12 +80,12 @@
         @change="handleChange"
         v-model="inputValue"
         :controls="false"
+        :max="getValue('max', options)"
+        :min="getValue('min', options)"
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
         :maxlength="getValue('maxlength', options)"
         :placeholder="placeholder || getValue('label', options)"
-        :max="getValue('max', options)"
-        :min="getValue('min', options)"
         :precision="getValue('precision', options, null, 2)"
         :clearable="clearable"
         :disabled="disabled"
@@ -117,8 +98,8 @@
         @blur="handleBlur"
         @change="handleChange"
         v-model="inputValue"
-        value-format="timestamp"
         type="datetime"
+        value-format="timestamp"
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
         :placeholder="placeholder || getValue('label', options)"
@@ -143,9 +124,6 @@
         :clearable="clearable"
         :disabled="disabled"
       >
-        <template slot="prepend">
-          <slot name="prepend" />
-        </template>
       </el-input>
     </template>
     <el-input
@@ -169,7 +147,7 @@
 </template>
 
 <style lang="less" >
-.xTableDataInput {
+.xInput {
   .el-input-number {
     width: 100% !important;
   }
@@ -184,12 +162,10 @@
 <script>
 import XHtml from "./_html.vue";
 import XSelect from "./_select.vue";
-import XUpload from "./_upload.vue";
 
 export default {
   components: {
     XSelect,
-    XUpload,
     XHtml,
   },
   props: {
@@ -257,6 +233,19 @@ export default {
     this.initInput();
   },
   methods: {
+    getValue(prop, item, param, def) {
+      if (!item || !prop) {
+        return def;
+      }
+      let propValue = item[prop];
+      if (propValue && typeof propValue === "function") {
+        return propValue(param, this.tag, this);
+      }
+      if (typeof propValue === "undefined") {
+        return def;
+      }
+      return propValue;
+    },
     dispatch(componentName, eventName, params) {
       setTimeout(() => {
         try {
@@ -312,19 +301,6 @@ export default {
       this.changeFlag = true;
       this.$emit("change", this.inputValue);
       this.dispatch("ElFormItem", "el.form.change");
-    },
-    getValue(prop, item, param, def) {
-      if (!item || !prop) {
-        return def;
-      }
-      let propValue = item[prop];
-      if (propValue && typeof propValue === "function") {
-        return propValue(param, this.tag);
-      }
-      if (typeof propValue === "undefined") {
-        return def;
-      }
-      return propValue;
     },
     delayChange() {
       if (this.changeTimeout) {

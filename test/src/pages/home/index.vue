@@ -3,34 +3,7 @@
     <x-page :menus="menuList" @click="handleMenuEvent" :value="path">
       <template slot="menu-header"> 菜单头 </template>
       <template slot="menu-collapse-header"> 菜 </template>
-      <template slot="content-header"> {{ path }}</template>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
+      <x-upload v-model="file" fileCount="5" type="image"></x-upload>
       <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
     </x-page>
   </div>
@@ -49,6 +22,7 @@ export default {
   },
   data() {
     return {
+      file: "http://game.iwxerp.com/drly/www-948843138501361664/05e009abe357a8e70b64d98e6b735ef0.png,http://game.iwxerp.com/drly/www-948843138501361664/05e009abe357a8e70b64d98e6b735ef0.png",
       path: "/22",
       menuList: [{
         label: '功能',

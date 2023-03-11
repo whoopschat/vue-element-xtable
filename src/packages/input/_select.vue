@@ -10,21 +10,21 @@
         trigger="click"
       >
         <div class="xInputSelect">
-          <div class="xClose" @click="hideDialog">
+          <div class="x-input-select-close" @click="hideDialog">
             <i class="el-icon-close"></i>
           </div>
-          <div class="xTitle">
+          <div class="x-input-select-title">
             {{ getTitleLabel() || "请选择" }}
           </div>
-          <div class="xContent">
+          <div class="x-input-select-content">
             <x-table
               ref="table"
               paginationLayout="total, sizes, prev, next"
               @selectList="handleSelectList"
               :selection="multipleable"
+              :btnList="computedBtnList"
               :tag="getValue('tag', configInfo)"
               :listApi="getValue('listApi', configInfo)"
-              :btnList="computedBtnList"
               :fieldList="getValue('fieldList', configInfo)"
               :paramList="getValue('paramList', configInfo)"
               :retryLabel="getValue('retryLabel', configInfo)"
@@ -40,9 +40,13 @@
               :filterLabelMethod="filterLabelMethod"
               :filterMethod="filterMethod"
               :actionList="getActionList()"
-            />
+            >
+              <template slot="extra">
+                <slot name="extra"></slot>
+              </template>
+            </x-table>
           </div>
-          <div class="xFooter" v-if="multipleable">
+          <div class="x-input-select-footer" v-if="multipleable">
             <el-button @click="handleCancelClick" :size="size">
               {{ getValue("cancelLabel", configInfo) || "取消" }}
             </el-button>
@@ -106,12 +110,12 @@
 
 <style lang="less">
 .xInputSelect {
-  .xContent {
+  .x-input-select-content {
     padding: 20px;
     min-height: 100px;
   }
 
-  .xClose {
+  .x-input-select-close {
     float: right;
     padding: 2px 0;
     font-size: 14px;
@@ -119,18 +123,18 @@
     color: #919191;
   }
 
-  .xClose:hover {
+  .x-input-select-close:hover {
     color: #676767;
   }
 
-  .xTitle {
+  .x-input-select-title {
     padding: 2px 0;
     font-size: 14px;
     font-weight: 600;
     color: #333;
   }
 
-  .xFooter {
+  .x-input-select-footer {
     margin-top: 10px;
     text-align: right;
   }

@@ -97,11 +97,12 @@
 
   .x-upload-file-list {
     display: flex;
-    padding: var(--x-upload-padding);
+    padding: calc(var(--x-upload-padding) / 2);
 
     .x-upload-item-image {
       position: relative;
       overflow: hidden;
+      margin: calc(var(--x-upload-padding) / 2);
       line-height: var(--x-upload-image-view-height);
       height: var(--x-upload-image-view-height);
       width: var(--x-upload-image-view-width);

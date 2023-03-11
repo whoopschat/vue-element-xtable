@@ -1,10 +1,7 @@
 <template>
   <div>
     <x-page :menus="menuList" @click="handleMenuEvent" :value="path">
-      <template slot="menu-header"> 菜单头 </template>
-      <template slot="menu-collapse-header"> 菜 </template>
       <x-upload v-model="file" fileCount="5" type="image"></x-upload>
-      <h1>vue-element-xui - create by vue-tape 4.1.5</h1>
     </x-page>
   </div>
 </template>

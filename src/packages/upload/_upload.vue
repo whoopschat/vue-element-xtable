@@ -13,7 +13,7 @@
           :src="url"
           :fit="imageViewFit"
           class="x-upload-image-view"
-          @click="handlePreviewFile(url)"
+          @click="handlePreviewFile(url, $event)"
         />
       </div>
     </div>
@@ -153,6 +153,8 @@
 
 
 <script>
+import ImageViewer from '../imageViewer'
+
 export default {
   data() {
     return {
@@ -316,8 +318,12 @@ export default {
         } catch (error) { }
       }, 200);
     },
-    handlePreviewFile(url) {
-      this.$xUIFilePreviewHandler(url, this.type);
+    handlePreviewFile(url, e) {
+      if (this.type == 'image') {
+        ImageViewer.showImage({
+          images: [url]
+        })
+      }
     },
     handleUploadFile(file) {
       if (this.disabled) {

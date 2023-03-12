@@ -13,6 +13,25 @@ declare module "vue-element-xui" {
     query?: any;
   }
 
+  interface ImageViewerOptions {
+    images?: {
+      mainUrl: string;
+      thumbnailUrl?: string;
+      description?: string;
+    }[] | string[];
+    buttons?: {
+      name: string;
+      iconSrc: string;
+      iconSize: string;
+      onSelect: () => void;
+    }[];
+    currentSelected?: number;
+    showThumbnails?: boolean;
+    isZoomable?: boolean;
+    stretchImages?: boolean;
+    style?: object;
+  }
+
   interface IdentifyOptions {
     /** dialog 宽度 */
     width?: number,
@@ -56,13 +75,19 @@ declare module "vue-element-xui" {
     /** 数据列表 */
     list: any[],
   }
-
   /**
    * 上传文件返回格式
    */
   interface UploadResponse {
     /**  文件地址 */
     url: string,
+  }
+
+  /** 图片预览 */
+  interface ImageViewer {
+
+    showImage(options: ImageViewerOptions): void;
+
   }
 
   interface Identify {
@@ -108,12 +133,6 @@ declare module "vue-element-xui" {
   function install(vue: any): void;
 
   /**
-   * 设置处理文件预览回调
-   * @param handler 回调
-   */
-  function setFilePreviewHandler(handler: (url: any, type?: string) => void): void
-
-  /**
    * 设置处理文件上传
    * @param handler 回调
    */
@@ -146,5 +165,10 @@ declare module "vue-element-xui" {
    * Identify验证码
    */
   var Identify: Identify;
+
+  /**
+   * ImageViewer图片预览
+   */
+  var ImageViewer: ImageViewer;
 
 }

@@ -1,5 +1,6 @@
 import Drawer, { _installDrawer } from "./packages/drawer"
 import Identify, { _installIdentify } from "./packages/identify"
+import ImageViewer, { _installImageViewer } from "./packages/imageViewer"
 import { _installResize } from "./directives/resize"
 import { _installTab } from "./packages/tab"
 import { _installTable } from "./packages/table"
@@ -9,16 +10,9 @@ import { _installPage } from "./packages/page"
 
 let _installed = false;
 let _fileUploadHandler = null;
-let _filePreviewHandler = null;
 let _dataListHandler = null;
 let _dataDetailHandler = null;
 let _dataConfigHandler = null;
-
-function setFilePreviewHandler(handler) {
-  if (handler && typeof handler === 'function') {
-    _filePreviewHandler = handler;
-  }
-}
 
 function setFileUploadHandler(handler) {
   if (handler && typeof handler === 'function') {
@@ -50,15 +44,6 @@ export function FileUploadHandler(file, type) {
       return _fileUploadHandler(file, type);
     }
     throw "not call setFileUploadHandler";
-  })
-}
-
-export function FilePreviewHandler(url, type) {
-  return Promise.resolve().then(() => {
-    if (_filePreviewHandler && typeof _filePreviewHandler === 'function') {
-      return _filePreviewHandler(url, type);
-    }
-    throw "not call setFilePreviewHandler";
   })
 }
 
@@ -98,18 +83,19 @@ const install = (Vue, options) => {
   Vue.prototype.$xUIDrawerFullScreen = options && options.drawerFullScreen;
   Vue.prototype.$xUISelectPlacement = options && options.selectPlacement ? options.selectPlacement : "top-start";
   Vue.prototype.$xUIFileUploadHandler = FileUploadHandler;
-  Vue.prototype.$xUIFilePreviewHandler = FilePreviewHandler;
   Vue.prototype.$xUIDataListHandler = DataListHandler;
   Vue.prototype.$xUIDataDetailHandler = DataDetailHandler;
   Vue.prototype.$xUIDataConfigHandler = DataConfigHandler;
-  _installTab(Vue);
+  let imageViewerOptions = options && options.imageViewerOptions;
   _installDrawer(Vue);
   _installIdentify(Vue);
+  _installImageViewer(Vue, imageViewerOptions);
   _installResize(Vue);
   _installTable(Vue);
   _installInput(Vue);
   _installUpload(Vue);
   _installPage(Vue);
+  _installTab(Vue);
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
@@ -118,11 +104,11 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 export default {
   install,
-  setFileUploadHandler,
-  setFilePreviewHandler,
   setDataListHandler,
   setDataDetailHandler,
   setDataConfigHandler,
+  setFileUploadHandler,
   Drawer,
-  Identify
+  Identify,
+  ImageViewer
 }

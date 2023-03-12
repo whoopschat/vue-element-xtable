@@ -13,15 +13,15 @@ vue.use(vueXui);
 vue.use(vueTape);
 
 export function init(app, name) {
-    // set debug mode
-    Tape.setDebug(!config.PROD);
-    // init app
-    Tape.initApp({
-        app,
-        name,
-        config,
-        width: 750,
-        unit: 100,
-        el: '#app',
-    });
+  // set debug mode
+  Tape.setDebug(!config.PROD);
+  // init app
+  Tape.initApp({
+    app,
+    name,
+    config,
+    width: 750,
+    unit: 100,
+    el: '#app',
+  });
 }

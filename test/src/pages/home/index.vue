@@ -1,7 +1,7 @@
 <template>
   <div>
     <x-page :menus="menuList" @click="handleMenuEvent" :value="path">
-      <x-upload v-model="file" :fileCount="2" type="image1"></x-upload>
+      <x-upload v-model="file" :fileCount="2" type="image"></x-upload>
     </x-page>
   </div>
 </template>
@@ -19,8 +19,8 @@ export default {
   },
   data() {
     return {
-      file: "http://game.iwxerp.com/drly/www-948843138501361664/05e009abe357a8e70b64d98e6b735ef0.png,http://game.iwxerp.com/drly/www-948843138501361664/05e009abe357a8e70b64d98e6b735ef0.png",
-      path: "/22",
+      file: '',
+      path: '/22',
       menuList: [{
         label: '功能',
         icon: 'el-icon-s-home',

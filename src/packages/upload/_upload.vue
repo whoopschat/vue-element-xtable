@@ -396,7 +396,7 @@ export default {
             this.uploadLoading = false;
           });
       }
-      if (this.imageCrop) {
+      if (this.imageCrop && this.type == "image") {
         this.$cropper.showCropper({
           img: file, // 裁剪图片的地址
           title: this.imageCropTitle, // 裁剪弹窗标题

@@ -553,9 +553,13 @@ export default {
         this.$emit('img-load', 'error')
       }
       if (this.img instanceof File) {
+        // 如果是文件，通过FileReader加载图片资源
         let reader = new FileReader()
         reader.readAsDataURL(this.img);
-        reader.onerror = (e) => { reject(e); }
+        reader.onerror = (e) => {
+          this.$emit('imgLoad', 'error')
+          this.$emit('img-load', 'error')
+        }
         reader.onload = () => {
           img.src = reader.result
         }
@@ -576,7 +580,6 @@ export default {
         } else {
           img.src = this.img
         }
-
       }
     },
     // 当按下鼠标键

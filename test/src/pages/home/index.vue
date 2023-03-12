@@ -1,7 +1,13 @@
 <template>
   <div>
     <x-page :menus="menuList" @click="handleMenuEvent" :value="path">
-      <x-upload v-model="file" :fileCount="2" type="image"></x-upload>
+      {{ file }}
+      <x-upload
+        type="image"
+        v-model="file"
+        :fileCount="2"
+        :imageCrop="true"
+      ></x-upload>
     </x-page>
   </div>
 </template>

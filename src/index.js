@@ -1,6 +1,7 @@
 import Drawer, { _installDrawer } from "./packages/drawer"
 import Identify, { _installIdentify } from "./packages/identify"
 import ImageViewer, { _installImageViewer } from "./packages/imageViewer"
+import Cropper, { _installCropper } from './packages/cropper'
 import { _installResize } from "./directives/resize"
 import { _installTab } from "./packages/tab"
 import { _installTable } from "./packages/table"
@@ -43,7 +44,14 @@ export function FileUploadHandler(file, type) {
     if (_fileUploadHandler && typeof _fileUploadHandler === 'function') {
       return _fileUploadHandler(file, type);
     }
-    throw "not call setFileUploadHandler";
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader()
+      reader.readAsDataURL(file);
+      reader.onerror = (e) => { reject(e); }
+      reader.onload = () => {
+        resolve(reader.result)
+      }
+    })
   })
 }
 
@@ -87,6 +95,7 @@ const install = (Vue, options) => {
   Vue.prototype.$xUIDataDetailHandler = DataDetailHandler;
   Vue.prototype.$xUIDataConfigHandler = DataConfigHandler;
   let imageViewerOptions = options && options.imageViewerOptions;
+  _installCropper(Vue);
   _installDrawer(Vue);
   _installIdentify(Vue);
   _installImageViewer(Vue, imageViewerOptions);
@@ -110,5 +119,6 @@ export default {
   setFileUploadHandler,
   Drawer,
   Identify,
-  ImageViewer
+  ImageViewer,
+  Cropper,
 }

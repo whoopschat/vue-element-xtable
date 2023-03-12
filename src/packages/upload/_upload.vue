@@ -16,52 +16,57 @@
           @click="handlePreviewFile(url, $event)"
         />
       </div>
-    </div>
-    <div class="x-upload-file-list x-upload-file-urls" v-else>
-      <div class="x-upload-item-file" :key="i" v-for="(url, i) in currentUrls">
-        <span>
-          {{ url }}
-        </span>
-        <el-link
-          type="danger"
-          icon="el-icon-delete"
-          @click="handleDeleteImage(i)"
-        >
-          {{ deleteLabel }}
-        </el-link>
       </div>
-    </div>
-    <div
-      v-if="
-        !disabled &&
-        (fileCount == 0 || fileCount > currentUrls.length) &&
-        currentUrls.length > 0
-      "
-      class="x-upload-file-hr"
-    ></div>
-    <div
-      class="x-upload-file-upload"
-      v-if="!disabled && (fileCount == 0 || fileCount > currentUrls.length)"
-    >
-      <el-upload
-        :show-file-list="false"
-        :disabled="uploadLoading"
-        :accept="uploadAcceptValue"
-        :before-upload="handleUploadFile"
-        action=""
-        drag
-      >
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text" v-if="uploadLoading">
-          <i class="el-icon-loading" style="margin-right: 8px" />
-          {{ loadingLabel }}
+      <div class="x-upload-file-list x-upload-file-urls" v-else>
+        <div
+          class="x-upload-item-file"
+          :key="i"
+          v-for="(url, i) in currentUrls"
+        >
+          <span>
+            {{ url }}
+          </span>
+          <el-link
+            type="danger"
+            icon="el-icon-delete"
+            @click="handleDeleteImage(i)"
+          >
+            {{ deleteLabel }}
+          </el-link>
         </div>
-        <template v-else>
-          <div class="el-upload__text" v-html="uploadLabel"></div>
-        </template>
-      </el-upload>
-      <div v-if="uploadErrorMsg" class="error">
-        {{ uploadErrorMsg }}
+      </div>
+      <div
+        v-if="
+          !disabled &&
+          (fileCount == 0 || fileCount > currentUrls.length) &&
+          currentUrls.length > 0
+        "
+        class="x-upload-file-hr"
+      ></div>
+      <div
+        class="x-upload-file-upload"
+        v-if="!disabled && (fileCount == 0 || fileCount > currentUrls.length)"
+      >
+        <el-upload
+          :show-file-list="false"
+          :disabled="uploadLoading"
+          :accept="uploadAcceptValue"
+          :before-upload="handleUploadFile"
+          action=""
+          drag
+        >
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text" v-if="uploadLoading">
+            <i class="el-icon-loading" style="margin-right: 8px" />
+            {{ loadingLabel }}
+          </div>
+          <template v-else>
+            <div class="el-upload__text" v-html="uploadLabel"></div>
+          </template>
+        </el-upload>
+        <div v-if="uploadErrorMsg" class="error">
+          {{ uploadErrorMsg }}
+        </div>
       </div>
     </div>
   </div>
@@ -151,7 +156,6 @@
 }
 </style>
 
-
 <script>
 import ImageViewer from '../imageViewer'
 
@@ -235,6 +239,34 @@ export default {
       type: Number,
       default: 1024,
     },
+    imageCrop: {
+      type: Boolean,
+      default: false,
+    },
+    imageCropTitle: {
+      type: String,
+      default: "图片裁剪",
+    },
+    imageCropOkLabel: {
+      type: String,
+      default: "确定",
+    },
+    imageCropCancelLabel: {
+      type: String,
+      default: "取消",
+    },
+    imageCropOutputType: {
+      type: String,
+      default: "png",
+    },
+    imageCropWidth: {
+      type: Number,
+      default: 120,
+    },
+    imageCropHeight: {
+      type: Number,
+      default: 120,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -278,7 +310,7 @@ export default {
   },
   methods: {
     initValue() {
-      this.currentUrls = (this.value || "").split(",").filter((image) => {
+      this.currentUrls = (this.value || "").split("|").filter((image) => {
         return !!image;
       });
     },
@@ -347,21 +379,42 @@ export default {
         )}`;
         return false;
       }
-      this.uploadLoading = true;
-      this.uploadErrorMsg = null;
-      this.$xUIFileUploadHandler(file, this.type)
-        .then((data) => {
-          this.uploadLoading = false;
-          this.currentUrls.push(data);
-          this.submitChange();
+      let callUpload = (file) => {
+        this.uploadLoading = true;
+        this.uploadErrorMsg = null;
+        this.$xUIFileUploadHandler(file, this.type)
+          .then((data) => {
+            this.uploadLoading = false;
+            this.currentUrls.push(data);
+            this.submitChange();
+          })
+          .catch((err) => {
+            console.error(err);
+            this.uploadErrorMsg = err || "上传文件失败";
+          })
+          .finally(() => {
+            this.uploadLoading = false;
+          });
+      }
+      if (this.imageCrop) {
+        this.$cropper.showCropper({
+          img: file, // 裁剪图片的地址
+          title: this.imageCropTitle, // 裁剪弹窗标题
+          okLabel: this.imageCropOkLabel, // 裁剪弹窗确认按钮
+          cancelLabel: this.imageCropCancelLabel, // 裁剪弹窗取消按钮
+          autoCropWidth: this.imageCropWidth, // 默认生成截图框宽度
+          autoCropHeight: this.imageCropHeight, // 默认生成截图框高度
+          outputType: this.imageCropOutputType, // 裁剪的默认输出格式
+          success: res => {
+            let blob = res.img;
+            blob.lastModifiedDate = new Date();
+            blob.name = file.name;
+            callUpload(blob);
+          }
         })
-        .catch((err) => {
-          console.error(err);
-          this.uploadErrorMsg = err || "上传文件失败";
-        })
-        .finally(() => {
-          this.uploadLoading = false;
-        });
+      } else {
+        callUpload(file)
+      }
       return false;
     },
     handleDeleteImage(i) {
@@ -372,7 +425,7 @@ export default {
       this.submitChange();
     },
     submitChange() {
-      this.$emit("change", this.currentUrls.join(","));
+      this.$emit("change", this.currentUrls.join("|"));
       this.dispatch("ElFormItem", "el.form.change");
     },
   },

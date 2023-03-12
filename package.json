@@ -1,6 +1,6 @@
 {
   "name": "vue-element-xui",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "vue x ui with element-ui",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -16,7 +16,6 @@
     "types"
   ],
   "dependencies": {
-    "babel-preset-es2015": "^6.24.1",
     "vue": "^2.5.19"
   },
   "devDependencies": {
@@ -24,6 +23,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.7",

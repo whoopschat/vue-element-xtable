@@ -1,13 +1,20 @@
 <template>
   <div>
     <x-page :menus="menuList" @click="handleMenuEvent" :value="path">
-      {{ file }}
+      <div style="margin: 10px">
+        <el-breadcrumb separator="/">
+          <el-breadcrumb-item :to="{ path: '/' }">
+            {{ path }}
+          </el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
       <x-upload
         type="image"
         v-model="file"
         :fileCount="2"
         :imageCrop="true"
       ></x-upload>
+      <x-input type="html" v-model="html"></x-input>
     </x-page>
   </div>
 </template>
@@ -26,19 +33,21 @@ export default {
   data() {
     return {
       file: '',
-      path: '/22',
+      html: '',
+      path: '/marketing',
       menuList: [{
-        label: '功能',
-        icon: 'el-icon-s-home',
-        path: '/22',
+        label: 'marketing',
+        icon: 'el-icon-s-marketing',
+        path: '/marketing',
       },
       {
-        label: '功能',
-        icon: 'el-icon-s-home',
-        path: '/22',
+        label: 'tools',
+        icon: 'el-icon-s-tools',
+        path: '/tools',
         children: [
           {
-            path: '/',
+            path: '/home',
+            icon: 'el-icon-s-home',
             label: '首页一览',
           },
           {

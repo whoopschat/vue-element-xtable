@@ -285,6 +285,10 @@ export default {
       type: String,
       default: "操作",
     },
+    errorLabel: {
+      type: String,
+      default: "请求数据失败",
+    },
     retryLabel: {
       type: String,
       default: "重新加载",
@@ -551,7 +555,7 @@ export default {
             this.noCallFetch = false;
           }
         }).catch((err) => {
-          this.fetchErrorMsg = err || "请求数据失败";
+          this.fetchErrorMsg = err || this.errorLabel;
           this.$emit("fetch-error", err);
         }).finally(() => {
           this.fetchLoading = false;

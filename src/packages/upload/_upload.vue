@@ -64,7 +64,7 @@
             <div class="el-upload__text" v-html="uploadLabel"></div>
           </template>
         </el-upload>
-        <div v-if="uploadErrorMsg" class="error">
+        <div v-if="uploadErrorMsg" class="x-upload-file-error">
           {{ uploadErrorMsg }}
         </div>
       </div>
@@ -76,9 +76,11 @@
 .xUpload {
   border: var(--x-upload-border-width) solid var(--x-upload-border-color);
 
-  .error {
-    font-size: 12px;
+  .x-upload-file-error {
     color: #ff0000;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 
   .x-upload-file-upload {
@@ -157,6 +159,7 @@
 </style>
 
 <script>
+import { formatString } from '../../utils/string'
 import ImageViewer from '../imageViewer'
 
 export default {
@@ -215,6 +218,18 @@ export default {
       type: String,
       default: "将文件拖到此处，或<em>点击上传</em>",
     },
+    typeErrorLabel: {
+      type: String,
+      default: "文件格式错误",
+    },
+    sizeErrorLabel: {
+      type: String,
+      default: "文件大小不能超过{size}",
+    },
+    uploadErrorLabel: {
+      type: String,
+      default: "文件上传失败",
+    },
     loadingLabel: {
       type: String,
       default: "正在上传中...",
@@ -243,29 +258,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    imageCropTitle: {
-      type: String,
-      default: "图片裁剪",
-    },
-    imageCropOkLabel: {
-      type: String,
-      default: "确定",
-    },
-    imageCropCancelLabel: {
-      type: String,
-      default: "取消",
-    },
-    imageCropOutputType: {
-      type: String,
-      default: "png",
-    },
-    imageCropWidth: {
-      type: Number,
-      default: 120,
-    },
-    imageCropHeight: {
-      type: Number,
-      default: 120,
+    imageCropOptions: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     },
     disabled: {
       type: Boolean,
@@ -369,14 +366,16 @@ export default {
       }
       if (this.uploadFileTypes && this.uploadFileTypes.length > 0) {
         if (!this.uploadFileTypes.includes(file.type)) {
-          this.uploadErrorMsg = "文件格式错误";
+          this.uploadErrorMsg = this.typeErrorLabel;
           return false;
         }
       }
       if (file.size / 1024 / 1024 > this.fileSize / 1024) {
-        this.uploadErrorMsg = `文件大小不能超过${this.converSize(
-          this.fileSize * 1024
-        )}`;
+        this.uploadErrorMsg = formatString(this.sizeErrorLabel, {
+          size: this.converSize(
+            this.fileSize * 1024
+          )
+        });
         return false;
       }
       let callUpload = (file) => {
@@ -390,27 +389,24 @@ export default {
           })
           .catch((err) => {
             console.error(err);
-            this.uploadErrorMsg = err || "上传文件失败";
+            this.uploadErrorMsg = err || this.uploadErrorLabel;
           })
           .finally(() => {
             this.uploadLoading = false;
           });
       }
       if (this.imageCrop && this.type == "image") {
-        this.$cropper.showCropper({
+        this.$cropper.showCropper(Object.assign({
           img: file, // 裁剪图片的地址
-          title: this.imageCropTitle, // 裁剪弹窗标题
-          okLabel: this.imageCropOkLabel, // 裁剪弹窗确认按钮
-          cancelLabel: this.imageCropCancelLabel, // 裁剪弹窗取消按钮
-          autoCropWidth: this.imageCropWidth, // 默认生成截图框宽度
-          autoCropHeight: this.imageCropHeight, // 默认生成截图框高度
-          outputType: this.imageCropOutputType, // 裁剪的默认输出格式
-          success: res => {
-            let blob = res.img;
-            blob.lastModifiedDate = new Date();
-            blob.name = file.name;
-            callUpload(blob);
-          }
+          autoCropWidth: 150, // 默认生成截图框宽度
+          autoCropHeight: 150, // 默认生成截图框高度
+          outputType: "png", // 裁剪的默认输出格式
+          centerBox: false,
+        }, this.imageCropOptions || {}), res => {
+          let blob = res.img;
+          blob.lastModifiedDate = new Date();
+          blob.name = file.name;
+          callUpload(blob);
         })
       } else {
         callUpload(file)

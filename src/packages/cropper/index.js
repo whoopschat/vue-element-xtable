@@ -4,8 +4,8 @@ let _installed = false;
 let _cropperInstance = null;
 let _showCropper = null;
 
-function showCropper(options) {
-  _showCropper && _showCropper(options);
+function showCropper(options, callback) {
+  _showCropper && _showCropper(options, callback);
 }
 
 const Cropper = {
@@ -21,8 +21,8 @@ export function _installCropper(Vue) {
   _cropperInstance = new comp();
   _cropperInstance.$mount(document.createElement('div'))
   document.body.appendChild(_cropperInstance.$el);
-  _showCropper = function (options) {
-    _cropperInstance && _cropperInstance.showCropper(options);
+  _showCropper = function (options, callback) {
+    _cropperInstance && _cropperInstance.showCropper(options, callback);
   }
   Vue.prototype.$cropper = Cropper;
 }

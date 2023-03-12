@@ -165,6 +165,18 @@ export default {
       type: String,
       default: "",
     },
+    selectLabel: {
+      type: String,
+      default: "选择",
+    },
+    currentLabel: {
+      type: String,
+      default: "当前",
+    },
+    errorLabel: {
+      type: String,
+      default: "获取数据失败",
+    },
     filterMethod: {
       type: Function,
     },
@@ -313,8 +325,8 @@ export default {
           label: (row, tag, table) => {
             return this.getValue("value", this.configInfo, row) ==
               this.selectValue
-              ? this.getValue("currentLabel", this.configInfo) || "当前"
-              : this.getValue("selectLabel", this.configInfo) || "选择";
+              ? this.getValue("currentLabel", this.configInfo) || this.currentLabel
+              : this.getValue("selectLabel", this.configInfo) || this.selectLabel;
           },
           linkType: (row, tag, table) => {
             return this.getValue("value", this.configInfo, row) ==
@@ -406,7 +418,7 @@ export default {
           this.select = resp;
         }).catch((err) => {
           console.error(err);
-          this.detailErrorMsg = err || "请求数据失败";
+          this.detailErrorMsg = err || this.errorLabel;
         }).finally(() => {
           this.detailLoading = false;
         });
@@ -419,22 +431,19 @@ export default {
       this.$nextTick(() => {
         this.configLoading = true;
         this.configErrorMsg = null;
-        return this.$xUIDataConfigHandler(this.type)
-          .then((resp) => {
-            if (resp) {
-              this.configInfo = deepAssign({}, resp, this.options);
-              this.fetchDetail();
-            } else {
-              throw "找不到选择器配置信息";
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            this.configErrorMsg = err || "请求数据失败";
-          })
-          .finally(() => {
-            this.configLoading = false;
-          });
+        return this.$xUIDataConfigHandler(this.type).then((resp) => {
+          if (resp) {
+            this.configInfo = deepAssign({}, resp, this.options);
+            this.fetchDetail();
+          } else {
+            throw "Not found select config: " + this.type;
+          }
+        }).catch((err) => {
+          console.error(err);
+          this.configErrorMsg = err;
+        }).finally(() => {
+          this.configLoading = false;
+        });
       });
     },
   },

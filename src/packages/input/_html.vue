@@ -1,8 +1,8 @@
 <template>
-  <div class="xHtmlEditor">
+  <div class="xInputHtml">
     <div v-if="!loading">
       <quill-editor
-        ref="myQuillEditor"
+        ref="editor"
         v-model="inputValue"
         :class="[disabled ? 'is-disabled' : '']"
         :options="editorOption"
@@ -13,7 +13,7 @@
 </template>
 
 <style lang="less">
-.xHtmlEditor {
+.xInputHtml {
   .quill-editor {
     background: #ffffff;
     &.is-disabled {
@@ -226,8 +226,8 @@ export default {
       })
     },
     refreshDisabled() {
-      if (this.$refs.myQuillEditor) {
-        this.$refs.myQuillEditor.quill.enable(!this.disabled);
+      if (this.$refs.editor) {
+        this.$refs.editor.quill.enable(!this.disabled);
       }
     },
     dispatch(componentName, eventName, params) {

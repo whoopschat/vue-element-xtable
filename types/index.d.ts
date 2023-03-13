@@ -41,8 +41,16 @@ declare module "vue-element-xui" {
     title: string,
     /** 组件 */
     component: any,
+    /** 遮罩 */
+    model?: boolean;
+    /** 显示关闭 */
+    showClose?: boolean;
+    /** 点击遮罩区域关闭 */
+    closeable?: boolean;
     /** 刷新回调 */
     refresh?: Function,
+    /** 返回值回调 */
+    result?: Function,
     /** Params参数 */
     params?: any,
     /** Query参数 */
@@ -171,6 +179,9 @@ declare module "vue-element-xui" {
   /** 图片裁剪 */
   interface Cropper {
 
+    /**
+     * 显示图片裁剪
+     */
     showCropper(options: CropperOptions, callback?: Function): void;
 
   }
@@ -179,6 +190,7 @@ declare module "vue-element-xui" {
    * 抽屉弹窗
    */
   interface Drawer {
+
     /**
      * 是否打开
      */
@@ -190,14 +202,19 @@ declare module "vue-element-xui" {
     closeDrawer(): void;
 
     /**
+     * 返回页面
+     */
+    backDrawer(): void;
+
+    /**
      * 刷新页面
      */
     refreshDrawer(): void;
 
     /**
-     * 返回页面
+     * 返回值页面
      */
-    backDrawer(): void;
+    resultDrawer(result: any): void;
 
     /**
      * 打开页面

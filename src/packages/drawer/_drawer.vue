@@ -6,6 +6,7 @@
       custom-class="xDrawer"
       :before-close="handleClose"
       :wrapperClosable="drawerClosable"
+      :show-close="drawerShowClose"
       :visible.sync="show"
       :modal="drawerModal"
       :title="drawerTitle"
@@ -28,6 +29,7 @@
         >
           <component
             v-show="i == historyList.length - 1"
+            @result="handleResult"
             :ref="opt.key"
             :is="opt.component"
             :params="opt.params"
@@ -104,6 +106,7 @@ export default {
   data() {
     return {
       show: false,
+      result: null,
       refresh: false,
       options: null,
       autoSize: "80%",
@@ -133,6 +136,9 @@ export default {
     },
     drawerClosable() {
       return this.currentOptions && this.currentOptions.closable == true;
+    },
+    drawerShowClose() {
+      return this.currentOptions && this.currentOptions.showClose != true;
     }
   },
   mounted() {
@@ -159,6 +165,9 @@ export default {
         }
         return refComp;
       }
+    },
+    setResult(result) {
+      this.result = result;
     },
     setRefresh() {
       this.refresh = true;
@@ -202,6 +211,9 @@ export default {
     checkRefresh(option) {
       if (option && this.refresh && typeof option.refresh === "function") {
         option.refresh();
+      }
+      if (option && this.result && typeof option.result === "function") {
+        option.result(this.result);
       }
     },
     openDrawer(options = {}, replace = false) {

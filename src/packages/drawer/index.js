@@ -4,8 +4,9 @@ import { onChanged } from "../../utils/changed";
 let _installed = false;
 let _drawerInstance = null;
 let _openDrawer = null;
-let _refreshDrawer = null;
 let _replaceDrawer = null;
+let _refreshDrawer = null;
+let _resultDrawer = null;
 let _closeDrawer = null;
 let _backDrawer = null;
 
@@ -33,12 +34,17 @@ function refreshDrawer() {
   _refreshDrawer && _refreshDrawer();
 }
 
+function resultDrawer(result) {
+  _resultDrawer && _resultDrawer(result);
+}
+
 const Drawer = {
   isOpened,
   backDrawer,
   closeDrawer,
   replaceDrawer,
   refreshDrawer,
+  resultDrawer,
   openDrawer
 }
 
@@ -63,11 +69,14 @@ export function _installDrawer(Vue) {
   _backDrawer = function () {
     _drawerInstance && _drawerInstance.backDrawer(true);
   }
-  _closeDrawer = function () {
-    _drawerInstance && _drawerInstance.closeDrawer();
-  }
   _refreshDrawer = function () {
     _drawerInstance && _drawerInstance.setRefresh();
+  }
+  _resultDrawer = function (result) {
+    _drawerInstance && _drawerInstance.setResult(result);
+  }
+  _closeDrawer = function () {
+    _drawerInstance && _drawerInstance.closeDrawer();
   }
   Vue.prototype.$drawer = Drawer;
 }

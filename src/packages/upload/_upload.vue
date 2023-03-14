@@ -75,6 +75,7 @@
 <style lang="less" >
 .xUpload {
   border: var(--x-upload-border-width) solid var(--x-upload-border-color);
+  border-radius: var(--x-upload-border-radius);
 
   .x-upload-file-error {
     color: #ff0000;
@@ -193,7 +194,11 @@ export default {
     },
     borderColor: {
       type: String,
-      default: "#f1f1f1",
+      default: "#DCDFE6",
+    },
+    borderRadius: {
+      type: Number,
+      default: 4,
     },
     borderWidth: {
       type: Number,
@@ -281,6 +286,7 @@ export default {
         "--x-upload-image-view-height": `${this.imageViewHeight}px`,
         "--x-upload-image-delete-color": `${this.deleteColor}`,
         "--x-upload-border-color": `${this.borderColor}`,
+        "--x-upload-border-radius": `${this.borderRadius}px`,
         "--x-upload-border-width": `${this.borderWidth}px`,
         "--x-upload-padding": `${this.padding}px`,
       }

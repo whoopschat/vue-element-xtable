@@ -21,6 +21,7 @@
               ref="table"
               paginationLayout="total, sizes, prev, next"
               @selectList="handleSelectList"
+              @event="handleEvent"
               :selection="multipleable"
               :btnList="computedBtnList"
               :tag="getValue('tag', configInfo)"
@@ -270,6 +271,13 @@ export default {
   methods: {
     focus() {
       this.handleOpenClick();
+    },
+    handleEvent(type, ...params) {
+      if (type == 'hide') {
+        this.hideDialog();
+      } else {
+        this.$emit("event", type, ...params)
+      }
     },
     hideDialog() {
       this.visible = false;

@@ -70,7 +70,7 @@ export function _installDrawer(Vue) {
     _drawerInstance && _drawerInstance.backDrawer(true);
   }
   _refreshDrawer = function () {
-    _drawerInstance && _drawerInstance.setRefresh();
+    _drawerInstance && _drawerInstance.setChanged();
   }
   _resultDrawer = function (result) {
     _drawerInstance && _drawerInstance.setResult(result);

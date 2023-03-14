@@ -29,7 +29,6 @@
         >
           <component
             v-show="i == historyList.length - 1"
-            @result="handleResult"
             :ref="opt.key"
             :is="opt.component"
             :params="opt.params"
@@ -106,7 +105,6 @@ export default {
   data() {
     return {
       show: false,
-      result: null,
       refresh: false,
       options: null,
       autoSize: "80%",
@@ -114,6 +112,13 @@ export default {
     };
   },
   computed: {
+    backOptions() {
+      try {
+        if (this.historyList.length > 1) {
+          return this.historyList[this.historyList.length - 2];
+        }
+      } catch (error) { }
+    },
     currentOptions() {
       try {
         if (this.historyList.length > 0) {
@@ -122,24 +127,26 @@ export default {
       } catch (error) { }
     },
     backLabel() {
-      try {
-        if (this.historyList.length > 1) {
-          return this.getTitle(this.historyList[this.historyList.length - 2]);
-        }
-      } catch (error) { }
+      return (
+        (this.backOptions && this.backOptions.title) ||
+        (this.backOptions && this.backOptions.component && this.backOptions.component.name)
+      );
     },
     drawerTitle() {
-      return this.getTitle(this.currentOptions);
+      return (
+        (this.currentOptions && this.currentOptions.title) ||
+        (this.currentOptions && this.currentOptions.component && this.currentOptions.component.name)
+      );
     },
-    drawerModal() {
-      return this.currentOptions && this.currentOptions.modal != false;
+    drawerShowClose() {
+      return this.currentOptions && this.currentOptions.showClose != false;
     },
     drawerClosable() {
       return this.currentOptions && this.currentOptions.closable == true;
     },
-    drawerShowClose() {
-      return this.currentOptions && this.currentOptions.showClose != true;
-    }
+    drawerModal() {
+      return this.currentOptions && this.currentOptions.modal != false;
+    },
   },
   mounted() {
     this.checkResize();
@@ -151,35 +158,32 @@ export default {
     isOpened() {
       return this.show;
     },
-    getTitle(option) {
-      return (
-        (option && option.title) ||
-        (option && option.component && option.component.name)
-      );
-    },
-    getCurComp() {
-      if (this.currentOptions && this.$refs[this.currentOptions.key]) {
-        let refComp = this.$refs[this.currentOptions.key];
-        if (refComp instanceof Array) {
-          return refComp[0];
+    setChanged() {
+      let flag = false;
+      for (let index = this.historyList.length - 1; !flag && index >= 0; index--) {
+        let option = this.historyList[index];
+        if (option && option.refresh) {
+          option.changed = true;
+          flag = true;
         }
-        return refComp;
       }
     },
-    setResult(result) {
-      this.result = result;
-    },
-    setRefresh() {
-      this.refresh = true;
+    setResult(response) {
+      let flag = false;
+      for (let index = this.historyList.length - 1; !flag && index >= 0; index--) {
+        let option = this.historyList[index];
+        if (option && option.result) {
+          option.response = response;
+          flag = true;
+        }
+      }
     },
     checkResize() {
-      let curComponent = this.getCurComp();
-      if (curComponent && typeof curComponent['getDrawerWidth'] == 'function') {
-        this.autoSize = curComponent['getDrawerWidth']();
-        if (this.autoSize) {
-          return
-        }
+      this.autoSize = this.currentOptions && this.currentOptions.width;
+      if (this.autoSize) {
+        return
       }
+      let maxWidth = this.currentOptions && this.currentOptions.maxWidth || this.$xUIDrawerMaxWidth;
       if (this.$xUIDrawerFullScreen) {
         this.autoSize = "100%";
         return;
@@ -187,10 +191,10 @@ export default {
       try {
         let width =
           document.documentElement.clientWidth || document.body.clientWidth;
-        if (width < 1000) {
+        if (width < maxWidth) {
           this.autoSize = "100%";
         } else {
-          this.autoSize = 1000;
+          this.autoSize = maxWidth;
         }
       } catch (error) { }
     },
@@ -199,21 +203,20 @@ export default {
         callback && callback();
         return;
       }
-      let curComponent = this.getCurComp();
-      if (curComponent && typeof curComponent['onDrawerClose'] == 'function') {
-        curComponent['onDrawerClose']((_) => {
+      if (this.currentOptions && typeof this.currentOptions.close === "function") {
+        this.currentOptions.close((_) => {
           callback && callback();
         })
       } else {
         callback && callback();
       }
     },
-    checkRefresh(option) {
-      if (option && this.refresh && typeof option.refresh === "function") {
+    checkCallback(option) {
+      if (option && option.changed && typeof option.refresh === "function") {
         option.refresh();
       }
-      if (option && this.result && typeof option.result === "function") {
-        option.result(this.result);
+      if (option && option.response && typeof option.result === "function") {
+        option.result(option.response);
       }
     },
     openDrawer(options = {}, replace = false) {
@@ -228,6 +231,7 @@ export default {
         } catch (err) { }
       }
       options.key = createUUID();
+      options.response = null;
       options.params = options.query = Object.assign(
         { isDrawer: 1 },
         options.query || {},
@@ -235,10 +239,7 @@ export default {
       );
       if (replace) {
         let opt = this.historyList.pop();
-        this.checkRefresh(opt);
-        if (!options.refresh) {
-          options.refresh = opt.refresh;
-        }
+        this.checkCallback(opt);
       }
       this.historyList.push(options);
       this.show = true;
@@ -248,9 +249,8 @@ export default {
     },
     closeDrawer() {
       this.historyList.splice(0, this.historyList.length).forEach((option) => {
-        this.checkRefresh(option);
+        this.checkCallback(option);
       });
-      this.refresh = false;
       this.show = false;
       this.checkResize();
     },
@@ -259,7 +259,7 @@ export default {
         if (this.historyList.length == 1) {
           this.closeDrawer();
         } else {
-          this.checkRefresh(this.historyList.pop());
+          this.checkCallback(this.historyList.pop());
           this.$nextTick(() => {
             try {
               let currentKey = `drawer-content`;

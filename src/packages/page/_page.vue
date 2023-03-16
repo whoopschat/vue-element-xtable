@@ -129,6 +129,7 @@
     .el-submenu__title {
       width: auto;
       height: var(--x-page-menu-item-height);
+      background-color: var(--x-page-menu-bg-color);
       line-height: var(--x-page-menu-item-height);
       min-width: calc(
         var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
@@ -136,8 +137,8 @@
       max-width: calc(
         var(--x-page-menu-width)- var(--x-page-menu-border-width)
       );
-
       color: var(--x-page-menu-text-color);
+
       i {
         color: var(--x-page-menu-text-color);
       }
@@ -164,6 +165,7 @@
       width: auto;
       height: var(--x-page-menu-item-height);
       line-height: var(--x-page-menu-item-height);
+      background-color: var(--x-page-menu-bg-color);
       min-width: calc(
         var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
       );

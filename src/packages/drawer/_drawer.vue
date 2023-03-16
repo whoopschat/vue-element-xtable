@@ -159,12 +159,10 @@ export default {
       return this.show;
     },
     setChanged() {
-      let flag = false;
-      for (let index = this.historyList.length - 1; !flag && index >= 0; index--) {
+      for (let index = this.historyList.length - 1; index >= 0; index--) {
         let option = this.historyList[index];
         if (option && option.refresh) {
           option.changed = true;
-          flag = true;
         }
       }
     },

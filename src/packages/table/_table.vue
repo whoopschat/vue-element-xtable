@@ -55,6 +55,7 @@
       :data="filterData"
       :size="size || $xUISize"
       :highlight-current-row="true"
+      :height="height"
       v-if="filterData.length > 0"
       @sort-change="handleSortChange"
       @current-change="handleCurrentChange"
@@ -221,6 +222,15 @@
   .x-table-action-link {
     margin-right: 8px;
   }
+
+  // 滚动条的滑块
+  ::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+  }
+  ::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    background: #eee;
+  }
 }
 </style>
 
@@ -231,7 +241,10 @@ export default {
       type: Object | String | Boolean | Number,
     },
     size: {
-      type: Number,
+      type: Number | String,
+    },
+    height: {
+      type: Number | String,
     },
     listApi: {
       type: String,
@@ -321,6 +334,9 @@ export default {
     filterLabelMethod: {
       type: Function,
     },
+    handleMapList: {
+      type: Function,
+    },
     handleFetchList: {
       type: Function,
     },
@@ -348,7 +364,6 @@ export default {
       dataList: [],
       dataParams: {},
       selectList: [],
-      noCallFetch: false,
       fetchLoading: false,
       fetchErrorMsg: null,
       refreshElement: false,
@@ -544,26 +559,25 @@ export default {
             })
           }
           return resp;
+        }).then(resp => {
+          if (this.handleMapList) {
+            return this.handleMapList(resp);
+          }
+          return resp;
         }).then((resp) => {
           this.dataList = resp.list || [];
           this.dataList.unshift(...(this.unshiftList || []));
           this.currentTotal = parseInt(resp.total) || 0;
           this.currentPage = parseInt(resp.page) || this.currentPage;
           this.currentSize = parseInt(resp.size) || this.currentSize;
-          if (!this.noCallFetch) {
-            this.$emit("fetch-list", this.dataList, this);
-            this.noCallFetch = false;
-          }
         }).catch((err) => {
           this.fetchErrorMsg = err || this.errorLabel;
-          this.$emit("fetch-error", err);
         }).finally(() => {
           this.fetchLoading = false;
         });
       });
     },
     refresh() {
-      this.noCallFetch = true;
       this.fetchList();
     },
   },

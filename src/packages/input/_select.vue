@@ -25,6 +25,7 @@
               :selection="multipleable"
               :btnList="computedBtnList"
               :tag="getValue('tag', configInfo)"
+              :height="getValue('height', configInfo)"
               :listApi="getValue('listApi', configInfo)"
               :fieldList="getValue('fieldList', configInfo)"
               :paramList="getValue('paramList', configInfo)"
@@ -155,7 +156,7 @@ export default {
       type: String | Number,
     },
     size: {
-      type: String,
+      type: Number | String,
       default: "",
     },
     type: {

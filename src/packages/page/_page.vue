@@ -195,17 +195,16 @@
       }
     }
   }
-
   // 滚动条的宽度
-  ::-webkit-scrollbar {
+  .x-page-menu::-webkit-scrollbar {
     width: 0px; // 横向滚动条
     height: 16px; // 纵向滚动条 必写
   }
   // 滚动条的滑块
-  ::-webkit-scrollbar-thumb {
+  .x-page-menu::-webkit-scrollbar-thumb {
     background-color: #ddd;
   }
-  ::-webkit-scrollbar-track {
+  .x-page-menu::-webkit-scrollbar-track {
     /*滚动条里面轨道*/
     background: #eee;
   }

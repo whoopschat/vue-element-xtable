@@ -13,14 +13,14 @@
         <el-menu
           mode="vertical"
           menu-trigger="click"
-          :collapse="isCollapse"
+          :unique-opened="true"
           :collapse-transition="false"
           :default-active="actionName"
-          @select="handleMenuClick"
+          @select="handleSelectClick"
         >
           <template v-for="(item, index) in menus">
             <el-submenu
-              v-if="item.children"
+              v-if="item.children && item.children.length > 0"
               v-show="getValue('show', item, null, true)"
               :disabled="getValue('disabled', item, null, false)"
               :key="'x-page-menu-' + index"
@@ -28,7 +28,9 @@
             >
               <template slot="title">
                 <i v-if="item.icon" :class="getValue('icon', item)"></i>
-                <span> {{ getValue("label", item) }}</span>
+                <span v-if="!isCollapse">
+                  {{ getValue("label", item) }}
+                </span>
               </template>
               <el-menu-item
                 v-for="(children, cIndex) in item.children"
@@ -42,7 +44,9 @@
                     v-if="children.icon"
                     :class="getValue('icon', children)"
                   ></i>
-                  <span> {{ getValue("label", children) }}</span>
+                  <span v-if="!isCollapse">
+                    {{ getValue("label", children) }}
+                  </span>
                 </template>
               </el-menu-item>
             </el-submenu>
@@ -53,7 +57,9 @@
               :index="'' + index"
             >
               <i v-if="item.icon" :class="getValue('icon', item)"></i>
-              <span slot="title"> {{ getValue("label", item) }}</span>
+              <span v-if="!isCollapse" slot="title">
+                {{ getValue("label", item) }}
+              </span>
             </el-menu-item>
           </template>
         </el-menu>
@@ -78,18 +84,20 @@
 
   .x-page-content {
     overflow: auto;
-    position: fixed;
-    flex-direction: column;
     display: flex;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    height: var(--page-height);
+    flex-direction: column;
+    margin-left: calc(
+      var(--x-page-menu-border-width) + var(--x-page-menu-width)
+    );
     width: calc(
       100% - var(--x-page-menu-border-width) - var(--x-page-menu-width)
     );
-    background-color: var(--page-content-bg-color);
+    min-width: var(--x-page-content-min-width);
+    background-color: var(--x-page-content-bg-color);
     &.x-menu-collapse {
+      margin-left: calc(
+        var(--x-page-menu-border-width) + var(--x-page-menu-collapse-width)
+      );
       width: calc(
         100% - var(--x-page-menu-border-width) -
           var(--x-page-menu-collapse-width)
@@ -115,83 +123,115 @@
     border-right: solid var(--x-page-menu-border-width)
       var(--x-page-menu-border-color);
 
+    .el-menu {
+      width: auto;
+      color: var(--x-page-menu-text-color);
+      background-color: var(--x-page-menu-bg-color);
+      border: 0px;
+
+      .el-submenu__title {
+        width: auto;
+        height: var(--x-page-menu-item-height);
+        background-color: var(--x-page-menu-bg-color);
+        line-height: var(--x-page-menu-item-height);
+        min-width: calc(
+          var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
+        );
+        max-width: calc(
+          var(--x-page-menu-width)- var(--x-page-menu-border-width)
+        );
+        color: var(--x-page-menu-text-color);
+
+        i {
+          color: var(--x-page-menu-text-color);
+        }
+      }
+
+      .el-submenu__title.is-active {
+        background-color: var(--x-page-menu-bg-active-color);
+        color: var(--x-page-menu-text-active-color);
+
+        i {
+          color: var(--x-page-menu-text-active-color);
+        }
+      }
+      .el-submenu__title:hover {
+        background-color: var(--x-page-menu-bg-hover-color);
+        color: var(--x-page-menu-text-hover-color);
+
+        i {
+          color: var(--x-page-menu-text-hover-color);
+        }
+      }
+
+      .el-menu-item {
+        width: auto;
+        padding: 0px;
+        height: var(--x-page-menu-item-height);
+        line-height: var(--x-page-menu-item-height);
+        background-color: var(--x-page-menu-bg-color);
+        padding-left: var(--x-page-menu-item-padding-left) !important;
+        min-width: calc(
+          var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
+        );
+        max-width: calc(
+          var(--x-page-menu-width)- var(--x-page-menu-border-width)
+        );
+        color: var(--x-page-menu-text-color);
+
+        i {
+          color: var(--x-page-menu-text-color);
+        }
+      }
+      .el-menu-item.is-active {
+        background-color: var(--x-page-menu-bg-active-color);
+        color: var(--x-page-menu-text-active-color);
+
+        i {
+          color: var(--x-page-menu-text-active-color);
+        }
+      }
+      .el-menu-item:hover {
+        background-color: var(--x-page-menu-bg-hover-color);
+        color: var(--x-page-menu-text-hover-color);
+
+        i {
+          color: var(--x-page-menu-text-hover-color);
+        }
+      }
+    }
+    .el-submenu .el-menu-item {
+      background-color: var(--x-page-menu-sub-bg-color);
+      color: var(--x-page-menu-sub-text-color);
+
+      i {
+        color: var(--x-page-menu-sub-text-color);
+      }
+    }
+
+    .el-submenu .el-menu-item.is-active {
+      background-color: var(--x-page-menu-sub-bg-active-color);
+      color: var(--x-page-menu-sub-text-active-color);
+
+      i {
+        color: var(--x-page-menu-sub-text-active-color);
+      }
+    }
+
+    .el-submenu .el-menu-item:hover {
+      background-color: var(--x-page-menu-sub-bg-hover-color);
+      color: var(--x-page-menu-sub-text-hover-color);
+
+      i {
+        color: var(--x-page-menu-sub-text-hover-color);
+      }
+    }
+
     &.x-menu-collapse {
       width: var(--x-page-menu-collapse-width);
-    }
-  }
 
-  .el-menu {
-    width: auto;
-    color: var(--x-page-menu-text-color);
-    background-color: var(--x-page-menu-bg-color);
-    border: 0px;
-
-    .el-submenu__title {
-      width: auto;
-      height: var(--x-page-menu-item-height);
-      background-color: var(--x-page-menu-bg-color);
-      line-height: var(--x-page-menu-item-height);
-      min-width: calc(
-        var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
-      );
-      max-width: calc(
-        var(--x-page-menu-width)- var(--x-page-menu-border-width)
-      );
-      color: var(--x-page-menu-text-color);
-
-      i {
-        color: var(--x-page-menu-text-color);
-      }
-    }
-
-    .el-submenu__title.is-active {
-      background-color: var(--x-page-menu-bg-active-color);
-      color: var(--x-page-menu-text-active-color);
-
-      i {
-        color: var(--x-page-menu-text-active-color);
-      }
-    }
-    .el-submenu__title:hover {
-      background-color: var(--x-page-menu-bg-hover-color);
-      color: var(--x-page-menu-text-hover-color);
-
-      i {
-        color: var(--x-page-menu-text-hover-color);
-      }
-    }
-
-    .el-menu-item {
-      width: auto;
-      height: var(--x-page-menu-item-height);
-      line-height: var(--x-page-menu-item-height);
-      background-color: var(--x-page-menu-bg-color);
-      min-width: calc(
-        var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
-      );
-      max-width: calc(
-        var(--x-page-menu-width)- var(--x-page-menu-border-width)
-      );
-      color: var(--x-page-menu-text-color);
-
-      i {
-        color: var(--x-page-menu-text-color);
-      }
-    }
-    .el-menu-item.is-active {
-      background-color: var(--x-page-menu-bg-active-color);
-      color: var(--x-page-menu-text-active-color);
-
-      i {
-        color: var(--x-page-menu-text-active-color);
-      }
-    }
-    .el-menu-item:hover {
-      background-color: var(--x-page-menu-bg-hover-color);
-      color: var(--x-page-menu-text-hover-color);
-
-      i {
-        color: var(--x-page-menu-text-hover-color);
+      .el-submenu__icon-arrow {
+        display: none;
       }
     }
   }
@@ -230,10 +270,6 @@ export default {
       type: Number,
       default: 800,
     },
-    menuWidth: {
-      type: Number,
-      default: 170,
-    },
     menuBgColor: {
       type: String,
       default: "#c25b4e",
@@ -258,6 +294,30 @@ export default {
       type: String,
       default: "#c5e1fd",
     },
+    menuSubBgColor: {
+      type: String,
+      default: "#d57164",
+    },
+    menuSubBgHoverColor: {
+      type: String,
+      default: "#a7493d",
+    },
+    menuSubBgActiveColor: {
+      type: String,
+      default: "#a7493d",
+    },
+    menuSubTextColor: {
+      type: String,
+      default: "#ffffff",
+    },
+    menuSubTextHoverColor: {
+      type: String,
+      default: "#c5e1fd",
+    },
+    menuSubTextActiveColor: {
+      type: String,
+      default: "#c5e1fd",
+    },
     menuBorderColor: {
       type: String,
       default: "#ff0000",
@@ -268,11 +328,27 @@ export default {
     },
     menuCollapseWidth: {
       type: Number,
-      default: 70,
+      default: 60,
+    },
+    menuWidth: {
+      type: Number,
+      default: 170,
     },
     menuItemHeight: {
       type: Number,
       default: 50,
+    },
+    menuItemPaddingLeft: {
+      type: Number,
+      default: 20,
+    },
+    contentBgColor: {
+      type: String,
+      default: "#ffffff",
+    },
+    contentMinWidth: {
+      type: Number,
+      default: 300,
     },
   },
   data() {
@@ -333,7 +409,14 @@ export default {
         this.pageStyle = {
           "--x-page-menu-width": `${this.menuWidth}px`,
           "--x-page-menu-item-height": `${this.menuItemHeight}px`,
+          "--x-page-menu-item-padding-left": `${this.menuItemPaddingLeft}px`,
           "--x-page-menu-collapse-width": `${this.menuCollapseWidth}px`,
+          "--x-page-menu-sub-bg-color": this.menuSubBgColor,
+          "--x-page-menu-sub-bg-hover-color": this.menuSubBgHoverColor,
+          "--x-page-menu-sub-bg-active-color": this.menuSubBgActiveColor,
+          "--x-page-menu-sub-text-color": this.menuSubTextColor,
+          "--x-page-menu-sub-text-hover-color": this.menuSubTextHoverColor,
+          "--x-page-menu-sub-text-active-color": this.menuSubTextActiveColor,
           "--x-page-menu-bg-color": this.menuBgColor,
           "--x-page-menu-bg-hover-color": this.menuBgHoverColor,
           "--x-page-menu-bg-active-color": this.menuBgActiveColor,
@@ -341,7 +424,9 @@ export default {
           "--x-page-menu-text-hover-color": this.menuTextHoverColor,
           "--x-page-menu-text-active-color": this.menuTextActiveColor,
           "--x-page-menu-border-color": this.menuBorderColor,
-          "--x-page-menu-border-width": `${this.menuBorderWidth || 0}px`
+          "--x-page-menu-border-width": `${this.menuBorderWidth || 0}px`,
+          "--x-page-content-bg-color": this.contentBgColor,
+          "--x-page-content-min-width": `${this.contentMinWidth || 300}px`,
         }
         let width = document.documentElement.clientWidth;
         if (width > this.collapseWidth) {
@@ -373,7 +458,7 @@ export default {
         return event(param, this.tag, this.fetchList, this);
       }
     },
-    handleMenuClick(index) {
+    handleSelectClick(index) {
       let splitIndex = `${index}`.split("_");
       let currentItem = this.menus[Number(splitIndex[0])];
       if (currentItem) {

@@ -386,6 +386,10 @@ export default {
     selectList() {
       this.$emit("selectList", this.selectList);
     },
+    defaultParams() {
+      this.handleChangeParams();
+      this.fetchList();
+    },
   },
   computed: {
     filterTips() {

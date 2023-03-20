@@ -216,6 +216,9 @@ export default {
       if (option && option.response && typeof option.result === "function") {
         option.result(option.response);
       }
+      if (option && typeof option.close === "function") {
+        option.close();
+      }
     },
     openDrawer(options = {}, replace = false) {
       if (this.historyList.length > 0) {

@@ -1,6 +1,6 @@
 <template>
-  <div class="xInputHtml">
-    <div v-if="!loading">
+  <div :style="editorStyle">
+    <div v-if="!loading" class="xInputHtml">
       <quill-editor
         ref="editor"
         v-model="inputValue"
@@ -14,24 +14,26 @@
 
 <style lang="less">
 .xInputHtml {
+  .ql-editor {
+    max-width: 100%;
+    min-height: 240px;
+    max-height: var(--x-input-html-editor-max-height);
+    img {
+      max-width: 100%;
+    }
+  }
   .quill-editor {
     background: #ffffff;
     &.is-disabled {
       background: #f1f1f1;
     }
   }
-  .ql-editor {
-    max-width: 100%;
-    min-height: 240px;
-    img {
-      max-width: 100%;
-    }
-  }
   .ql-snow .ql-formats {
     line-height: 20px;
   }
   .ql-snow .ql-tooltip {
-    z-index: 99999;
+    z-index: 9999;
+    transform: translateX(120px);
   }
   .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
   .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10px"]::before {
@@ -115,6 +117,10 @@ export default {
       type: String,
       default: "color: #919191",
     },
+    maxHeight: {
+      type: Number,
+      default: 500
+    },
     loadingLabel: {
       type: String,
       default: "正在加载编辑器",
@@ -135,6 +141,11 @@ export default {
     },
   },
   computed: {
+    editorStyle() {
+      return {
+        "--x-input-html-editor-max-height": `${this.maxHeight}px`
+      }
+    },
     editorOption() {
       return {
         theme: "snow",
@@ -174,7 +185,7 @@ export default {
               [{ script: "sub" }, { script: "super" }],
               [{ indent: "-1" }, { indent: "+1" }],
               ["clean"],
-              ["image"],
+              ["link", "image"],
             ],
             handlers: {
               image: function () {

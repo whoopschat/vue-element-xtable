@@ -1,21 +1,40 @@
 <template>
   <span v-loading="configLoading">
     <template v-if="!configLoading && configInfo">
-      <el-popover
-        :value="visible"
-        :disabled="!!disabled"
-        :visible-arrow="false"
-        :placement="getValue('placement', configInfo) || $xUISelectPlacement"
-        :width="getValue('width', configInfo)"
-        trigger="click"
+      <template >
+        <el-input 
+          @clear="handleClearClick"
+          :size="size || $xUISize"
+          :style="
+            styleValue || getValue('styleValue', configInfo) || 'width: 100%'
+          "
+          :value="getValueLabel()"
+          :placeholder="getPlaceholderLabel()"
+          :loading="detailLoading"
+          :clearable="!!clearable"
+          :disabled="!!disabled">
+          <i
+            slot="prefix"
+            v-if="detailLoading"
+            class="el-input__icon el-icon-loading"
+          ></i>
+          <el-button 
+            slot="append" 
+            icon="el-icon-arrow-down"
+            @click="handleOpenClick"></el-button>
+        </el-input>
+      </template>
+      <el-dialog
+        append-to-body
+        custom-class="xInputSelect"
+        :title="getTitleLabel() || '请选择'"
+        :width="getValue('width', configInfo) + 'px'"
+        :top="getValue('top', configInfo) || '60px'"
+        :lock-scroll="false"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :visible.sync="visible"
       >
-        <div class="xInputSelect">
-          <div class="x-input-select-close" @click="hideDialog">
-            <i class="el-icon-close"></i>
-          </div>
-          <div class="x-input-select-title">
-            {{ getTitleLabel() || "请选择" }}
-          </div>
           <div class="x-input-select-content">
             <x-table
               ref="table"
@@ -62,40 +81,7 @@
             </el-button>
           </div>
         </div>
-        <template slot="reference">
-          <el-button
-            v-if="getValue('showType', configInfo) == 'button'"
-            :size="size"
-            :style="
-              styleValue || getValue('styleValue', configInfo) || 'width: 100%'
-            "
-            :loading="detailLoading"
-            :disabled="!!disabled"
-            @click="handleOpenClick"
-          >
-            {{ getValueLabel() || getPlaceholderLabel() }}
-          </el-button>
-          <el-input
-            v-else
-            :size="size"
-            :value="getValueLabel()"
-            :placeholder="getPlaceholderLabel()"
-            :style="
-              styleValue || getValue('styleValue', configInfo) || 'width: 100%'
-            "
-            :clearable="!!clearable"
-            :disabled="!!disabled"
-            @click.native="handleOpenClick"
-            @clear="handleClearClick"
-          >
-            <i
-              slot="prefix"
-              v-if="detailLoading"
-              class="el-input__icon el-icon-loading"
-            ></i>
-          </el-input>
-        </template>
-      </el-popover>
+      </el-dialog>
     </template>
     <template v-else-if="!configLoading && configErrorMsg">
       <el-tag
@@ -112,8 +98,11 @@
 
 <style lang="less">
 .xInputSelect {
-  .x-input-select-content {
+  .el-dialog__body {
     padding: 20px;
+  }
+
+  .x-input-select-content {
     min-height: 100px;
   }
 

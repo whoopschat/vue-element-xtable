@@ -3,6 +3,7 @@
     <template v-if="!configLoading && configInfo">
       <template >
         <el-input 
+          @focus="handleOpenClick"
           @clear="handleClearClick"
           :size="size || $xUISize"
           :style="

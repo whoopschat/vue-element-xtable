@@ -214,6 +214,9 @@
   .el-form-item {
     margin-bottom: 5px;
   }
+  .el-form-item__content .el-input-group {
+    vertical-align: unset;
+  }
   .x-table-param-btn {
     margin-left: 0px;
     margin-right: 8px;

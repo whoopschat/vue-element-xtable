@@ -67,11 +67,13 @@
         <slot v-else name="menu-collapse-footer"></slot>
       </div>
       <div :class="'x-page-content' + (isCollapse ? ' x-menu-collapse' : '')">
-        <div ref="header">
-          <slot name="content-header"></slot>
-        </div>
-        <div class="x-page-slot-content">
-          <slot></slot>
+        <div class="x-page-content-warp">
+          <div ref="header">
+            <slot name="content-header"></slot>
+          </div>
+          <div class="x-page-slot-content">
+            <slot></slot>
+          </div>
         </div>
       </div>
     </template>
@@ -83,8 +85,8 @@
   z-index: 499;
 
   .x-page-content {
-    overflow: auto;
     display: flex;
+    overflow: auto;
     flex-direction: column;
     margin-left: calc(
       var(--x-page-menu-border-width) + var(--x-page-menu-width)
@@ -92,7 +94,6 @@
     width: calc(
       100% - var(--x-page-menu-border-width) - var(--x-page-menu-width)
     );
-    min-width: var(--x-page-content-min-width);
     background-color: var(--x-page-content-bg-color);
     &.x-menu-collapse {
       margin-left: calc(
@@ -102,6 +103,10 @@
         100% - var(--x-page-menu-border-width) -
           var(--x-page-menu-collapse-width)
       );
+    }
+
+    .x-page-content-warp {
+      min-width: var(--x-page-content-min-width);
     }
 
     .el-card {
@@ -235,18 +240,10 @@
       }
     }
   }
-  // 滚动条的宽度
+  // 隐藏滚动条
   .x-page-menu::-webkit-scrollbar {
-    width: 0px; // 横向滚动条
-    height: 16px; // 纵向滚动条 必写
-  }
-  // 滚动条的滑块
-  .x-page-menu::-webkit-scrollbar-thumb {
-    background-color: #ddd;
-  }
-  .x-page-menu::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
-    background: #eee;
+    width: 0px;
+    height: 0px;
   }
 }
 </style>
@@ -263,6 +260,10 @@ export default {
       default: () => [],
     },
     noFrame: {
+      type: Boolean,
+      default: false,
+    },
+    collapseEnable: {
       type: Boolean,
       default: false,
     },
@@ -428,11 +429,15 @@ export default {
           "--x-page-content-bg-color": this.contentBgColor,
           "--x-page-content-min-width": `${this.contentMinWidth || 300}px`,
         }
-        let width = document.documentElement.clientWidth;
-        if (width > this.collapseWidth) {
+        if (!this.collapseEnable) {
           this.isCollapse = false;
         } else {
-          this.isCollapse = true;
+          let width = document.documentElement.clientWidth;
+          if (width > this.collapseWidth) {
+            this.isCollapse = false;
+          } else {
+            this.isCollapse = true;
+          }
         }
       } catch (error) { }
     },

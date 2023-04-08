@@ -86,7 +86,8 @@
 
   .x-page-content {
     display: flex;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     flex-direction: column;
     margin-left: calc(
       var(--x-page-menu-border-width) + var(--x-page-menu-width)

@@ -176,6 +176,18 @@ export default {
       type: String,
       default: "",
     },
+    cacheKey: {
+      type: String,
+      default: "",
+    },
+    cacheEnable: {
+      type: Boolean,
+      default: false,
+    },
+    defaultValue: {
+      type: String | Object | Array,
+      default: "",
+    },
     styleValue: {
       type: String,
       default: "",
@@ -301,6 +313,9 @@ export default {
       this.changeFlag = true;
       this.$emit("change", this.inputValue);
       this.dispatch("ElFormItem", "el.form.change");
+      if (this.cacheEnable) {
+        localStorage.setItem(`xui-input-cache-${this.cacheKey}`, this.inputValue);
+      }
     },
     delayChange() {
       if (this.changeTimeout) {
@@ -323,6 +338,9 @@ export default {
           (this.value && JSON.parse(JSON.stringify(this.value))) || "";
       } catch (error) {
         this.inputValue = "";
+      }
+      if (this.cacheEnable && !this.inputValue) {
+        this.inputValue = localStorage.getItem(`xui-input-cache-${this.cacheKey}`) || this.defaultValue;
       }
       if (this.focusable) {
         this.focus();

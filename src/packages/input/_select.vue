@@ -384,6 +384,11 @@ export default {
       this.hideDialog();
     },
     fetchDetail() {
+      if (!this.value) {
+        this.select = null;
+        this.detailErrorMsg = null;
+        return;
+      }
       if (this.select) {
         return;
       }
@@ -391,11 +396,6 @@ export default {
         return;
       }
       if (!this.configInfo) {
-        return;
-      }
-      if (!this.value) {
-        this.select = null;
-        this.detailErrorMsg = null;
         return;
       }
       this.$nextTick(() => {

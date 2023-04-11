@@ -177,6 +177,9 @@ export default {
       }
     },
     checkResize() {
+      if (!this.currentOptions) {
+        return;
+      }
       this.autoSize = this.currentOptions && this.currentOptions.width;
       if (this.autoSize) {
         return
@@ -231,6 +234,7 @@ export default {
           }
         } catch (err) { }
       }
+      options = Object.assign({}, this.currentOptions || {}, options);
       options.key = createUUID();
       options.response = null;
       options.params = options.query = Object.assign(

@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import exifmin from '../exif-js-min'
+import exifmin from './exif-js-min'
 
 export default {
   name: 'vue-cropper',

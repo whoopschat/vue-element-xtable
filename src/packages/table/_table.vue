@@ -542,6 +542,7 @@ export default {
         }
       });
       this.dataParams = Object.assign({}, this.defaultParams, this.dataParams);
+      this.currentPage = 1;
       this.fetchList();
     },
     fetchList() {

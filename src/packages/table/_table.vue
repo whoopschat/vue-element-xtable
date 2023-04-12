@@ -188,7 +188,7 @@
     <br />
     <div class="block">
       <el-pagination
-        v-if="filterData && filterData.length > 0"
+        v-if="currentTotal > 0"
         @current-change="handlePageChange"
         @size-change="handleSizeChange"
         :total="currentTotal"

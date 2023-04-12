@@ -27,7 +27,7 @@
             icon="el-icon-search"
             @click="fetchList"
           >
-            {{ searchLabel }}
+            {{ refreshLabel }}
           </el-button>
         </el-form-item>
         <el-form-item v-if="filterList(btnList).length > 0">
@@ -313,9 +313,9 @@ export default {
       type: String,
       default: "暂无数据",
     },
-    searchLabel: {
+    refreshLabel: {
       type: String,
-      default: "搜索",
+      default: "刷新列表",
     },
     defaultSort: {
       type: String,

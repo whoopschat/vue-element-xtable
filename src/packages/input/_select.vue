@@ -51,7 +51,7 @@
               :paramList="getValue('paramList', configInfo)"
               :retryLabel="getValue('retryLabel', configInfo)"
               :emptyLabel="getValue('emptyLabel', configInfo)"
-              :searchLabel="getValue('searchLabel', configInfo)"
+              :refreshLabel="getValue('refreshLabel', configInfo)"
               :actionLabel="getValue('actionLabel', configInfo)"
               :actionFixed="getValue('actionFixed', configInfo)"
               :actionWidth="getValue('actionWidth', configInfo)"

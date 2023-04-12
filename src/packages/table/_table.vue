@@ -2,53 +2,66 @@
   <div v-loading="fetchLoading" class="xTable">
     <div @keyup.enter="fetchList">
       <el-form :inline="true" :size="size || $xUISize" @submit.native.prevent>
-        <el-form-item v-if="filterList(paramList).length > 0">
-          <span
-            style="margin-right: 12px"
-            v-for="(param, i) in filterList(paramList)"
-            v-show="getValue('show', param, null, true)"
-            :key="'x-table-param-' + i"
-          >
-            <x-input
-              v-model="param.value"
-              @change="handleChangeParams()"
-              :disabled="getValue('disabled', param)"
-              :clearable="
-                !!(param.value && param.value != getValue('default', param))
-              "
-              :size="getValue('size', param) || size || $xUISize"
-              :styleValue="getValue('styleValue', param) || 'width: 150px;'"
-              :options="getParamOptions(param)"
-            />
-          </span>
-          <el-button
-            :size="size || $xUISize"
-            class="x-table-param-btn"
-            icon="el-icon-search"
-            @click="fetchList"
-          >
-            {{ refreshLabel }}
-          </el-button>
-        </el-form-item>
-        <el-form-item v-if="filterList(btnList).length > 0">
-          <el-button
-            v-for="(btn, i) in filterList(btnList)"
-            v-show="getValue('show', btn, null, true)"
-            class="x-table-param-btn"
-            :key="'x-table-btn-' + i"
-            :disabled="getValue('disabled', btn)"
-            :icon="getValue('icon', btn)"
-            :type="getValue('type', btn)"
-            :style="getValue('styleValue', btn)"
-            :size="getValue('size', btn) || size || $xUISize"
-            @click="callEvent('click', btn)"
-          >
-            {{ getValue("label", btn) }}
-          </el-button>
+        <el-form-item
+          v-if="
+            filterList(paramList).length > 0 || filterList(btnList).length > 0
+          "
+        >
+          <div class="x-table-param-list">
+            <div
+              class="x-table-param-item"
+              v-for="(param, i) in filterList(paramList)"
+              v-show="getValue('show', param, null, true)"
+              :key="'x-table-param-' + i"
+            >
+              <x-input
+                v-model="param.value"
+                @change="handleChangeParams()"
+                :disabled="getValue('disabled', param)"
+                :clearable="
+                  !!(param.value && param.value != getValue('default', param))
+                "
+                :size="getValue('size', param) || size || $xUISize"
+                :styleValue="getValue('styleValue', param) || 'width: 150px;'"
+                :options="getParamOptions(param)"
+              />
+            </div>
+            <el-button
+              v-if="filterList(paramList).length > 0"
+              :size="size || $xUISize"
+              class="x-table-param-item"
+              icon="el-icon-search"
+              @click="fetchList"
+            >
+              {{ refreshLabel }}
+            </el-button>
+            <el-button
+              v-for="(btn, i) in filterList(btnList)"
+              v-show="getValue('show', btn, null, true)"
+              class="x-table-param-item"
+              :key="'x-table-btn-' + i"
+              :disabled="getValue('disabled', btn)"
+              :icon="getValue('icon', btn)"
+              :type="getValue('type', btn)"
+              :style="getValue('styleValue', btn)"
+              :size="getValue('size', btn) || size || $xUISize"
+              @click="callEvent('click', btn)"
+            >
+              {{ getValue("label", btn) }}
+            </el-button>
+          </div>
         </el-form-item>
         <slot name="extra" :refresh="fetchList"></slot>
       </el-form>
     </div>
+    <el-alert
+      type="info"
+      v-if="filterCount > 0"
+      style="margin: 10px 0"
+      :title="filterTips"
+      :closable="false"
+    >
+    </el-alert>
     <el-table
       ref="xTableEl"
       :border="border"
@@ -56,7 +69,7 @@
       :size="size || $xUISize"
       :highlight-current-row="true"
       :height="height"
-      v-if="filterData.length > 0"
+      v-if="!fetchLoading && filterData.length > 0"
       @sort-change="handleSortChange"
       @current-change="handleCurrentChange"
       @selection-change="handleSelectionChange"
@@ -198,41 +211,32 @@
         :layout="paginationLayout"
       ></el-pagination>
     </div>
-    <el-alert
-      type="info"
-      v-if="filterCount > 0"
-      :title="filterTips"
-      :closable="false"
-    >
-    </el-alert>
   </div>
 </template>
 
 <style lang="less">
 .xTable {
-  min-height: 100px;
+  min-height: 200px;
   .el-form-item {
     margin-bottom: 5px;
   }
   .el-form-item__content .el-input-group {
     vertical-align: unset;
   }
-  .x-table-param-btn {
-    margin-left: 0px;
-    margin-right: 8px;
-    margin-top: 8px;
-  }
   .x-table-action-link {
     margin-right: 8px;
   }
 
-  // 滚动条的滑块
-  ::-webkit-scrollbar-thumb {
-    background-color: #ddd;
-  }
-  ::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
-    background: #eee;
+  .x-table-param-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .x-table-param-item {
+      margin-left: 0px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
   }
 }
 </style>

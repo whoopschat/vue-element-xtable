@@ -234,7 +234,10 @@ export default {
           }
         } catch (err) { }
       }
-      options = Object.assign({}, this.currentOptions || {}, options);
+      options = Object.assign({}, {
+        width: this.currentOptions && this.currentOptions.width,
+        maxWidth: this.currentOptions && this.currentOptions.maxWidth
+      }, options);
       options.key = createUUID();
       options.response = null;
       options.params = options.query = Object.assign(

@@ -2,7 +2,8 @@ import drawer from "./_drawer.vue";
 import { onChanged } from "../../utils/changed";
 
 let _installed = false;
-let _drawerInstance = null;
+let _drawerComp = null;
+let _drawerInstances = [];
 let _openDrawer = null;
 let _replaceDrawer = null;
 let _refreshDrawer = null;
@@ -14,8 +15,8 @@ function isOpened() {
   return _drawerInstance && _drawerInstance.isOpened();
 }
 
-function openDrawer(drawerParams) {
-  _openDrawer && _openDrawer(drawerParams);
+function openDrawer(drawerParams, newDrawer) {
+  _openDrawer && _openDrawer(drawerParams, newDrawer);
 }
 
 function replaceDrawer(drawerParams) {
@@ -38,6 +39,22 @@ function resultDrawer(result) {
   _resultDrawer && _resultDrawer(result);
 }
 
+function getInstance(create) {
+  if (create || !_drawerInstances || _drawerInstances.length <= 0) {
+    let instance = new _drawerComp();
+    instance.$mount(document.createElement('div'))
+    document.body.appendChild(instance.$el);
+    instance.setCloseCallback(() => {
+      let index = _drawerInstances.indexOf(instance);
+      _drawerInstances.splice(index, 1);
+      document.body.removeChild(instance.$el);
+    })
+    _drawerInstances.push(instance);
+    return instance;
+  }
+  return _drawerInstances[_drawerInstances.length - 1];
+}
+
 const Drawer = {
   isOpened,
   backDrawer,
@@ -53,31 +70,36 @@ export function _installDrawer(Vue) {
     return;
   }
   _installed = true;
-  const comp = Vue.extend(drawer);
-  _drawerInstance = new comp();
-  _drawerInstance.$mount(document.createElement('div'))
-  document.body.appendChild(_drawerInstance.$el);
-  onChanged(() => {
-    _drawerInstance && _drawerInstance.checkResize();
-  });
-  _openDrawer = function (options) {
-    _drawerInstance && _drawerInstance.openDrawer(options, false);
+  _drawerComp = Vue.extend(drawer);
+  _openDrawer = function (options, newDrawer) {
+    getInstance(newDrawer).openDrawer(options, false);
   }
   _replaceDrawer = function (options) {
-    _drawerInstance && _drawerInstance.openDrawer(options, true);
+    getInstance().openDrawer(options, true);
   }
   _backDrawer = function () {
-    _drawerInstance && _drawerInstance.backDrawer(true);
+    getInstance().backDrawer(true);
   }
   _refreshDrawer = function () {
-    _drawerInstance && _drawerInstance.setChanged();
+    _drawerInstances.forEach(instance => {
+      instance.setChanged();
+    });
   }
   _resultDrawer = function (result) {
-    _drawerInstance && _drawerInstance.setResult(result);
+    _drawerInstances.forEach(instance => {
+      instance.setResult(result);
+    });
   }
   _closeDrawer = function () {
-    _drawerInstance && _drawerInstance.closeDrawer();
+    _drawerInstances.forEach(instance => {
+      instance.closeDrawer();
+    });
   }
+  onChanged(() => {
+    _drawerInstances.forEach(instance => {
+      instance.checkResize();
+    });
+  });
   Vue.prototype.$drawer = Drawer;
 }
 

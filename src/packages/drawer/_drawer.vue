@@ -109,6 +109,7 @@ export default {
       options: null,
       autoSize: "80%",
       historyList: [],
+      callback: null
     };
   },
   computed: {
@@ -157,6 +158,9 @@ export default {
   methods: {
     isOpened() {
       return this.show;
+    },
+    setCloseCallback(callback) {
+      this.callback = callback;
     },
     setChanged() {
       for (let index = this.historyList.length - 1; index >= 0; index--) {
@@ -261,6 +265,7 @@ export default {
       });
       this.show = false;
       this.checkResize();
+      this.callback && this.callback();
     },
     backDrawer(force = false) {
       let done = () => {

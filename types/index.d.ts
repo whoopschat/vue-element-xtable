@@ -219,8 +219,9 @@ declare module "vue-element-xui" {
     /**
      * 打开页面
      * @param options 页面参数
+     * @param create 是否新建drawer
      */
-    openDrawer(options: DrawerOptions): void;
+    openDrawer(options: DrawerOptions, create?: boolean): void;
 
 
   }

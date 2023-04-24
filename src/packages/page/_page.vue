@@ -86,7 +86,6 @@
 
   .x-page-content {
     display: flex;
-    overflow-y: auto;
     overflow-x: hidden;
     flex-direction: column;
     margin-left: calc(

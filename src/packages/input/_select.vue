@@ -31,7 +31,7 @@
         :title="getTitleLabel() || '请选择'"
         :width="getValue('width', configInfo) + 'px'"
         :top="getValue('top', configInfo) || '60px'"
-        :lock-scroll="false"
+        :lock-scroll="true"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :visible.sync="visible"

@@ -162,6 +162,15 @@ export default {
     setCloseCallback(callback) {
       this.callback = callback;
     },
+    getCurComp() {
+      if (this.currentOptions && this.$refs[this.currentOptions.key]) {
+        let refComp = this.$refs[this.currentOptions.key];
+        if (refComp instanceof Array) {
+          return refComp[0];
+        }
+        return refComp;
+      }
+    },
     setChanged() {
       for (let index = this.historyList.length - 1; index >= 0; index--) {
         let option = this.historyList[index];
@@ -184,6 +193,13 @@ export default {
       if (!this.currentOptions) {
         return;
       }
+      let curComponent = this.getCurComp();
+      if (curComponent && typeof curComponent['getDrawerWidth'] == 'function') {
+        this.autoSize = curComponent['getDrawerWidth']();
+        if (this.autoSize) {
+          return
+        }
+      }
       this.autoSize = this.currentOptions && this.currentOptions.width;
       if (this.autoSize) {
         return
@@ -203,18 +219,30 @@ export default {
         }
       } catch (error) { }
     },
-    checkClose(callback, force = false) {
-      if (force) {
-        callback && callback();
-        return;
-      }
-      if (this.currentOptions && typeof this.currentOptions.close === "function") {
-        this.currentOptions.close((_) => {
+    checkCompClose(callback) {
+      let curComponent = this.getCurComp();
+      if (curComponent && typeof curComponent['onDrawerClose'] == 'function') {
+        curComponent['onDrawerClose']((_) => {
           callback && callback();
         })
       } else {
         callback && callback();
       }
+    },
+    checkClose(callback, force = false) {
+      this.checkCompClose(() => {
+        if (force) {
+          callback && callback();
+          return;
+        }
+        if (this.currentOptions && typeof this.currentOptions.close === "function") {
+          this.currentOptions.close((_) => {
+            callback && callback();
+          })
+        } else {
+          callback && callback();
+        }
+      })
     },
     checkCallback(option) {
       if (option && option.changed && typeof option.refresh === "function") {

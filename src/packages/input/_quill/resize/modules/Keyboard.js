@@ -93,7 +93,6 @@ export default class Keyboard extends BaseModule {
       this.blot.deleteAt(0)
       this.blot.parent.optimize()
       handled = true
-
       // direction key
     } else if (code >= Keyboard.keys.LEFT && code <= Keyboard.keys.DOWN) {
       if (code === Keyboard.keys.RIGHT) {

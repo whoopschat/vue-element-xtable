@@ -119,7 +119,7 @@ export default {
     },
     maxHeight: {
       type: Number,
-      default: 500
+      default: 600
     },
     loadingLabel: {
       type: String,

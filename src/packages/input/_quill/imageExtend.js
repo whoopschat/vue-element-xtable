@@ -29,6 +29,9 @@ export class ImageExtend {
    * @param e
    */
   pasteHandle(e) {
+    // 拦截原始的操作
+    e.preventDefault();
+    // 处理图片粘贴
     let clipboardData = e.clipboardData
     let i = 0
     let items, item, types
@@ -62,8 +65,10 @@ export class ImageExtend {
    * @param e
    */
   dropHandle(e) {
-    const self = this
+    // 拦截原始的操作
     e.preventDefault()
+    // 处理拖拽上传
+    const self = this
     self.file = e.dataTransfer.files[0]; // 获取到第一个上传的文件对象
     if (self.config.uploadHandler && typeof self.config.uploadHandler === 'function') {
       self.uploadImg()

@@ -29,9 +29,6 @@ export class ImageExtend {
    * @param e
    */
   pasteHandle(e) {
-    // 拦截原始的操作
-    e.preventDefault();
-    // 处理图片粘贴
     let clipboardData = e.clipboardData
     let i = 0
     let items, item, types
@@ -49,6 +46,9 @@ export class ImageExtend {
         }
       }
       if (item && item.kind === 'file' && item.type.match(/^image\//i)) {
+        // 拦截原始的操作
+        e.preventDefault();
+        // 处理图片粘贴
         this.file = item.getAsFile()
         let self = this
         if (self.config.uploadHandler && typeof self.config.uploadHandler === 'function') {

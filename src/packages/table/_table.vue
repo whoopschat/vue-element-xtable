@@ -27,7 +27,7 @@
               />
             </div>
             <el-button
-              v-if="filterList(paramList).length > 0"
+              v-if="showRefreshBtn && filterList(paramList).length > 0"
               :size="size || $xUISize"
               class="x-table-param-item"
               icon="el-icon-search"
@@ -293,6 +293,10 @@ export default {
         return [];
       },
     },
+    showRefreshBtn: {
+      type: String | Boolean,
+      default: false,
+    },
     actionFixed: {
       type: String | Boolean,
       default: false,
@@ -319,7 +323,7 @@ export default {
     },
     refreshLabel: {
       type: String,
-      default: "刷新列表",
+      default: "刷新",
     },
     defaultSort: {
       type: String,

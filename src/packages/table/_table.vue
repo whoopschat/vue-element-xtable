@@ -68,8 +68,9 @@
       :data="filterData"
       :size="size || $xUISize"
       :highlight-current-row="true"
+      :empty-text="emptyLabel"
       :height="height"
-      v-if="!fetchLoading && filterData.length > 0"
+      v-if="!fetchErrorMsg"
       @sort-change="handleSortChange"
       @current-change="handleCurrentChange"
       @selection-change="handleSelectionChange"
@@ -187,7 +188,7 @@
     </el-table>
     <el-empty
       v-else-if="!fetchLoading"
-      :description="fetchErrorMsg || emptyLabel"
+      :description="fetchErrorMsg"
       :image-size="100"
     >
       <el-button

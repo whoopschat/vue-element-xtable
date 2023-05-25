@@ -204,18 +204,23 @@ export default {
       if (this.autoSize) {
         return
       }
-      let maxWidth = this.currentOptions && this.currentOptions.maxWidth || this.$xUIDrawerMaxWidth;
       if (this.$xUIDrawerFullScreen) {
         this.autoSize = "100%";
         return;
       }
+      let leftSize = this.currentOptions && this.currentOptions.leftSize || this.$xUIDrawerLeftSize;
+      let maxWidth = this.currentOptions && this.currentOptions.maxWidth || this.$xUIDrawerMaxWidth;
       try {
         let width =
           document.documentElement.clientWidth || document.body.clientWidth;
         if (width < maxWidth) {
           this.autoSize = "100%";
         } else {
-          this.autoSize = maxWidth;
+          if (leftSize > 0) {
+            this.autoSize = width - leftSize;
+          } else {
+            this.autoSize = maxWidth;
+          }
         }
       } catch (error) { }
     },

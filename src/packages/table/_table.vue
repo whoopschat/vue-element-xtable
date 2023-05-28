@@ -4,7 +4,9 @@
       <el-form :inline="true" :size="size || $xUISize" @submit.native.prevent>
         <el-form-item
           v-if="
-            filterList(paramList).length > 0 || filterList(btnList).length > 0
+            showRefreshBtn ||
+            filterList(paramList).length > 0 ||
+            filterList(btnList).length > 0
           "
         >
           <div class="x-table-param-list">

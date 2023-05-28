@@ -27,7 +27,7 @@
               />
             </div>
             <el-button
-              v-if="showRefreshBtn && filterList(paramList).length > 0"
+              v-if="showRefreshBtn"
               :size="size || $xUISize"
               class="x-table-param-item"
               icon="el-icon-search"

@@ -28,9 +28,11 @@
                 :options="getParamOptions(param)"
               />
             </div>
+            <slot name="param-extra" :refresh="fetchList"></slot>
             <el-button
               v-if="showRefreshBtn"
               :size="size || $xUISize"
+              :loading="fetchLoading"
               class="x-table-param-item"
               icon="el-icon-search"
               @click="fetchList"
@@ -42,6 +44,7 @@
               v-show="getValue('show', btn, null, true)"
               class="x-table-param-item"
               :key="'x-table-btn-' + i"
+              :loading="getValue('loading', btn)"
               :disabled="getValue('disabled', btn)"
               :icon="getValue('icon', btn)"
               :type="getValue('type', btn)"
@@ -553,6 +556,7 @@ export default {
         }
       });
       this.dataParams = Object.assign({}, this.defaultParams, this.dataParams);
+      this.$emit("params-change", this.dataParams);
       this.currentPage = 1;
       this.fetchList();
     },

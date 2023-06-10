@@ -1,44 +1,42 @@
 <template>
-  <div>
-    <el-drawer
-      append-to-body
-      destroy-on-close
-      custom-class="xDrawer"
-      :before-close="handleClose"
-      :wrapperClosable="drawerClosable"
-      :show-close="drawerShowClose"
-      :visible.sync="show"
-      :modal="drawerModal"
-      :title="drawerTitle"
-      :size="autoSize"
-    >
-      <template slot="title">
-        <div :class="backLabel ? '' : 'hidden-back'">
-          <el-page-header
-            @back="backDrawer"
-            :title="backLabel"
-            :content="drawerTitle"
-          ></el-page-header>
-        </div>
-      </template>
-      <div v-if="show" ref="drawer-content">
-        <div
-          v-for="(opt, i) in historyList"
-          :style="opt.bodyStyle"
-          :key="opt.key"
-        >
-          <component
-            v-show="i == historyList.length - 1"
-            :ref="opt.key"
-            :is="opt.component"
-            :params="opt.params"
-            :query="opt.query"
-          >
-          </component>
-        </div>
+  <el-drawer
+    append-to-body
+    custom-class="xDrawer"
+    :before-close="handleClose"
+    :destroy-on-close="true"
+    :wrapperClosable="drawerClosable"
+    :show-close="drawerShowClose"
+    :visible.sync="show"
+    :modal="drawerModal"
+    :title="drawerTitle"
+    :size="autoSize"
+  >
+    <template slot="title">
+      <div :class="backLabel ? '' : 'hidden-back'">
+        <el-page-header
+          @back="backDrawer"
+          :title="backLabel"
+          :content="drawerTitle"
+        ></el-page-header>
       </div>
-    </el-drawer>
-  </div>
+    </template>
+    <div v-if="show" ref="drawer-content">
+      <div
+        v-for="(opt, i) in historyList"
+        :style="opt.bodyStyle"
+        :key="opt.key"
+      >
+        <component
+          v-show="i == historyList.length - 1"
+          :ref="opt.key"
+          :is="opt.component"
+          :params="opt.params"
+          :query="opt.query"
+        >
+        </component>
+      </div>
+    </div>
+  </el-drawer>
 </template>
 
 <style lang="less">
@@ -146,7 +144,11 @@ export default {
       return this.currentOptions && this.currentOptions.closable == true;
     },
     drawerModal() {
-      return this.currentOptions && this.currentOptions.modal != false;
+      let flag = this.currentOptions && this.currentOptions.modal != false;
+      if (!flag) {
+        return !flag;
+      }
+      return this.$xUIDrawerModel;
     },
   },
   mounted() {

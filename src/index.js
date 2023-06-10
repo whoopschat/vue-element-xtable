@@ -88,6 +88,7 @@ const install = (Vue, options) => {
   }
   _installed = true;
   Vue.prototype.$xUISize = options && options.size ? options.size : "small";
+  Vue.prototype.$xUIDrawerModel = (!options || options.drawerModel !== false) ? true : false;
   Vue.prototype.$xUIDrawerLeftSize = options && options.drawerLeftSize ? options.drawerLeftSize : 0;
   Vue.prototype.$xUIDrawerMaxWidth = options && options.drawerMaxWidth ? options.drawerMaxWidth : 1000;
   Vue.prototype.$xUIDrawerFullScreen = options && options.drawerFullScreen;

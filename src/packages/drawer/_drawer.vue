@@ -226,30 +226,32 @@ export default {
         }
       } catch (error) { }
     },
-    checkCompClose(callback) {
+    checkCompFinish() {
       let curComponent = this.getCurComp();
-      if (curComponent && typeof curComponent['onDrawerClose'] == 'function') {
-        curComponent['onDrawerClose']((_) => {
+      if (curComponent && typeof curComponent['onFinish'] == 'function') {
+        curComponent['onFinish']()
+      }
+    },
+    checkCompRefresh() {
+      if (this.currentOptions && this.currentOptions.changed) {
+        let curComponent = this.getCurComp();
+        if (curComponent && typeof curComponent['onRefresh'] == 'function') {
+          curComponent['onRefresh']()
+        }
+      }
+    },
+    checkClose(callback, force = false) {
+      if (force) {
+        callback && callback();
+        return;
+      }
+      if (this.currentOptions && typeof this.currentOptions.close === "function") {
+        this.currentOptions.close((_) => {
           callback && callback();
         })
       } else {
         callback && callback();
       }
-    },
-    checkClose(callback, force = false) {
-      this.checkCompClose(() => {
-        if (force) {
-          callback && callback();
-          return;
-        }
-        if (this.currentOptions && typeof this.currentOptions.close === "function") {
-          this.currentOptions.close((_) => {
-            callback && callback();
-          })
-        } else {
-          callback && callback();
-        }
-      })
     },
     checkCallback(option) {
       if (option && option.changed && typeof option.refresh === "function") {
@@ -304,6 +306,7 @@ export default {
     },
     backDrawer(force = false) {
       let done = () => {
+        this.checkCompFinish();
         if (this.historyList.length == 1) {
           this.closeDrawer();
         } else {
@@ -316,6 +319,7 @@ export default {
                 parentElement.scrollTop = this.currentOptions.scrollTop;
               }
             } catch (error) { }
+            this.checkCompRefresh();
             this.checkResize();
           });
         }

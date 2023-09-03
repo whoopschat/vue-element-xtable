@@ -5,13 +5,13 @@
       :visible.sync="dialogVisiblex"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
+      :width="(option.cropperWidth || 550) + 'px'"
       custom-class="xCroper"
       append-to-body
-      width="380px"
       top="50px"
     >
       <div class="cropper-content">
-        <div class="cropper" style="text-align: center">
+        <div class="cropper" :style="styleValue">
           <vue-cropper
             ref="cropper"
             :img="option.img"
@@ -88,6 +88,15 @@ export default {
       },
     }
   },
+  computed: {
+    styleValue() {
+      return {
+        "--x-cropper-height": `${this.option.cropperHeight || 512}px`,
+        "--x-cropper-width": `${this.option.cropperWidth || 550}px`,
+        "text-align": "center",
+      }
+    }
+  },
   methods: {
     showCropper(obj, callback) {
       this.option = Object.assign({}, defaultOptions, { callback }, obj || {});
@@ -123,8 +132,8 @@ export default {
     padding: 20px 20px !important;
   }
   .cropper {
-    width: 380px;
-    height: 340px;
+    height: var(--x-cropper-height);
+    width: var(--x-cropper-width);
   }
 }
 </style>

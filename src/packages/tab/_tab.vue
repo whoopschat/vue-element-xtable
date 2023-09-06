@@ -11,6 +11,8 @@
         <div v-if="checkTabVisiable(tab)">
           <component
             :is="tab.component"
+            :tabName="activeName"
+            :tabProps="tab.props"
             :params="tab.params || params"
             :query="tab.query || query"
             @event="callOnEvent"
@@ -32,11 +34,11 @@ export default {
     };
   },
   props: {
-    value: {
-      type: String | Number,
-    },
     tag: {
       type: Object | String | Boolean | Number,
+    },
+    value: {
+      type: String | Number,
     },
     type: {
       type: String,

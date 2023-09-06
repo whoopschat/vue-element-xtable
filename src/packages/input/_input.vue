@@ -31,6 +31,7 @@
         @change="handleChange"
         :size="getValue('size', options) || $xUISize"
         :customs="getValue('customs', options)"
+        :maxHeight="getValue('maxHeight', options)"
         :disabledLabel="getValue('disabledLabel', options)"
         :disabledStyle="getValue('disabledStyle', options)"
         :loadingLabel="getValue('loadingLabel', options)"

@@ -11,7 +11,8 @@
         <div v-if="checkTabVisiable(tab)">
           <component
             :is="tab.component"
-            :tabName="activeName"
+            :tag="tag"
+            :tabName="tab.name"
             :tabProps="tab.props"
             :params="tab.params || params"
             :query="tab.query || query"

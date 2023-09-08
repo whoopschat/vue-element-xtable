@@ -103,6 +103,7 @@
         value-format="timestamp"
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
+        :default-time="getValue('defaultTime', options) || '00:00:00'"
         :placeholder="placeholder || getValue('label', options)"
         :clearable="clearable"
         :disabled="disabled"

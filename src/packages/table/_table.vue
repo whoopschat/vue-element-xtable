@@ -205,7 +205,7 @@
       </el-button>
     </el-empty>
     <br />
-    <div class="block" v-if="!paginationShow">
+    <div class="block" v-if="paginationShow">
       <el-pagination
         v-if="currentTotal > 0"
         @current-change="handlePageChange"

@@ -1,5 +1,13 @@
 <template>
   <div v-loading="fetchLoading" class="xTable">
+    <el-alert
+      type="info"
+      v-if="filterCount > 0"
+      style="margin: 10px 0"
+      :title="filterTips"
+      :closable="false"
+    >
+    </el-alert>
     <div @keyup.enter="fetchList">
       <el-form :inline="true" :size="size || $xUISize" @submit.native.prevent>
         <el-form-item
@@ -59,14 +67,6 @@
         <slot name="extra" :refresh="fetchList"></slot>
       </el-form>
     </div>
-    <el-alert
-      type="info"
-      v-if="filterCount > 0"
-      style="margin: 10px 0"
-      :title="filterTips"
-      :closable="false"
-    >
-    </el-alert>
     <el-table
       ref="xTableEl"
       :border="border"
@@ -152,7 +152,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="!selection && actionList.length > 0"
+        v-if="actionList.length > 0"
         :width="actionWidth"
         :label="actionLabel"
         :fixed="actionFixed"
@@ -367,6 +367,10 @@ export default {
         return [5, 10, 50, 100, 300, 500, 1000];
       },
     },
+    selectionMultiple: {
+      type: Boolean,
+      default: false,
+    },
     selection: {
       type: Boolean,
       default: false,
@@ -380,7 +384,9 @@ export default {
     return {
       dataList: [],
       dataParams: {},
+      selectItem: null,
       selectList: [],
+      selectRefresh: false,
       fetchLoading: false,
       fetchErrorMsg: null,
       refreshElement: false,
@@ -399,9 +405,6 @@ export default {
     },
     paramList() {
       this.handleChangeParams();
-    },
-    selectList() {
-      this.$emit("selectList", this.selectList);
     },
     defaultParams() {
       this.handleChangeParams();
@@ -464,18 +467,19 @@ export default {
         this.refreshElement = false;
       });
     },
+    filterList(list, param) {
+      return (list || []).filter((item) => {
+        return this.getValue("show", item, param, true);
+      });
+    },
     getParamOptions(param) {
       let options = Object.assign({}, param);
       delete options.value;
       return options;
     },
-    setCurrentRow(val) {
-      if (this.$refs.xTableEl) {
-        this.$refs.xTableEl.setCurrentRow(val);
-      }
-    },
     toggleSelection(rows) {
       try {
+        this.selectRefresh = true;
         if (this.$refs.xTableEl) {
           this.$refs.xTableEl.clearSelection();
           if (rows) {
@@ -484,32 +488,65 @@ export default {
             });
           }
         }
+        this.$nextTick(() => {
+          this.selectRefresh = false;
+        })
       } catch (error) { }
     },
     clearSelectList() {
       this.selectList = [];
+      this.handleRefreshSelect();
+    },
+    handleSelectionChange(list) {
+      if (!this.selection) {
+        return;
+      }
+      if (this.selectRefresh) {
+        return;
+      }
+      this.selectList = list;
+      if (!this.selectionMultiple && this.selectList && this.selectList.length > 0) {
+        this.selectItem = this.selectList[this.selectList.length - 1];
+      }
+      this.handleRefreshSelect();
+      this.handleSumbitSelect();
+    },
+    handleRefreshSelect() {
       this.toggleSelection(this.selectList);
     },
-    filterList(list, param) {
-      return (list || []).filter((item) => {
-        return this.getValue("show", item, param, true);
-      });
-    },
-    handleSelectionChange(selected) {
-      this.selectList = selected;
-    },
     handleCurrentChange(val) {
-      if (val) {
-        this.$emit("current-change", val, this);
-        let indexOf = this.selectList.indexOf(val);
-        if (indexOf >= 0) {
-          this.selectList.splice(indexOf, 1);
+      if (this.selection && val) {
+        if (this.selectionMultiple) {
+          let indexOf = this.selectList.indexOf(val);
+          if (indexOf >= 0) {
+            this.selectList.splice(indexOf, 1);
+          } else {
+            this.selectList.push(val);
+          }
         } else {
+          if (this.selectList.length > 0) {
+            this.selectList.splice(0, this.selectList.length);
+          }
           this.selectList.push(val);
+          this.selectItem = val;
         }
-        this.toggleSelection(this.selectList);
+        this.handleRefreshSelect();
+        this.handleSumbitSelect();
         if (this.selection) {
-          this.setCurrentRow(null);
+          if (this.$refs.xTableEl) {
+            this.$refs.xTableEl.setCurrentRow(null);
+          }
+        }
+      }
+    },
+    handleSumbitSelect() {
+      if (this.selectionMultiple) {
+        this.$emit("selectList", this.selectList);
+      } else {
+        if (this.selectItem) {
+          this.$emit("select", this.selectItem);
+        } else {
+          this.$emit("select", null);
         }
       }
     },

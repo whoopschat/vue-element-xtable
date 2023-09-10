@@ -1,29 +1,6 @@
 <template>
   <span class="xInput">
-    <template v-if="getValue('type', options, null, type) == 'data'">
-      <x-select
-        ref="input"
-        @close="handleBlur"
-        @change="handleChange"
-        @select="handleSelect"
-        v-model="inputValue"
-        :size="getValue('size', options) || $xUISize"
-        :type="getValue('dataType', options)"
-        :styleValue="styleValue"
-        :placeholder="placeholder || getValue('label', options)"
-        :filterLabelMethod="filterLabelMethod"
-        :filterMethod="filterMethod"
-        :multipleable="multipleable"
-        :clearable="clearable"
-        :disabled="disabled"
-        :options="options"
-      >
-        <template slot="extra">
-          <slot name="extra" />
-        </template>
-      </x-select>
-    </template>
-    <template v-else-if="getValue('type', options, null, type) == 'html'">
+    <template v-if="getValue('type', options, null, type) == 'html'">
       <x-html
         ref="input"
         v-model="inputValue"
@@ -163,11 +140,9 @@
 
 <script>
 import XHtml from "./_html.vue";
-import XSelect from "./_select.vue";
 
 export default {
   components: {
-    XSelect,
     XHtml,
   },
   props: {
@@ -206,19 +181,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    filterMethod: {
-      type: Function,
-    },
-    filterLabelMethod: {
-      type: Function,
-    },
     placeholder: {
       type: String,
       default: "",
-    },
-    multipleable: {
-      type: Boolean,
-      default: false,
     },
     options: {
       type: Object,
@@ -304,9 +269,6 @@ export default {
     },
     handleBlur() {
       this.delayChange();
-    },
-    handleSelect(select) {
-      this.$emit("select", select);
     },
     handleChange() {
       if (this.options.type == "number" && !this.inputValue) {

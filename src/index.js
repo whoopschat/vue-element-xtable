@@ -92,7 +92,6 @@ const install = (Vue, options) => {
   Vue.prototype.$xUIDrawerLeftSize = options && options.drawerLeftSize ? options.drawerLeftSize : 0;
   Vue.prototype.$xUIDrawerMaxWidth = options && options.drawerMaxWidth ? options.drawerMaxWidth : 1000;
   Vue.prototype.$xUIDrawerFullScreen = options && options.drawerFullScreen;
-  Vue.prototype.$xUISelectPlacement = options && options.selectPlacement ? options.selectPlacement : "top-start";
   Vue.prototype.$xUIFileUploadHandler = FileUploadHandler;
   Vue.prototype.$xUIDataListHandler = DataListHandler;
   Vue.prototype.$xUIDataDetailHandler = DataDetailHandler;

@@ -48,21 +48,21 @@ export function FileUploadHandler(file, type) {
   })
 }
 
-export function DataListHandler(apiUrl, params, options) {
-  return Promise.resolve().then(() => {
-    if (_dataListHandler && typeof _dataListHandler === 'function') {
-      return _dataListHandler(apiUrl, params, options);
-    }
-    throw "not call setDataListHandler";
-  })
-}
-
 export function DataDetailHandler(apiUrl, params) {
   return Promise.resolve().then(() => {
     if (_dataDetailHandler && typeof _dataDetailHandler === 'function') {
       return _dataDetailHandler(apiUrl, params);
     }
     throw "not call setDataDetailHandler";
+  })
+}
+
+export function DataListHandler(apiUrl, params, options) {
+  return Promise.resolve().then(() => {
+    if (_dataListHandler && typeof _dataListHandler === 'function') {
+      return _dataListHandler(apiUrl, params, options);
+    }
+    throw "not call setDataListHandler";
   })
 }
 
@@ -77,9 +77,8 @@ const install = (Vue, options) => {
   Vue.prototype.$xUIDrawerMaxWidth = options && options.drawerMaxWidth ? options.drawerMaxWidth : 1000;
   Vue.prototype.$xUIDrawerFullScreen = options && options.drawerFullScreen;
   Vue.prototype.$xUIFileUploadHandler = FileUploadHandler;
-  Vue.prototype.$xUIDataListHandler = DataListHandler;
   Vue.prototype.$xUIDataDetailHandler = DataDetailHandler;
-  Vue.prototype.$xUIDataConfigHandler = DataConfigHandler;
+  Vue.prototype.$xUIDataListHandler = DataListHandler;
   let imageViewerOptions = options && options.imageViewerOptions;
   _installCropper(Vue);
   _installDrawer(Vue);

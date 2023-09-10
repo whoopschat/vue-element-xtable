@@ -251,12 +251,6 @@ declare module "vue-element-xui" {
   function setDataDetailHandler(handler: (apiUrl: string, value?: any) => object | Promise<object>): void;
 
   /**
-   * 设置选择器配置信息回调
-   * @param handler 回调
-   */
-  function setDataConfigHandler(handler: (dataType?: any) => object | Promise<object>): void;
-
-  /**
    * Drawer抽屉组件
    */
   var Drawer: Drawer;

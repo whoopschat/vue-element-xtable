@@ -205,7 +205,7 @@
       </el-button>
     </el-empty>
     <br />
-    <div class="block">
+    <div class="block" v-if="!paginationShow">
       <el-pagination
         v-if="currentTotal > 0"
         @current-change="handlePageChange"
@@ -356,6 +356,10 @@ export default {
     },
     handleFetchList: {
       type: Function,
+    },
+    paginationShow: {
+      type: Boolean,
+      default: true,
     },
     paginationLayout: {
       type: String,
@@ -604,22 +608,25 @@ export default {
       this.$nextTick(() => {
         this.fetchLoading = true;
         this.fetchErrorMsg = null;
-        return Promise.resolve().then(() => {
-          return this.handleFetchList && this.handleFetchList(this.dataParams, {
-            pageNum: this.currentPage,
-            pageSize: this.currentSize || this.defaultPageSize,
-            orderBy: this.currentOrderBy || this.defaultSort,
+        let fetchPromise;
+        if (this.handleFetchList) {
+          fetchPromise = Promise.resolve().then(() => {
+            return this.handleFetchList(this.dataParams, {
+              pageNum: this.currentPage,
+              pageSize: this.currentSize || this.defaultPageSize,
+              orderBy: this.currentOrderBy || this.defaultSort,
+            })
           })
-        }).catch(() => { }).then(resp => {
-          if (!resp) {
+        } else {
+          fetchPromise = Promise.resolve().then(() => {
             return this.$xUIDataListHandler(this.listApi, this.dataParams, {
               pageNum: this.currentPage,
               pageSize: this.currentSize || this.defaultPageSize,
               orderBy: this.currentOrderBy || this.defaultSort,
             })
-          }
-          return resp;
-        }).then(resp => {
+          })
+        }
+        fetchPromise.then(resp => {
           if (this.handleMapList) {
             return this.handleMapList(resp);
           }

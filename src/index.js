@@ -13,7 +13,6 @@ let _installed = false;
 let _fileUploadHandler = null;
 let _dataListHandler = null;
 let _dataDetailHandler = null;
-let _dataConfigHandler = null;
 
 function setFileUploadHandler(handler) {
   if (handler && typeof handler === 'function') {
@@ -30,12 +29,6 @@ function setDataListHandler(handler) {
 function setDataDetailHandler(handler) {
   if (handler && typeof handler === 'function') {
     _dataDetailHandler = handler;
-  }
-}
-
-function setDataConfigHandler(handler) {
-  if (handler && typeof handler === 'function') {
-    _dataConfigHandler = handler;
   }
 }
 
@@ -70,15 +63,6 @@ export function DataDetailHandler(apiUrl, params) {
       return _dataDetailHandler(apiUrl, params);
     }
     throw "not call setDataDetailHandler";
-  })
-}
-
-export function DataConfigHandler(dataType) {
-  return Promise.resolve().then(() => {
-    if (_dataConfigHandler && typeof _dataConfigHandler === 'function') {
-      return _dataConfigHandler(dataType);
-    }
-    throw "not call setDataConfigHandler";
   })
 }
 
@@ -117,7 +101,6 @@ export default {
   install,
   setDataListHandler,
   setDataDetailHandler,
-  setDataConfigHandler,
   setFileUploadHandler,
   Drawer,
   Identify,

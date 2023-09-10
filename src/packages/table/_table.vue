@@ -3,7 +3,7 @@
     <el-alert
       type="info"
       v-if="filterCount > 0"
-      style="margin: 10px 0"
+      style="margin-bottom: 10px"
       :title="filterTips"
       :closable="false"
     >

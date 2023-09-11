@@ -58,7 +58,7 @@
               :type="getValue('type', btn)"
               :style="getValue('styleValue', btn)"
               :size="getValue('size', btn) || size || $xUISize"
-              @click="callEvent('click', btn)"
+              @click="callEvent('click', btn, dataParams)"
             >
               {{ getValue("label", btn) }}
             </el-button>

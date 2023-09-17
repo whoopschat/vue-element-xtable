@@ -414,6 +414,9 @@ export default {
       this.handleChangeParams();
       this.fetchList();
     },
+    dataList() {
+      this.$emit("list-change", this.dataList);
+    }
   },
   computed: {
     filterTips() {

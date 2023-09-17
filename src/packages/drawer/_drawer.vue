@@ -4,6 +4,7 @@
     custom-class="xDrawer"
     :before-close="handleClose"
     :destroy-on-close="true"
+    :close-on-press-escape="false"
     :wrapperClosable="drawerClosable"
     :show-close="drawerShowClose"
     :visible.sync="show"
@@ -128,7 +129,8 @@ export default {
     backLabel() {
       return (
         (this.backOptions && this.backOptions.title) ||
-        (this.backOptions && this.backOptions.component && this.backOptions.component.name)
+        (this.backOptions && this.backOptions.component && this.backOptions.component.name) ||
+        this.$xUIDrawerBackLabel
       );
     },
     drawerTitle() {

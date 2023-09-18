@@ -102,7 +102,7 @@
   .x-upload-file-list {
     display: flex;
     padding: calc(var(--x-upload-padding) / 2);
-    justify-content: center;
+    justify-content: var(--x-upload-image-align);
     flex-direction: row;
     flex-wrap: wrap;
 
@@ -241,6 +241,10 @@ export default {
       type: Number,
       default: 1,
     },
+    imageAlign: {
+      type: String,
+      default: "center"
+    },
     imageViewWidth: {
       type: Number,
       default: 120,
@@ -331,6 +335,7 @@ export default {
   computed: {
     uploadStyle() {
       return {
+        "--x-upload-image-align": `${this.imageAlign}`,
         "--x-upload-image-view-width": `${this.imageViewWidth}px`,
         "--x-upload-image-view-height": `${this.imageViewHeight}px`,
         "--x-upload-image-delete-color": `${this.deleteColor}`,

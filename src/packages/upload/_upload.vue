@@ -421,21 +421,21 @@ export default {
       if (file == null) {
         return;
       }
-      if (this.uploadFileTypes && this.uploadFileTypes.length > 0) {
-        if (!this.uploadFileTypes.includes(file.type)) {
-          this.uploadErrorMsg = this.typeErrorLabel;
+      let callUpload = (file) => {
+        if (this.uploadFileTypes && this.uploadFileTypes.length > 0) {
+          if (!this.uploadFileTypes.includes(file.type)) {
+            this.uploadErrorMsg = this.typeErrorLabel;
+            return false;
+          }
+        }
+        if (file.size / 1024 / 1024 > this.fileSize / 1024) {
+          this.uploadErrorMsg = formatString(this.sizeErrorLabel, {
+            size: this.converSize(
+              this.fileSize * 1024
+            )
+          });
           return false;
         }
-      }
-      if (file.size / 1024 / 1024 > this.fileSize / 1024) {
-        this.uploadErrorMsg = formatString(this.sizeErrorLabel, {
-          size: this.converSize(
-            this.fileSize * 1024
-          )
-        });
-        return false;
-      }
-      let callUpload = (file) => {
         this.uploadLoading = true;
         this.uploadErrorMsg = null;
         this.$xUIFileUploadHandler(file, this.type)

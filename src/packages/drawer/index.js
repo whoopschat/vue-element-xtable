@@ -12,7 +12,11 @@ let _closeDrawer = null;
 let _backDrawer = null;
 
 function isOpened() {
-  return _drawerInstance && _drawerInstance.isOpened();
+  let opened = false;
+  _drawerInstances.forEach(instance => {
+    opened = opened || instance.isOpened();
+  });
+  return opened;
 }
 
 function openDrawer(drawerParams, newDrawer) {

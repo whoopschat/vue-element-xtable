@@ -299,6 +299,10 @@ export default {
         return [];
       },
     },
+    fetchClear: {
+      type: String | Boolean,
+      default: true,
+    },
     showRefreshBtn: {
       type: String | Boolean,
       default: false,
@@ -609,6 +613,9 @@ export default {
         return;
       }
       this.$nextTick(() => {
+        if (this.fetchClear) {
+          this.dataList = [];
+        }
         this.fetchLoading = true;
         this.fetchErrorMsg = null;
         let fetchPromise;

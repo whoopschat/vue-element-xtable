@@ -1,37 +1,45 @@
 <template>
 <div class="xUpload" :style="uploadStyle">
-  <div class="x-upload-file-list" v-if="type == 'image'">
-    <div class="x-upload-item-image" :key="i" v-for="(url, i) in currentUrls">
-      <div class="x-upload-image-btns">
-        <div class="x-upload-image-moveUp" v-if="!disabled && i > 0" @click="handleMoveImage(i, -1)">
-          {{ moveUpLabel }}
+  <template v-if="currentUrls && currentUrls.length > 0">
+    <div class="x-upload-file-list" v-if="type == 'image'">
+      <div class="x-upload-item-image" :key="i" v-for="(url, i) in currentUrls">
+        <div class="x-upload-image-btns">
+          <div class="x-upload-image-preview" @click="handlePreviewFile(i, $event)">
+            {{ previewLabel }}
+          </div>
+          <div class="x-upload-image-moveUp" v-if="!disabled && i > 0" @click="handleMoveImage(i, -1)">
+            {{ moveUpLabel }}
+          </div>
+          <div class="x-upload-image-moveDown" v-if="!disabled && i < currentUrls.length -1" @click="handleMoveImage(i, 1)">
+            {{ moveDownLabel }}
+          </div>
+          <div class="x-upload-image-delete" v-if="!disabled" @click="handleDeleteImage(i, $event)">
+            {{ deleteLabel }}
+          </div>
         </div>
-        <div class="x-upload-image-moveDown" v-if="!disabled && i < currentUrls.length -1" @click="handleMoveImage(i, 1)">
-          {{ moveDownLabel }}
-        </div>
-        <div class="x-upload-image-delete" v-if="!disabled" @click="handleDeleteImage(i)">
-          {{ deleteLabel }}
-        </div>
+        <el-image :src="url" :fit="imageViewFit" class="x-upload-image-view" @click="handlePreviewFile(i, $event)" />
       </div>
-      <el-image :src="url" :fit="imageViewFit" class="x-upload-image-view" @click="handlePreviewFile(i, $event)" />
     </div>
-  </div>
-  <div class="x-upload-file-list x-upload-file-urls" v-else>
-    <div class="x-upload-item-file" :key="i" v-for="(url, i) in currentUrls">
-      <span>
-        {{ url }}
-      </span>
-      <el-link :underline="false" type="primary" style="margin-left: 10px" v-if="!disabled && i > 0" @click="handleMoveImage(i, -1)">
-        {{ moveUpLabel }}
-      </el-link>
-      <el-link :underline="false" type="primary" style="margin-left: 10px" v-if="!disabled && i < currentUrls.length -1" @click="handleMoveImage(i, 1)">
-        {{ moveDownLabel }}
-      </el-link>
-      <el-link :underline="false" type="danger" style="margin-left: 10px" v-if="!disabled" icon="el-icon-delete" @click="handleDeleteImage(i)">
-        {{ deleteLabel }}
-      </el-link>
+    <div class="x-upload-file-list x-upload-file-urls" v-else>
+      <div class="x-upload-item-file" :key="i" v-for="(url, i) in currentUrls">
+        <span>
+          {{ url }}
+        </span>
+        <el-link :underline="false" type="primary" style="margin-left: 10px" @click="handlePreviewFile(i, $event)">
+          {{ previewLabel }}
+        </el-link>
+        <el-link :underline="false" type="primary" style="margin-left: 10px" v-if="!disabled && i > 0" @click="handleMoveImage(i, -1)">
+          {{ moveUpLabel }}
+        </el-link>
+        <el-link :underline="false" type="primary" style="margin-left: 10px" v-if="!disabled && i < currentUrls.length -1" @click="handleMoveImage(i, 1)">
+          {{ moveDownLabel }}
+        </el-link>
+        <el-link :underline="false" type="danger" style="margin-left: 10px" v-if="!disabled" icon="el-icon-delete" @click="handleDeleteImage(i)">
+          {{ deleteLabel }}
+        </el-link>
+      </div>
     </div>
-  </div>
+  </template>
   <div v-if="
           !disabled &&
           (fileCount == 0 || fileCount > currentUrls.length) &&
@@ -78,13 +86,18 @@
         width: 100%;
         border: 0px;
         border-radius: 0px;
-        height: 120px;
+        height: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-content: flex-start;
+        justify-content: center;
       }
 
       .el-upload-dragger .el-icon-upload {
-        font-size: 50px;
-        margin: 20px 0 0px;
-        line-height: 50px;
+        margin: 10px;
+        font-size: 20px;
+        line-height: 20px;
       }
 
       .el-upload-dragger .el-upload__text {
@@ -143,6 +156,21 @@
         justify-content: flex-end;
         align-items: flex-start;
         height: 20px;
+      }
+
+      .x-upload-image-preview {
+        line-height: 20px;
+        padding: 2px 8px;
+        font-size: 12px;
+        background-color: var(--x-upload-image-move-color);
+        color: #ffffff;
+        cursor: pointer;
+        opacity: 0.8;
+        z-index: 1;
+
+        &:hover {
+          opacity: 1;
+        }
       }
 
       .x-upload-image-moveUp {
@@ -288,6 +316,10 @@ export default {
       type: String,
       default: "#a7493d",
     },
+    previewLabel: {
+      type: String,
+      default: "查看",
+    },
     deleteLabel: {
       type: String,
       default: "移除",
@@ -414,6 +446,11 @@ export default {
           images: this.currentUrls,
           currentSelected: index
         })
+      } else {
+        try {
+          window.open(this.currentUrls[index]);
+        } catch (error) {
+        }
       }
     },
     handleUploadFile(file) {

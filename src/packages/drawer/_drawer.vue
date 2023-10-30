@@ -277,7 +277,8 @@ export default {
           }
         } catch (err) { }
       }
-      options = Object.assign({}, {
+      options = Object.assign({},
+        replace ? this.historyList.pop() : {}, {
         width: this.currentOptions && this.currentOptions.width,
         maxWidth: this.currentOptions && this.currentOptions.maxWidth
       }, options);
@@ -288,10 +289,6 @@ export default {
         options.query || {},
         options.params || {}
       );
-      if (replace) {
-        let opt = this.historyList.pop();
-        this.checkCallback(opt);
-      }
       this.historyList.push(options);
       this.show = true;
       this.$nextTick(() => {

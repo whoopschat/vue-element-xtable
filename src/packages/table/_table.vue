@@ -72,7 +72,8 @@
       :border="border"
       :data="filterData"
       :size="size || $xUISize"
-      :highlight-current-row="true"
+      :highlight-current-row="highlightCurrentRow"
+      :show-header="headerShow"
       :empty-text="emptyLabel"
       :height="height"
       v-if="!fetchErrorMsg"
@@ -222,13 +223,41 @@
 
 <style lang="less">
 .xTable {
-  min-height: 200px;
+  min-height: 100px;
+
   .el-form-item {
     margin-bottom: 5px;
   }
+
   .el-form-item__content .el-input-group {
     vertical-align: unset;
   }
+
+  .el-table--medium .el-table__cell {
+    padding: 12px 0;
+  }
+
+  .el-table td.el-table__cell {
+    border-bottom: 0px solid #ebeef5;
+  }
+
+  .el-table th.el-table__cell.is-leaf {
+    border-bottom: 1.5px solid #ececec;
+  }
+
+  .el-table__body tr.current-row > td.el-table__cell {
+    background-color: #ffffff;
+  }
+
+  .el-table__body tr.hover-row > td.el-table__cell {
+    background-color: #ffffff;
+  }
+
+  .el-table__body tr.hover-row.current-row > td.el-table__cell,
+  .el-table__body tr.hover-row > td.el-table__cell {
+    background-color: #ffffff;
+  }
+
   .x-table-action-link {
     margin-right: 8px;
   }
@@ -360,6 +389,14 @@ export default {
     },
     handleFetchList: {
       type: Function,
+    },
+    highlightCurrentRow: {
+      type: Boolean,
+      default: true,
+    },
+    headerShow: {
+      type: Boolean,
+      default: true,
     },
     paginationShow: {
       type: Boolean,
@@ -621,19 +658,19 @@ export default {
         let fetchPromise;
         if (this.handleFetchList) {
           fetchPromise = Promise.resolve().then(() => {
-            return this.handleFetchList(this.dataParams, {
+            return this.handleFetchList(this.dataParams, this.paginationShow ? {
               pageNum: this.currentPage,
               pageSize: this.currentSize || this.defaultPageSize,
               orderBy: this.currentOrderBy || this.defaultSort,
-            })
+            } : {})
           })
         } else {
           fetchPromise = Promise.resolve().then(() => {
-            return this.$xUIDataListHandler(this.listApi, this.dataParams, {
+            return this.$xUIDataListHandler(this.listApi, this.dataParams, this.paginationShow ? {
               pageNum: this.currentPage,
               pageSize: this.currentSize || this.defaultPageSize,
               orderBy: this.currentOrderBy || this.defaultSort,
-            })
+            } : {})
           })
         }
         fetchPromise.then(resp => {

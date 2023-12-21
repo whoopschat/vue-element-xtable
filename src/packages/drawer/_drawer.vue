@@ -2,12 +2,13 @@
   <el-drawer
     append-to-body
     custom-class="xDrawer"
+    @opened="handleOpened"
     :before-close="handleClose"
     :destroy-on-close="true"
     :close-on-press-escape="false"
     :wrapperClosable="drawerClosable"
     :show-close="drawerShowClose"
-    :visible.sync="show"
+    :visible.sync="__show__"
     :modal="drawerModal"
     :title="drawerTitle"
     :size="autoSize"
@@ -21,7 +22,7 @@
         ></el-page-header>
       </div>
     </template>
-    <div v-if="show" ref="drawer-content">
+    <div v-if="__show__ && __opened__" ref="drawer-content">
       <div
         v-for="(opt, i) in historyList"
         :style="opt.bodyStyle"
@@ -103,12 +104,13 @@ function createUUID() {
 export default {
   data() {
     return {
-      show: false,
       refresh: false,
       options: null,
       autoSize: "80%",
       historyList: [],
-      callback: null
+      callback: null,
+      __show__: false,
+      __opened__: false
     };
   },
   computed: {
@@ -161,7 +163,10 @@ export default {
   },
   methods: {
     isOpened() {
-      return this.show;
+      return this.__show__;
+    },
+    handleOpened() {
+      this.__opened__ = true;
     },
     setCloseCallback(callback) {
       this.callback = callback;
@@ -290,7 +295,7 @@ export default {
         options.params || {}
       );
       this.historyList.push(options);
-      this.show = true;
+      this.__show__ = true;
       this.$nextTick(() => {
         this.checkResize();
       });
@@ -299,7 +304,7 @@ export default {
       this.historyList.splice(0, this.historyList.length).forEach((option) => {
         this.checkCallback(option);
       });
-      this.show = false;
+      this.__show__ = false;
       this.checkResize();
       this.callback && this.callback();
     },

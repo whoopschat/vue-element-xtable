@@ -618,7 +618,7 @@ export default {
     handleChangeParams() {
       this.dataParams = {};
       (this.paramList || []).map((param) => {
-        if (!param.value) {
+        if (param.value == undefined || param.value == null) {
           param.value = this.getValue("default", param) || "";
         }
         return param;

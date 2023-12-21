@@ -2,13 +2,12 @@
   <el-drawer
     append-to-body
     custom-class="xDrawer"
-    @opened="handleOpened"
     :before-close="handleClose"
     :destroy-on-close="true"
     :close-on-press-escape="false"
     :wrapperClosable="drawerClosable"
     :show-close="drawerShowClose"
-    :visible.sync="__show__"
+    :visible.sync="visible"
     :modal="drawerModal"
     :title="drawerTitle"
     :size="autoSize"
@@ -22,14 +21,14 @@
         ></el-page-header>
       </div>
     </template>
-    <div v-if="__show__ && __opened__" ref="drawer-content">
+    <div v-if="visible" ref="drawer-content">
       <div
         v-for="(opt, i) in historyList"
         :style="opt.bodyStyle"
         :key="opt.key"
       >
         <component
-          v-show="i == historyList.length - 1"
+          v-show="ready && i == historyList.length - 1"
           :ref="opt.key"
           :is="opt.component"
           :params="opt.params"
@@ -109,8 +108,9 @@ export default {
       autoSize: "80%",
       historyList: [],
       callback: null,
-      __show__: false,
-      __opened__: false
+      timeout: null,
+      visible: false,
+      ready: false,
     };
   },
   computed: {
@@ -161,12 +161,21 @@ export default {
   created() {
     this.checkResize();
   },
+  destroyed() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
+  },
   methods: {
     isOpened() {
-      return this.__show__;
+      return this.visible;
     },
-    handleOpened() {
-      this.__opened__ = true;
+    setReady(delay = 400) {
+      this.timeout = setTimeout(() => {
+        this.ready = true;
+        this.timeout = null;
+      }, delay);
     },
     setCloseCallback(callback) {
       this.callback = callback;
@@ -295,8 +304,9 @@ export default {
         options.params || {}
       );
       this.historyList.push(options);
-      this.__show__ = true;
+      this.visible = true;
       this.$nextTick(() => {
+        this.setReady(options.delay);
         this.checkResize();
       });
     },
@@ -304,7 +314,7 @@ export default {
       this.historyList.splice(0, this.historyList.length).forEach((option) => {
         this.checkCallback(option);
       });
-      this.__show__ = false;
+      this.visible = false;
       this.checkResize();
       this.callback && this.callback();
     },

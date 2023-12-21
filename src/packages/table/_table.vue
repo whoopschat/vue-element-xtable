@@ -27,10 +27,9 @@
               <x-input
                 v-model="param.value"
                 @change="handleChangeParams()"
+                @clear="handleClearParam(param)"
                 :disabled="getValue('disabled', param)"
-                :clearable="
-                  !!(param.value && param.value != getValue('default', param))
-                "
+                :clearable="!!(param.value != getValue('default', param))"
                 :size="getValue('size', param) || size || $xUISize"
                 :styleValue="getValue('styleValue', param) || 'width: 150px;'"
                 :options="getParamOptions(param)"
@@ -614,6 +613,10 @@ export default {
         this.currentOrderBy = "";
       }
       this.fetchList();
+    },
+    handleClearParam(param) {
+      param.value = this.getValue("default", param) || "";
+      this.handleChangeParams();
     },
     handleChangeParams() {
       this.dataParams = {};

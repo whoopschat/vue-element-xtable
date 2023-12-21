@@ -6,6 +6,7 @@
         v-model="inputValue"
         @blur="handleBlur"
         @change="handleChange"
+        @clear="handleClear"
         :size="getValue('size', options) || $xUISize"
         :customs="getValue('customs', options)"
         :maxHeight="getValue('maxHeight', options)"
@@ -26,6 +27,7 @@
         ref="input"
         @blur="handleBlur"
         @change="handleChange"
+        @clear="handleClear"
         v-model="inputValue"
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
@@ -56,6 +58,7 @@
         ref="input"
         @blur="handleBlur"
         @change="handleChange"
+        @clear="handleClear"
         v-model="inputValue"
         :controls="false"
         :max="getValue('max', options)"
@@ -75,6 +78,7 @@
         ref="input"
         @blur="handleBlur"
         @change="handleChange"
+        @clear="handleClear"
         v-model="inputValue"
         type="datetime"
         value-format="timestamp"
@@ -93,6 +97,7 @@
         type="textarea"
         @blur="handleBlur"
         @change="handleChange"
+        @clear="handleClear"
         v-model="inputValue"
         :size="getValue('size', options) || $xUISize"
         :style="styleValue || getValue('styleValue', options)"
@@ -110,6 +115,7 @@
       ref="input"
       @blur="handleBlur"
       @change="handleChange"
+      @clear="handleClear"
       v-model="inputValue"
       :size="getValue('size', options) || $xUISize"
       :style="styleValue || getValue('styleValue', options)"
@@ -280,6 +286,9 @@ export default {
       if (this.cacheEnable) {
         localStorage.setItem(`xui-input-cache-${this.cacheKey}`, this.inputValue);
       }
+    },
+    handleClear() {
+      this.$emit("clear");
     },
     delayChange() {
       if (this.changeTimeout) {

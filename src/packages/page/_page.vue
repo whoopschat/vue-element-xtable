@@ -7,13 +7,18 @@
       <div
         ref="xPageMenuParent"
         v-if="menus"
-        :class="'x-page-menu' + (isCollapse ? ' x-menu-collapse' : '')"
+        :class="'x-page-menu' + (isCollapse ? ' x-page-menu-collapse' : '')"
       >
         <div ref="xPageMenuHeader" class="x-page-menu-header">
           <slot v-if="!isCollapse" name="menu-header"></slot>
           <slot v-else name="menu-collapse-header"></slot>
         </div>
-        <div class="x-page-menu-list">
+        <div
+          :class="
+            'x-page-menu-list' +
+            (isCollapse ? ' x-page-menu-list-collapse' : '')
+          "
+        >
           <el-menu
             mode="vertical"
             menu-trigger="click"
@@ -139,6 +144,13 @@
       display: inline-block;
       width: var(--x-page-menu-width);
       height: var(--x-page-menu-list-height);
+      &.x-page-menu-list-collapse {
+        width: var(--x-page-menu-collapse-width);
+
+        .el-submenu__icon-arrow {
+          display: none;
+        }
+      }
     }
 
     .el-menu {
@@ -245,7 +257,7 @@
       }
     }
 
-    &.x-menu-collapse {
+    &.x-page-menu-collapse {
       width: var(--x-page-menu-collapse-width);
 
       .el-submenu__icon-arrow {
@@ -385,6 +397,9 @@ export default {
     value() {
       this.initMenu();
     },
+    forceCollapse() {
+      this.handleResize();
+    }
   },
   mounted() {
     this.initMenu();
@@ -424,7 +439,7 @@ export default {
       });
       return actionName;
     },
-    handleResize(el) {
+    handleResize() {
       try {
         let parentInfo = getPosition(this.$refs.xPageMenuParent);
         let footerInfo = getPosition(this.$refs.xPageMenuFooter);

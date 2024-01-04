@@ -24,7 +24,7 @@
     <div v-if="visible" ref="drawer-content">
       <div
         v-for="(opt, i) in historyList"
-        :style="opt.bodyStyle"
+        :style="opt.bodyStyle || $xUIDrawerBodyStyle"
         :key="opt.key"
       >
         <component

@@ -5,66 +5,73 @@
     </template>
     <template v-else>
       <div
+        ref="xPageMenuParent"
         v-if="menus"
         :class="'x-page-menu' + (isCollapse ? ' x-menu-collapse' : '')"
       >
-        <slot v-if="!isCollapse" name="menu-header"></slot>
-        <slot v-else name="menu-collapse-header"></slot>
-        <el-menu
-          mode="vertical"
-          menu-trigger="click"
-          :unique-opened="true"
-          :collapse-transition="false"
-          :default-active="actionName"
-          @select="handleSelectClick"
-        >
-          <template v-for="(item, index) in menus">
-            <el-submenu
-              v-if="item.children && item.children.length > 0"
-              v-show="getValue('show', item, null, true)"
-              :disabled="getValue('disabled', item, null, false)"
-              :key="'x-page-menu-' + index"
-              :index="'' + index"
-            >
-              <template slot="title">
-                <i v-if="item.icon" :class="getValue('icon', item)"></i>
-                <span v-if="!isCollapse">
-                  {{ getValue("label", item) }}
-                </span>
-              </template>
-              <el-menu-item
-                v-for="(children, cIndex) in item.children"
-                v-show="getValue('show', children, null, true)"
-                :disabled="getValue('disabled', children, null, false)"
-                :key="'x-page-menu-child-' + cIndex"
-                :index="index + '_' + cIndex"
+        <div ref="xPageMenuHeader" class="x-page-menu-header">
+          <slot v-if="!isCollapse" name="menu-header"></slot>
+          <slot v-else name="menu-collapse-header"></slot>
+        </div>
+        <div class="x-page-menu-list">
+          <el-menu
+            mode="vertical"
+            menu-trigger="click"
+            :unique-opened="true"
+            :collapse-transition="false"
+            :default-active="actionName"
+            @select="handleSelectClick"
+          >
+            <template v-for="(item, index) in menus">
+              <el-submenu
+                v-if="item.children && item.children.length > 0"
+                v-show="getValue('show', item, null, true)"
+                :disabled="getValue('disabled', item, null, false)"
+                :key="'x-page-menu-' + index"
+                :index="'' + index"
               >
                 <template slot="title">
-                  <i
-                    v-if="children.icon"
-                    :class="getValue('icon', children)"
-                  ></i>
+                  <i v-if="item.icon" :class="getValue('icon', item)"></i>
                   <span v-if="!isCollapse">
-                    {{ getValue("label", children) }}
+                    {{ getValue("label", item) }}
                   </span>
                 </template>
+                <el-menu-item
+                  v-for="(children, cIndex) in item.children"
+                  v-show="getValue('show', children, null, true)"
+                  :disabled="getValue('disabled', children, null, false)"
+                  :key="'x-page-menu-child-' + cIndex"
+                  :index="index + '_' + cIndex"
+                >
+                  <template slot="title">
+                    <i
+                      v-if="children.icon"
+                      :class="getValue('icon', children)"
+                    ></i>
+                    <span v-if="!isCollapse">
+                      {{ getValue("label", children) }}
+                    </span>
+                  </template>
+                </el-menu-item>
+              </el-submenu>
+              <el-menu-item
+                v-else
+                v-show="getValue('show', item, null, true)"
+                :disabled="getValue('disabled', item, null, false)"
+                :index="'' + index"
+              >
+                <i v-if="item.icon" :class="getValue('icon', item)"></i>
+                <span v-if="!isCollapse" slot="title">
+                  {{ getValue("label", item) }}
+                </span>
               </el-menu-item>
-            </el-submenu>
-            <el-menu-item
-              v-else
-              v-show="getValue('show', item, null, true)"
-              :disabled="getValue('disabled', item, null, false)"
-              :index="'' + index"
-            >
-              <i v-if="item.icon" :class="getValue('icon', item)"></i>
-              <span v-if="!isCollapse" slot="title">
-                {{ getValue("label", item) }}
-              </span>
-            </el-menu-item>
-          </template>
-        </el-menu>
-        <slot v-if="!isCollapse" name="menu-footer"></slot>
-        <slot v-else name="menu-collapse-footer"></slot>
+            </template>
+          </el-menu>
+        </div>
+        <div ref="xPageMenuFooter" class="x-page-menu-footer">
+          <slot v-if="!isCollapse" name="menu-footer"></slot>
+          <slot v-else name="menu-collapse-footer"></slot>
+        </div>
       </div>
       <div :class="'x-page-content' + (isCollapse ? ' x-menu-collapse' : '')">
         <div class="x-page-content-warp">
@@ -115,7 +122,6 @@
   }
 
   .x-page-menu {
-    overflow: auto;
     position: fixed;
     left: 0;
     top: 0;
@@ -127,6 +133,13 @@
     background-color: var(--x-page-menu-bg-color);
     border-right: solid var(--x-page-menu-border-width)
       var(--x-page-menu-border-color);
+
+    .x-page-menu-list {
+      overflow: auto;
+      display: inline-block;
+      width: var(--x-page-menu-width);
+      height: var(--x-page-menu-list-height);
+    }
 
     .el-menu {
       width: auto;
@@ -241,7 +254,7 @@
     }
   }
   // 隐藏滚动条
-  .x-page-menu::-webkit-scrollbar {
+  .x-page-menu-list::-webkit-scrollbar {
     width: 0px;
     height: 0px;
   }
@@ -249,6 +262,8 @@
 </style>
 
 <script>
+import { getPosition } from "../../utils/position";
+
 export default {
   props: {
     value: {
@@ -270,6 +285,10 @@ export default {
     collapseWidth: {
       type: Number,
       default: 800,
+    },
+    forceCollapse: {
+      type: Boolean,
+      default: false,
     },
     menuBgColor: {
       type: String,
@@ -405,10 +424,14 @@ export default {
       });
       return actionName;
     },
-    handleResize() {
+    handleResize(el) {
       try {
+        let parentInfo = getPosition(this.$refs.xPageMenuParent);
+        let footerInfo = getPosition(this.$refs.xPageMenuFooter);
+        let headerInfo = getPosition(this.$refs.xPageMenuHeader);
         this.pageStyle = {
           "--x-page-menu-width": `${this.menuWidth}px`,
+          "--x-page-menu-list-height": `${parentInfo.height - footerInfo.height - headerInfo.height}px`,
           "--x-page-menu-item-height": `${this.menuItemHeight}px`,
           "--x-page-menu-item-padding-left": `${this.menuItemPaddingLeft}px`,
           "--x-page-menu-collapse-width": `${this.menuCollapseWidth}px`,
@@ -429,7 +452,9 @@ export default {
           "--x-page-content-bg-color": this.contentBgColor,
           "--x-page-content-min-width": `${this.contentMinWidth || 300}px`,
         }
-        if (!this.collapseEnable) {
+        if (this.forceCollapse) {
+          this.isCollapse = true;
+        } else if (!this.collapseEnable) {
           this.isCollapse = false;
         } else {
           let width = document.documentElement.clientWidth;

@@ -1,6 +1,8 @@
 <template>
   <div>
     <x-page :menus="menuList" @click="handleMenuEvent" :value="path">
+      <div slot="menu-header">LOGO</div>
+      <div slot="menu-footer">Footer</div>
       <div style="margin: 10px">
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/' }">

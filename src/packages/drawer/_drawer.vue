@@ -22,19 +22,19 @@
       </div>
     </template>
     <div v-if="visible" ref="drawer-content">
-      <div
-        v-for="(opt, i) in historyList"
-        :style="opt.bodyStyle || $xUIDrawerBodyStyle"
-        :key="opt.key"
-      >
-        <component
+      <div v-for="(opt, i) in historyList" :key="opt.key">
+        <div
           v-show="ready && i == historyList.length - 1"
-          :ref="opt.key"
-          :is="opt.component"
-          :params="opt.params"
-          :query="opt.query"
+          :style="opt.bodyStyle || $xUIDrawerBodyStyle"
         >
-        </component>
+          <component
+            :ref="opt.key"
+            :is="opt.component"
+            :params="opt.params"
+            :query="opt.query"
+          >
+          </component>
+        </div>
       </div>
     </div>
   </el-drawer>

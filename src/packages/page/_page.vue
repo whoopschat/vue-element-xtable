@@ -80,8 +80,10 @@
       </div>
       <div :class="'x-page-content' + (isCollapse ? ' x-menu-collapse' : '')">
         <div class="x-page-content-warp">
-          <div ref="header">
-            <slot name="content-header"></slot>
+          <div class="x-page-slot-header">
+            <div ref="header">
+              <slot name="content-header"></slot>
+            </div>
           </div>
           <div class="x-page-slot-content">
             <slot></slot>
@@ -142,7 +144,7 @@
     .x-page-menu-list {
       overflow: auto;
       display: inline-block;
-      width: var(--x-page-menu-width);
+      width: calc(var(--x-page-menu-width) - var(--x-page-menu-border-width));
       height: var(--x-page-menu-list-height);
       &.x-page-menu-list-collapse {
         width: var(--x-page-menu-collapse-width);
@@ -162,7 +164,7 @@
       .el-submenu__title {
         width: auto;
         height: var(--x-page-menu-item-height);
-        background-color: var(--x-page-menu-bg-color);
+        background-color: var(--x-page-menu-group-bg-color);
         line-height: var(--x-page-menu-item-height);
         min-width: calc(
           var(--x-page-menu-collapse-width)- var(--x-page-menu-border-width)
@@ -170,27 +172,27 @@
         max-width: calc(
           var(--x-page-menu-width)- var(--x-page-menu-border-width)
         );
-        color: var(--x-page-menu-text-color);
+        color: var(--x-page-menu-group-text-color);
 
         i {
-          color: var(--x-page-menu-text-color);
+          color: var(--x-page-menu-group-text-color);
         }
       }
 
       .el-submenu__title.is-active {
-        background-color: var(--x-page-menu-bg-active-color);
-        color: var(--x-page-menu-text-active-color);
+        background-color: var(--x-page-menu-group-bg-active-color);
+        color: var(--x-page-menu-group-text-active-color);
 
         i {
-          color: var(--x-page-menu-text-active-color);
+          color: var(--x-page-menu-group-text-active-color);
         }
       }
       .el-submenu__title:hover {
-        background-color: var(--x-page-menu-bg-hover-color);
-        color: var(--x-page-menu-text-hover-color);
+        background-color: var(--x-page-menu-group-bg-hover-color);
+        color: var(--x-page-menu-group-text-hover-color);
 
         i {
-          color: var(--x-page-menu-text-hover-color);
+          color: var(--x-page-menu-group-text-hover-color);
         }
       }
 
@@ -270,6 +272,30 @@
     width: 0px;
     height: 0px;
   }
+
+  @media print {
+    .x-page-menu {
+      display: none;
+
+      .x-page-menu-collapse {
+        display: none;
+      }
+    }
+
+    .x-page-slot-header {
+      display: none;
+    }
+
+    .x-page-content {
+      width: calc(100%);
+      margin-left: 0px;
+
+      &.x-menu-collapse {
+        width: calc(100%);
+        margin-left: 0px;
+      }
+    }
+  }
 }
 </style>
 
@@ -302,6 +328,42 @@ export default {
       type: Boolean,
       default: false,
     },
+    menuSubBgColor: {
+      type: String,
+    },
+    menuSubBgHoverColor: {
+      type: String,
+    },
+    menuSubBgActiveColor: {
+      type: String,
+    },
+    menuSubTextColor: {
+      type: String,
+    },
+    menuSubTextHoverColor: {
+      type: String,
+    },
+    menuSubTextActiveColor: {
+      type: String,
+    },
+    menuGroupBgColor: {
+      type: String,
+    },
+    menuGroupBgHoverColor: {
+      type: String,
+    },
+    menuGroupBgActiveColor: {
+      type: String,
+    },
+    menuGroupTextColor: {
+      type: String,
+    },
+    menuGroupTextHoverColor: {
+      type: String,
+    },
+    menuGroupTextActiveColor: {
+      type: String,
+    },
     menuBgColor: {
       type: String,
       default: "#c25b4e",
@@ -326,37 +388,13 @@ export default {
       type: String,
       default: "#c5e1fd",
     },
-    menuSubBgColor: {
-      type: String,
-      default: "#d57164",
-    },
-    menuSubBgHoverColor: {
-      type: String,
-      default: "#a7493d",
-    },
-    menuSubBgActiveColor: {
-      type: String,
-      default: "#a7493d",
-    },
-    menuSubTextColor: {
-      type: String,
-      default: "#ffffff",
-    },
-    menuSubTextHoverColor: {
-      type: String,
-      default: "#c5e1fd",
-    },
-    menuSubTextActiveColor: {
-      type: String,
-      default: "#c5e1fd",
-    },
     menuBorderColor: {
       type: String,
       default: "#ff0000",
     },
     menuBorderWidth: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     menuCollapseWidth: {
       type: Number,
@@ -450,12 +488,18 @@ export default {
           "--x-page-menu-item-height": `${this.menuItemHeight}px`,
           "--x-page-menu-item-padding-left": `${this.menuItemPaddingLeft}px`,
           "--x-page-menu-collapse-width": `${this.menuCollapseWidth}px`,
-          "--x-page-menu-sub-bg-color": this.menuSubBgColor,
-          "--x-page-menu-sub-bg-hover-color": this.menuSubBgHoverColor,
-          "--x-page-menu-sub-bg-active-color": this.menuSubBgActiveColor,
-          "--x-page-menu-sub-text-color": this.menuSubTextColor,
-          "--x-page-menu-sub-text-hover-color": this.menuSubTextHoverColor,
-          "--x-page-menu-sub-text-active-color": this.menuSubTextActiveColor,
+          "--x-page-menu-sub-bg-color": this.menuSubBgColor || this.menuBgColor,
+          "--x-page-menu-sub-bg-hover-color": this.menuSubBgHoverColor || this.menuBgHoverColor,
+          "--x-page-menu-sub-bg-active-color": this.menuSubBgActiveColor || this.menuBgActiveColor,
+          "--x-page-menu-sub-text-color": this.menuSubTextColor || this.menuTextColor,
+          "--x-page-menu-sub-text-hover-color": this.menuSubTextHoverColor || this.menuTextHoverColor,
+          "--x-page-menu-sub-text-active-color": this.menuSubTextActiveColor || this.menuTextActiveColor,
+          "--x-page-menu-group-bg-color": this.menuGroupBgColor || this.menuBgColor,
+          "--x-page-menu-group-bg-hover-color": this.menuGroupBgHoverColor || this.menuBgHoverColor,
+          "--x-page-menu-group-bg-active-color": this.menuGroupBgActiveColor || this.menuBgActiveColor,
+          "--x-page-menu-group-text-color": this.menuGroupTextColor || this.menuTextColor,
+          "--x-page-menu-group-text-hover-color": this.menuGroupTextHoverColor || this.menuTextHoverColor,
+          "--x-page-menu-group-text-active-color": this.menuGroupTextActiveColor || this.menuTextActiveColor,
           "--x-page-menu-bg-color": this.menuBgColor,
           "--x-page-menu-bg-hover-color": this.menuBgHoverColor,
           "--x-page-menu-bg-active-color": this.menuBgActiveColor,

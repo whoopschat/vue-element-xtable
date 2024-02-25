@@ -423,6 +423,7 @@ export default {
   },
   data() {
     return {
+      isReckonCollapse: false,
       isCollapse: false,
       actionName: "-",
       pageStyle: null,
@@ -437,7 +438,10 @@ export default {
     },
     forceCollapse() {
       this.handleResize();
-    }
+    },
+    isReckonCollapse() {
+      this.$emit("reckonCollapse", this.isReckonCollapse);
+    },
   },
   mounted() {
     this.initMenu();
@@ -511,17 +515,18 @@ export default {
           "--x-page-content-bg-color": this.contentBgColor,
           "--x-page-content-min-width": `${this.contentMinWidth || 300}px`,
         }
+        let width = document.documentElement.clientWidth;
+        if (width > this.collapseWidth) {
+          this.isCollapse = false;
+          this.isReckonCollapse = false;
+        } else {
+          this.isCollapse = true;
+          this.isReckonCollapse = true;
+        }
         if (this.forceCollapse) {
           this.isCollapse = true;
         } else if (!this.collapseEnable) {
           this.isCollapse = false;
-        } else {
-          let width = document.documentElement.clientWidth;
-          if (width > this.collapseWidth) {
-            this.isCollapse = false;
-          } else {
-            this.isCollapse = true;
-          }
         }
       } catch (error) { }
     },

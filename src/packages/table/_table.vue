@@ -381,7 +381,7 @@ export default {
     },
     defaultPageSize: {
       type: Number,
-      default: 10,
+      default: 20,
     },
     defaultParams: {
       type: Object,
@@ -420,7 +420,7 @@ export default {
     paginationPageSizes: {
       type: Array,
       default: () => {
-        return [5, 10, 50, 100, 300, 500, 1000];
+        return [10, 20, 50, 100];
       },
     },
     selectionMultiple: {

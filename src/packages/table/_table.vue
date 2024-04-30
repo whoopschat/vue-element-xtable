@@ -218,7 +218,6 @@
       <br />
       <div class="block" v-if="paginationShow">
         <el-pagination
-          v-if="currentTotal > 0"
           @current-change="handlePageChange"
           @size-change="handleSizeChange"
           :total="currentTotal"

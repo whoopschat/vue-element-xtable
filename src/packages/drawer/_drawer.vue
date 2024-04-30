@@ -50,12 +50,12 @@
 
   // 滚动条的滑块
   ::-webkit-scrollbar-thumb {
-    background-color: #ddd !important;
+    background-color: #eeeeee;
   }
 
   ::-webkit-scrollbar-track {
     /*滚动条里面轨道*/
-    background: #eee !important;
+    background: #f1f1f1;
   }
 
   .el-drawer__header {

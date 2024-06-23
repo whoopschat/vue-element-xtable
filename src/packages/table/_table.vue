@@ -380,7 +380,7 @@ export default {
     },
     defaultPageSize: {
       type: Number,
-      default: 20,
+      default: 10,
     },
     defaultParams: {
       type: Object,

@@ -16,7 +16,8 @@
             :tabProps="tab.props"
             :params="tab.params || params"
             :query="tab.query || query"
-            @event="callOnEvent"
+            :onEventMethod="onCallEvent"
+            @call-event="onCallEvent"
           />
         </div>
         <div v-else>
@@ -53,11 +54,13 @@ export default {
             name: "tab1",
             label: "Tab 1",
             interval: false,
+            event: () => { }
           },
           {
             name: "tab2",
             label: "Tab 2",
             interval: false,
+            event: () => { }
           },
         ];
       },
@@ -127,8 +130,8 @@ export default {
         } catch (error) { }
       }, 200);
     },
-    callOnEvent(...params) {
-      this.$emit("event", ...params);
+    onCallEvent(...params) {
+      this.$emit("call-event", ...params);
     },
     checkTabVisiable(tab) {
       if (!tab.component) {

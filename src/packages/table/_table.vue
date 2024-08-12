@@ -62,6 +62,7 @@
               >
                 {{ getValue("label", btn) }}
               </el-button>
+              <slot name="param-extra-append" :refresh="fetchList"></slot>
             </div>
           </el-form-item>
           <slot name="extra" :refresh="fetchList"></slot>
@@ -95,6 +96,7 @@
           :min-width="getValue('minWidth', field)"
           :sortable="getValue('sortKey', field) ? 'custom' : null"
           :fixed="getValue('fixed', field)"
+          :align="getValue('align', field)"
           :prop="getValue('sortKey', field)"
         >
           <template slot-scope="scope" v-if="field">
@@ -160,6 +162,7 @@
         </el-table-column>
         <el-table-column
           v-if="actionList.length > 0"
+          :align="actionAlign"
           :width="actionWidth"
           :label="actionLabel"
           :fixed="actionFixed"
@@ -247,12 +250,13 @@
     padding: 12px 0;
   }
 
-  .el-table td.el-table__cell {
-    border-bottom: var(--x-table-border-bottom) solid #ebeef5;
+  .el-table__fixed-right::before,
+  .el-table__fixed::before {
+    height: 0.5px !important;
   }
 
   .el-table th.el-table__cell.is-leaf {
-    border-bottom: 1.5px solid #ececec;
+    border-bottom: 1px solid #ececec;
   }
 
   .el-table__body tr.current-row > td.el-table__cell {
@@ -266,6 +270,11 @@
   .el-table__body tr.hover-row.current-row > td.el-table__cell,
   .el-table__body tr.hover-row > td.el-table__cell {
     background-color: #ffffff;
+  }
+
+  .el-table--border {
+    border-right: 1px solid #ebeef5;
+    border-bottom: 1px solid #ebeef5;
   }
 
   .x-table-action-link {
@@ -354,9 +363,13 @@ export default {
       type: Number,
       default: 140,
     },
+    actionAlign: {
+      type: String,
+      default: "center",
+    },
     actionLabel: {
       type: String,
-      default: "操作",
+      default: "-",
     },
     errorLabel: {
       type: String,

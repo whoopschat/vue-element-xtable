@@ -75,7 +75,7 @@
         :size="size || $xUISize"
         :highlight-current-row="highlightCurrentRow"
         :show-header="headerShow"
-        :empty-text="emptyLabel"
+        :empty-text="fetchLoading ? loadingLabel : emptyLabel"
         :height="height"
         v-if="!fetchErrorMsg"
         @sort-change="handleSortChange"
@@ -382,6 +382,10 @@ export default {
     emptyLabel: {
       type: String,
       default: "暂无数据",
+    },
+    loadingLabel: {
+      type: String,
+      default: "正在加载数据",
     },
     refreshLabel: {
       type: String,

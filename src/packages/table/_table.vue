@@ -349,7 +349,7 @@ export default {
     },
     fetchClear: {
       type: String | Boolean,
-      default: true,
+      default: false,
     },
     showRefreshBtn: {
       type: String | Boolean,
